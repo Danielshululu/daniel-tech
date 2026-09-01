@@ -1,12 +1,3 @@
-/* =====================================================
-   DANIEL TECH - FINAL JAVASCRIPT
-===================================================== */
-
-
-/* =====================================================
-   SUPABASE CONFIGURATION
-===================================================== */
-
 const SUPABASE_URL =
     "https://bodprzntcloioncwhpvr.supabase.co";
 
@@ -14,53 +5,21 @@ const SUPABASE_KEY =
     "sb_publishable_x4riqGTgHI3btFxG5RXLpA_7RNBneJA";
 
 const ADMIN_UID =
-    "05fef3eb-16a3-4554-9d9b-de7d2b29144d";
+    "05fef3eb-16a3-4554-9d9b-de7d2b29144b";
 
 const STORAGE_BUCKET =
     "daniel-files";
 
+const state = {
+    session: null,
+    contents: [],
+    editingId: null
+};
 
-/* =====================================================
-   GLOBAL VARIABLES
-===================================================== */
+const $ = (id) => document.getElementById(id);
 
-let currentSession = null;
-
-let editingContentId = null;
-
-let selectedContentType = "news";
-
-
-/* =====================================================
-   SUPABASE HEADERS
-===================================================== */
-
-function supabaseHeaders(token = null) {
-
-    const headers = {
-        "apikey": SUPABASE_KEY,
-        "Content-Type": "application/json"
-    };
-
-    if (token) {
-        headers["Authorization"] = `Bearer ${token}`;
-    }
-
-    return headers;
-}
-
-
-/* =====================================================
-   ESCAPE HTML
-===================================================== */
-
-function escapeHtml(value) {
-
-    if (value === null || value === undefined) {
-        return "";
-    }
-
-    return String(value)
+function escapeHTML(value) {
+    return String(value ?? "")
         .replace(/&/g, "&amp;")
         .replace(/</g, "&lt;")
         .replace(/>/g, "&gt;")
@@ -68,1913 +27,807 @@ function escapeHtml(value) {
         .replace(/'/g, "&#039;");
 }
 
-
-/* =====================================================
-   SESSION STORAGE
-===================================================== */
-
-function saveAdminSession(session) {
-
-    currentSession = session;
-
-    sessionStorage.setItem(
-        "danielTechAdminSession",
-        JSON.stringify(session)
-    );
+function show(element) {
+    if (element) element.classList.add("show");
 }
 
-
-function getSavedAdminSession() {
-
-    const saved =
-        sessionStorage.getItem(
-            "danielTechAdminSession"
-        );
-
-    if (!saved) {
-        return null;
-    }
-
-    try {
-        return JSON.parse(saved);
-    } catch (error) {
-
-        sessionStorage.removeItem(
-            "danielTechAdminSession"
-        );
-
-        return null;
-    }
+function hide(element) {
+    if (element) element.classList.remove("show");
 }
 
-
-function clearAdminSession() {
-
-    currentSession = null;
-
-    sessionStorage.removeItem(
-        "danielTechAdminSession"
-    );
+function formatDate(date) {
+    if (!date) return "";
+    
+    return new Date(date).toLocaleDateString("en-TZ", {
+        year: "numeric",
+        month: "long",
+        day: "numeric"
+    });
 }
 
+/* =========================
+   NAVIGATION
+========================= */
 
-/* =====================================================
-   PAGE NAVIGATION
-===================================================== */
-
-function showPage(pageId) {
-
-    document
-        .querySelectorAll(".page")
-        .forEach(page => {
-
-            page.classList.remove("active-page");
-
-        });
-
-
-    const target =
-        document.getElementById(pageId);
-
-    if (target) {
-
-        target.classList.add("active-page");
-
-        window.scrollTo({
-            top: 0,
-            behavior: "smooth"
-        });
-
-    }
-
-
-    document
-        .querySelectorAll(".main-nav a")
-        .forEach(link => {
-
-            link.classList.remove("active");
-
-            if (
-                link.dataset.page === pageId
-            ) {
-
-                link.classList.add("active");
-
-            }
-
-        });
-
-
-    const nav =
-        document.getElementById("mainNav");
-
-    if (nav) {
-        nav.classList.remove("open");
-    }
-}
-
-
-/* =====================================================
-   PAGE BUTTON EVENTS
-===================================================== */
-
-document.addEventListener(
-    "click",
-    function(event) {
-
-        const pageButton =
-            event.target.closest(
-                "[data-page]"
-            );
-
-        if (!pageButton) {
-            return;
-        }
-
+document.querySelectorAll("[data-page]").forEach((link) => {
+    link.addEventListener("click", (event) => {
         event.preventDefault();
 
-        const page =
-            pageButton.dataset.page;
+        const page = link.getAttribute("data-page");
 
-        if (page) {
-            showPage(page);
+        document.querySelectorAll(".page").forEach((section) => {
+            section.classList.remove("active");
+        });
+
+        const target = document.getElementById(page);
+
+        if (target) {
+            target.classList.add("active");
+            window.scrollTo({
+                top: 0,
+                behavior: "smooth"
+            });
         }
 
-    }
-);
+        $("mainMenu")?.classList.remove("open");
+    });
+});
 
-
-/* =====================================================
+/* =========================
    MOBILE MENU
-===================================================== */
+========================= */
 
-function setupMobileMenu() {
+$("menuButton")?.addEventListener("click", () => {
+    $("mainMenu")?.classList.toggle("open");
+});
 
-    const menuButton =
-        document.getElementById(
-            "menuButton"
-        );
-
-    const mainNav =
-        document.getElementById(
-            "mainNav"
-        );
-
-
-    if (!menuButton || !mainNav) {
-        return;
-    }
-
-
-    menuButton.addEventListener(
-        "click",
-        function() {
-
-            mainNav.classList.toggle(
-                "open"
-            );
-
-        }
-    );
-}
-
-
-/* =====================================================
+/* =========================
    DARK MODE
-===================================================== */
+========================= */
 
 function applyDarkMode(enabled) {
-
-    document.body.classList.toggle(
-        "dark-mode",
-        enabled
-    );
-
+    document.body.classList.toggle("dark-mode", enabled);
 
     localStorage.setItem(
         "danielTechDarkMode",
         enabled ? "true" : "false"
     );
 
-
-    const settingsToggle =
-        document.getElementById(
-            "settingsDarkMode"
-        );
-
-    if (settingsToggle) {
-        settingsToggle.checked = enabled;
-    }
-
-
-    const button =
-        document.getElementById(
-            "darkModeButton"
-        );
-
-    if (button) {
-
-        button.textContent =
-            enabled
-                ? "Light Mode"
-                : "Dark Mode";
-
+    if ($("settingsDarkMode")) {
+        $("settingsDarkMode").checked = enabled;
     }
 }
 
-
-function restoreDarkMode() {
-
-    const saved =
-        localStorage.getItem(
-            "danielTechDarkMode"
-        );
-
-    applyDarkMode(
-        saved === "true"
-    );
-}
-
-
-function setupDarkMode() {
-
-    const darkButton =
-        document.getElementById(
-            "darkModeButton"
-        );
-
-    const settingsToggle =
-        document.getElementById(
-            "settingsDarkMode"
-        );
-
-
-    if (darkButton) {
-
-        darkButton.addEventListener(
-            "click",
-            function() {
-
-                const enabled =
-                    !document.body.classList.contains(
-                        "dark-mode"
-                    );
-
-                applyDarkMode(enabled);
-
-            }
-        );
-
-    }
-
-
-    if (settingsToggle) {
-
-        settingsToggle.addEventListener(
-            "change",
-            function() {
-
-                applyDarkMode(
-                    settingsToggle.checked
-                );
-
-            }
-        );
-
-    }
-}
-
-
-/* =====================================================
-   SETTINGS PANEL
-===================================================== */
-
-function setupSettings() {
-
-    const settingsButton =
-        document.getElementById(
-            "settingsButton"
-        );
-
-    const settingsPanel =
-        document.getElementById(
-            "settingsPanel"
-        );
-
-    const closeSettings =
-        document.getElementById(
-            "closeSettings"
-        );
-
-    const overlay =
-        document.getElementById(
-            "overlay"
-        );
-
-
-    function openSettings() {
-
-        if (settingsPanel) {
-            settingsPanel.classList.add(
-                "open"
-            );
-        }
-
-        if (overlay) {
-            overlay.classList.add(
-                "active"
-            );
-        }
-
-    }
-
-
-    function closePanel() {
-
-        if (settingsPanel) {
-            settingsPanel.classList.remove(
-                "open"
-            );
-        }
-
-        if (overlay) {
-            overlay.classList.remove(
-                "active"
-            );
-        }
-
-    }
-
-
-    if (settingsButton) {
-
-        settingsButton.addEventListener(
-            "click",
-            openSettings
-        );
-
-    }
-
-
-    if (closeSettings) {
-
-        closeSettings.addEventListener(
-            "click",
-            closePanel
-        );
-
-    }
-
-
-    if (overlay) {
-
-        overlay.addEventListener(
-            "click",
-            closePanel
-        );
-
-    }
-
-
-    window.closeSettingsPanel =
-        closePanel;
-}
-
-
-/* =====================================================
-   MODAL HELPERS
-===================================================== */
-
-function openModal(id) {
-
-    const modal =
-        document.getElementById(id);
-
-    if (modal) {
-
-        modal.classList.add(
-            "open"
-        );
-
-    }
-}
-
-
-function closeModal(id) {
-
-    const modal =
-        document.getElementById(id);
-
-    if (modal) {
-
-        modal.classList.remove(
-            "open"
-        );
-
-    }
-}
-
-
-function setupModalCloseButtons() {
-
-    document
-        .querySelectorAll(
-            "[data-close-modal]"
-        )
-        .forEach(button => {
-
-            button.addEventListener(
-                "click",
-                function() {
-
-                    closeModal(
-                        button.dataset.closeModal
-                    );
-
-                }
-            );
-
-        });
-
-
-    document
-        .querySelectorAll(".modal")
-        .forEach(modal => {
-
-            modal.addEventListener(
-                "click",
-                function(event) {
-
-                    if (
-                        event.target === modal
-                    ) {
-
-                        modal.classList.remove(
-                            "open"
-                        );
-
-                    }
-
-                }
-            );
-
-        });
-}
-
-
-/* =====================================================
+const savedDarkMode =
+    localStorage.getItem("danielTechDarkMode") === "true";
+
+applyDarkMode(savedDarkMode);
+
+$("darkModeButton")?.addEventListener("click", () => {
+    applyDarkMode(!document.body.classList.contains("dark-mode"));
+});
+
+$("settingsDarkMode")?.addEventListener("change", (event) => {
+    applyDarkMode(event.target.checked);
+});
+
+/* =========================
+   SETTINGS
+========================= */
+
+$("settingsButton")?.addEventListener("click", () => {
+    show($("settingsPanel"));
+    show($("overlay"));
+});
+
+$("closeSettings")?.addEventListener("click", () => {
+    hide($("settingsPanel"));
+    hide($("overlay"));
+});
+
+$("overlay")?.addEventListener("click", () => {
+    hide($("settingsPanel"));
+    hide($("aboutModal"));
+    hide($("serviceModal"));
+    hide($("featureModal"));
+    hide($("adminLoginModal"));
+    hide($("dashboardModal"));
+    hide($("overlay"));
+});
+
+/* =========================
    ABOUT
-===================================================== */
+========================= */
 
-function setupAbout() {
+$("aboutButton")?.addEventListener("click", () => {
+    hide($("settingsPanel"));
+    show($("aboutModal"));
+    show($("overlay"));
+});
 
-    const aboutButton =
-        document.getElementById(
-            "aboutButton"
-        );
+$("aboutModal")?.querySelector(".close-modal")?.addEventListener("click", () => {
+    hide($("aboutModal"));
+    hide($("overlay"));
+});
 
-
-    if (!aboutButton) {
-        return;
-    }
-
-
-    aboutButton.addEventListener(
-        "click",
-        function() {
-
-            if (window.closeSettingsPanel) {
-                window.closeSettingsPanel();
-            }
-
-            openModal("aboutModal");
-
-        }
-    );
-}
-
-
-/* =====================================================
+/* =========================
    SERVICES
-===================================================== */
+========================= */
 
-const serviceInformation = {
-
-    web: {
+const serviceData = {
+    "Web Development": {
         title: "Web Development",
-        text:
-            "Daniel Tech provides modern and responsive website development for businesses, organizations, personal brands and digital projects."
+        text: "Professional websites and web applications designed for businesses, organizations, schools and personal projects."
     },
 
-    graphics: {
+    "Graphics Design": {
         title: "Graphics Design",
-        text:
-            "Professional graphics design services for logos, posters, social media artwork, promotional materials and digital branding."
+        text: "Creative graphics, posters, logos, social media designs and other digital designs."
     },
 
-    security: {
+    "Cyber Security": {
         title: "Cyber Security",
-        text:
-            "Learn practical cybersecurity principles, digital safety practices, account protection and responsible security awareness."
+        text: "Basic cybersecurity guidance, security awareness and protection of digital accounts and systems."
     },
 
-    computer: {
+    "Computer Services": {
         title: "Computer Services",
-        text:
-            "Computer setup, software installation, troubleshooting, maintenance and general ICT support."
+        text: "Computer setup, software installation, troubleshooting, maintenance and technical support."
     },
 
-    software: {
+    "Software Solutions": {
         title: "Software Solutions",
-        text:
-            "Digital software solutions designed to improve productivity and simplify everyday technology tasks."
+        text: "Useful software solutions and digital tools designed to simplify everyday work."
     },
 
-    ai: {
+    "AI Solutions": {
         title: "AI Solutions",
-        text:
-            "Practical artificial intelligence solutions for learning, productivity, content creation, programming and digital projects."
+        text: "Information and practical solutions using modern artificial intelligence tools."
     }
-
 };
 
+document.querySelectorAll(".service-card").forEach((card) => {
+    card.addEventListener("click", () => {
+        const title =
+            card.dataset.service ||
+            card.querySelector("h3")?.textContent.trim();
 
-function setupServices() {
+        const service = serviceData[title];
 
-    document
-        .querySelectorAll(
-            ".service-view-button"
-        )
-        .forEach(button => {
+        if (!service) return;
 
-            button.addEventListener(
-                "click",
-                function() {
+        $("serviceModalTitle").textContent = service.title;
+        $("serviceModalText").textContent = service.text;
 
-                    const type =
-                        button.dataset.service;
+        show($("serviceModal"));
+        show($("overlay"));
+    });
+});
 
-                    const data =
-                        serviceInformation[type];
+$("serviceModal")?.querySelector(".close-modal")?.addEventListener("click", () => {
+    hide($("serviceModal"));
+    hide($("overlay"));
+});
 
-                    if (!data) {
-                        return;
-                    }
-
-
-                    document.getElementById(
-                        "serviceModalTitle"
-                    ).textContent =
-                        data.title;
-
-
-                    document.getElementById(
-                        "serviceModalText"
-                    ).textContent =
-                        data.text;
-
-
-                    openModal(
-                        "serviceModal"
-                    );
-
-                }
-            );
-
-        });
-}
-
-
-/* =====================================================
+/* =========================
    FEATURES
-===================================================== */
+========================= */
 
-const featureInformation = {
+const featureData = {
+    "Computer Tips":
+        "Useful computer tips, shortcuts, maintenance advice and troubleshooting information.",
 
-    "computer-tips": {
-        title: "Computer Tips",
-        text:
-            "Practical computer tips covering maintenance, performance, troubleshooting, shortcuts and productivity."
-    },
+    "Phone Tips":
+        "Practical smartphone tips, settings, security advice and useful tricks.",
 
-    "phone-tips": {
-        title: "Phone Tips",
-        text:
-            "Useful smartphone tips covering settings, storage, performance, privacy and everyday phone usage."
-    },
+    "AI Tools":
+        "Discover useful AI tools and learn how they can help with work, study and creativity.",
 
-    "ai-tools": {
-        title: "AI Tools",
-        text:
-            "Discover useful AI tools for learning, writing, programming, research, design and productivity."
-    },
+    "Gaming":
+        "Gaming information, tips, software and useful resources for gamers.",
 
-    gaming: {
-        title: "Gaming",
-        text:
-            "Gaming information including performance tips, software guidance, computer requirements and gaming technology."
-    },
+    "Programming":
+        "Programming tutorials, coding tips and resources for beginners and developers.",
 
-    programming: {
-        title: "Programming",
-        text:
-            "Programming tutorials and development knowledge covering coding concepts, web development and software creation."
-    },
-
-    "software-tips": {
-        title: "Software Tips",
-        text:
-            "Learn how to install, configure, use and troubleshoot useful computer software."
-    }
-
+    "Software Tips":
+        "Helpful software guides, installation information and practical computer solutions."
 };
 
+document.querySelectorAll(".feature-card").forEach((card) => {
+    card.addEventListener("click", () => {
+        const title =
+            card.dataset.feature ||
+            card.querySelector("h3")?.textContent.trim();
 
-function setupFeatures() {
+        const text = featureData[title];
 
-    document
-        .querySelectorAll(
-            ".feature-view-button"
-        )
-        .forEach(button => {
+        if (!text) return;
 
-            button.addEventListener(
-                "click",
-                function() {
+        $("featureModalTitle").textContent = title;
+        $("featureModalText").textContent = text;
 
-                    const type =
-                        button.dataset.feature;
+        show($("featureModal"));
+        show($("overlay"));
+    });
+});
 
-                    const data =
-                        featureInformation[type];
+$("featureModal")?.querySelector(".close-modal")?.addEventListener("click", () => {
+    hide($("featureModal"));
+    hide($("overlay"));
+});
 
-                    if (!data) {
-                        return;
-                    }
+/* =========================
+   CONTENT MEDIA
+========================= */
 
+function createMedia(content) {
+    if (!content.file_url) return "";
 
-                    document.getElementById(
-                        "featureModalTitle"
-                    ).textContent =
-                        data.title;
+    const url = escapeHTML(content.file_url);
+    const fileType = content.file_type || "";
 
-
-                    document.getElementById(
-                        "featureModalText"
-                    ).textContent =
-                        data.text;
-
-
-                    openModal(
-                        "featureModal"
-                    );
-
-                }
-            );
-
-        });
-}
-
-
-/* =====================================================
-   CONTENT FILE DISPLAY
-===================================================== */
-
-function createContentMedia(content) {
-
-    if (!content.file_url) {
-        return "";
-    }
-
-
-    const url =
-        escapeHtml(content.file_url);
-
-    const fileType =
-        content.file_type || "";
-
-
-    if (
-        fileType.startsWith("image/")
-    ) {
-
+    if (fileType.startsWith("image/")) {
         return `
             <div class="content-media">
-                <img
-                    src="${url}"
-                    alt="${escapeHtml(content.title)}"
-                    loading="lazy">
+                <img src="${url}" alt="${escapeHTML(content.title)}">
             </div>
         `;
-
     }
 
-
-    if (
-        fileType.startsWith("audio/")
-    ) {
-
+    if (fileType.startsWith("audio/")) {
         return `
             <div class="content-media">
-                <audio
-                    controls
-                    preload="metadata">
-                    <source src="${url}">
+                <audio controls>
+                    <source src="${url}" type="${escapeHTML(fileType)}">
                 </audio>
             </div>
         `;
-
     }
 
-
-    if (
-        fileType.startsWith("video/")
-    ) {
-
+    if (fileType.startsWith("video/")) {
         return `
             <div class="content-media">
-                <video
-                    controls
-                    preload="metadata">
-                    <source src="${url}">
+                <video controls>
+                    <source src="${url}" type="${escapeHTML(fileType)}">
                 </video>
             </div>
         `;
-
     }
-
 
     return `
         <div class="content-file">
-            <a
-                href="${url}"
-                target="_blank"
-                rel="noopener noreferrer">
-                Open File
+            <a href="${url}" target="_blank" rel="noopener">
+                Open ${escapeHTML(content.file_name || "file")}
             </a>
         </div>
     `;
 }
 
-
-/* =====================================================
+/* =========================
    LOAD CONTENTS
-===================================================== */
+========================= */
 
 async function loadContents() {
-
     try {
-
-        const response =
-            await fetch(
-                `${SUPABASE_URL}/rest/v1/contents?select=*&order=created_at.desc`,
-                {
-                    headers:
-                        supabaseHeaders()
+        const response = await fetch(
+            `${SUPABASE_URL}/rest/v1/contents?select=*&order=created_at.desc`,
+            {
+                headers: {
+                    apikey: SUPABASE_KEY,
+                    Authorization: `Bearer ${SUPABASE_KEY}`
                 }
-            );
-
+            }
+        );
 
         if (!response.ok) {
-
-            throw new Error(
-                "Could not load contents."
-            );
-
+            throw new Error("Could not load contents");
         }
 
+        state.contents = await response.json();
 
-        const contents =
-            await response.json();
+        renderLatestContent();
+        renderBlog();
+        renderAdminContents();
 
-
-        renderLatestContent(contents);
-
-        renderBlog(contents);
-
-        renderAdminContent(contents);
-
-
-        updateNewsBar(contents);
+        updateNewsBar();
 
     } catch (error) {
-
-        console.error(
-            "Content loading error:",
-            error
-        );
-
+        console.error(error);
     }
 }
 
-
-/* =====================================================
+/* =========================
    LATEST CONTENT
-===================================================== */
+========================= */
 
-function renderLatestContent(contents) {
+function renderLatestContent() {
+    const container = $("latestContent");
 
-    const container =
-        document.getElementById(
-            "latestContent"
-        );
+    if (!container) return;
 
+    const latest = state.contents.slice(0, 3);
 
-    if (!container) {
-        return;
-    }
-
-
-    if (!contents.length) {
-
+    if (!latest.length) {
         container.innerHTML = `
-            <div class="empty-content">
-                No content has been published yet.
-            </div>
+            <p>No content has been published yet.</p>
         `;
-
         return;
     }
 
+    container.innerHTML = latest.map((item) => `
+        <article class="content-card">
+            <span class="content-category">
+                ${escapeHTML(item.category)}
+            </span>
 
-    container.innerHTML =
-        contents
-            .slice(0, 6)
-            .map(content => {
+            <h3>${escapeHTML(item.title)}</h3>
 
-                return `
-                    <article class="content-card">
+            <p>
+                ${escapeHTML(item.content_text || "")}
+            </p>
 
-                        ${createContentMedia(content)}
+            ${createMedia(item)}
 
-                        <span class="blog-category">
-                            ${escapeHtml(content.category)}
-                        </span>
-
-                        <h3>
-                            ${escapeHtml(content.title)}
-                        </h3>
-
-                        <p>
-                            ${escapeHtml(
-                                content.content_text || ""
-                            )}
-                        </p>
-
-                        <span class="blog-date">
-                            ${formatDate(
-                                content.created_at
-                            )}
-                        </span>
-
-                    </article>
-                `;
-
-            })
-            .join("");
+            <small>
+                ${formatDate(item.created_at)}
+            </small>
+        </article>
+    `).join("");
 }
 
-
-/* =====================================================
+/* =========================
    BLOG
-===================================================== */
+========================= */
 
-function renderBlog(contents) {
+function renderBlog() {
+    const container = $("blogGrid");
 
-    const container =
-        document.getElementById(
-            "blogGrid"
-        );
+    if (!container) return;
 
-
-    if (!container) {
-        return;
-    }
-
-
-    if (!contents.length) {
-
-        container.innerHTML = `
-            <div class="empty-content">
-                No blog content has been published yet.
-            </div>
-        `;
-
-        return;
-    }
-
-
-    container.innerHTML =
-        contents
-            .map(content => {
-
-                return `
-                    <article class="blog-card">
-
-                        <div class="blog-card-media">
-
-                            ${
-                                createContentMedia(
-                                    content
-                                ) ||
-                                `
-                                <span>
-                                    Daniel Tech
-                                </span>
-                                `
-                            }
-
-                        </div>
-
-                        <div class="blog-card-body">
-
-                            <span class="blog-category">
-                                ${escapeHtml(
-                                    content.category
-                                )}
-                            </span>
-
-                            <h3>
-                                ${escapeHtml(
-                                    content.title
-                                )}
-                            </h3>
-
-                            <p>
-                                ${escapeHtml(
-                                    content.content_text || ""
-                                )}
-                            </p>
-
-                            <span class="blog-date">
-                                ${formatDate(
-                                    content.created_at
-                                )}
-                            </span>
-
-                        </div>
-
-                    </article>
-                `;
-
-            })
-            .join("");
-}
-
-
-/* =====================================================
-   DATE FORMAT
-===================================================== */
-
-function formatDate(dateValue) {
-
-    if (!dateValue) {
-        return "";
-    }
-
-
-    const date =
-        new Date(dateValue);
-
-
-    if (Number.isNaN(date.getTime())) {
-        return "";
-    }
-
-
-    return date.toLocaleString(
-        "en-TZ",
-        {
-            dateStyle: "medium",
-            timeStyle: "short"
-        }
+    const blogItems = state.contents.filter(
+        (item) =>
+            item.category.toLowerCase() === "news" ||
+            item.category.toLowerCase() === "tip" ||
+            item.category.toLowerCase() === "blog"
     );
-}
 
-
-/* =====================================================
-   NEWS BAR
-===================================================== */
-
-function updateNewsBar(contents) {
-
-    const newsContent =
-        document.getElementById(
-            "newsContent"
-        );
-
-
-    if (!newsContent) {
+    if (!blogItems.length) {
+        container.innerHTML = `
+            <p>No blog or news content available yet.</p>
+        `;
         return;
     }
 
+    container.innerHTML = blogItems.map((item) => `
+        <article class="blog-card">
+            <span class="content-category">
+                ${escapeHTML(item.category)}
+            </span>
 
-    const latest =
-        contents[0];
+            <h3>${escapeHTML(item.title)}</h3>
 
+            <p>
+                ${escapeHTML(item.content_text || "")}
+            </p>
+
+            ${createMedia(item)}
+
+            <small>
+                ${formatDate(item.created_at)}
+            </small>
+        </article>
+    `).join("");
+}
+
+/* =========================
+   NEWS BAR
+========================= */
+
+function updateNewsBar() {
+    const news = $("newsContent");
+
+    if (!news) return;
+
+    const latest = state.contents[0];
 
     if (!latest) {
-
-        newsContent.textContent =
-            "Welcome to Daniel Tech.";
-
+        news.textContent = "Welcome to Daniel Tech";
         return;
     }
 
-
-    newsContent.textContent =
-        latest.title;
+    news.textContent =
+        `${latest.category}: ${latest.title}`;
 }
 
+/* =========================
+   COMMENTS
+========================= */
 
-/* =====================================================
-   LOCAL COMMENTS
-===================================================== */
+function loadComments() {
+    const comments = JSON.parse(
+        localStorage.getItem("danielTechComments") || "[]"
+    );
 
-function getComments() {
+    const container = $("commentsList");
 
-    const saved =
-        localStorage.getItem(
-            "danielTechComments"
-        );
+    if (!container) return;
 
-
-    if (!saved) {
-        return [];
+    if (!comments.length) {
+        container.innerHTML = "<p>No comments yet.</p>";
+        return;
     }
 
-
-    try {
-
-        return JSON.parse(saved);
-
-    } catch (error) {
-
-        return [];
-
-    }
+    container.innerHTML = comments.map((comment) => `
+        <div class="comment-item">
+            <strong>${escapeHTML(comment.name)}</strong>
+            <p>${escapeHTML(comment.text)}</p>
+            <small>${escapeHTML(comment.date)}</small>
+        </div>
+    `).join("");
 }
 
+$("commentForm")?.addEventListener("submit", (event) => {
+    event.preventDefault();
 
-function saveComments(comments) {
+    const name = $("commentName")?.value.trim();
+    const text = $("commentText")?.value.trim();
+
+    if (!name || !text) return;
+
+    const comments = JSON.parse(
+        localStorage.getItem("danielTechComments") || "[]"
+    );
+
+    comments.unshift({
+        name,
+        text,
+        date: new Date().toLocaleString()
+    });
 
     localStorage.setItem(
         "danielTechComments",
         JSON.stringify(comments)
     );
-}
 
+    event.target.reset();
 
-function renderComments() {
+    loadComments();
+});
 
-    const container =
-        document.getElementById(
-            "commentsList"
-        );
+loadComments();
 
-
-    if (!container) {
-        return;
-    }
-
-
-    const comments =
-        getComments();
-
-
-    if (!comments.length) {
-
-        container.innerHTML = `
-            <p class="empty-content">
-                No comments yet.
-            </p>
-        `;
-
-        return;
-    }
-
-
-    container.innerHTML =
-        comments
-            .slice()
-            .reverse()
-            .map(comment => {
-
-                return `
-                    <div class="comment-item">
-
-                        <strong>
-                            ${escapeHtml(
-                                comment.name
-                            )}
-                        </strong>
-
-                        <p>
-                            ${escapeHtml(
-                                comment.text
-                            )}
-                        </p>
-
-                    </div>
-                `;
-
-            })
-            .join("");
-}
-
-
-function setupComments() {
-
-    const form =
-        document.getElementById(
-            "commentForm"
-        );
-
-
-    if (!form) {
-        return;
-    }
-
-
-    form.addEventListener(
-        "submit",
-        function(event) {
-
-            event.preventDefault();
-
-
-            const name =
-                document.getElementById(
-                    "commentName"
-                ).value.trim();
-
-
-            const text =
-                document.getElementById(
-                    "commentText"
-                ).value.trim();
-
-
-            if (!name || !text) {
-                return;
-            }
-
-
-            const comments =
-                getComments();
-
-
-            comments.push({
-                name: name,
-                text: text,
-                created_at:
-                    new Date().toISOString()
-            });
-
-
-            saveComments(comments);
-
-
-            form.reset();
-
-            renderComments();
-
-        }
-    );
-
-
-    renderComments();
-}
-
-
-/* =====================================================
+/* =========================
    CONTACT FORM
-===================================================== */
+========================= */
 
-function setupContactForm() {
+$("contactForm")?.addEventListener("submit", async (event) => {
+    event.preventDefault();
 
-    const form =
-        document.getElementById(
-            "contactForm"
-        );
+    const status = $("contactStatus");
 
+    const name = $("contactName")?.value.trim();
+    const email = $("contactEmail")?.value.trim();
+    const subject = $("contactSubject")?.value.trim();
+    const message = $("contactMessage")?.value.trim();
 
-    if (!form) {
-        return;
-    }
-
-
-    form.addEventListener(
-        "submit",
-        async function(event) {
-
-            event.preventDefault();
-
-
-            const name =
-                document.getElementById(
-                    "contactName"
-                ).value.trim();
-
-
-            const email =
-                document.getElementById(
-                    "contactEmail"
-                ).value.trim();
-
-
-            const subject =
-                document.getElementById(
-                    "contactSubject"
-                ).value.trim();
-
-
-            const message =
-                document.getElementById(
-                    "contactMessage"
-                ).value.trim();
-
-
-            const status =
-                document.getElementById(
-                    "contactStatus"
-                );
-
-
-            if (
-                !name ||
-                !email ||
-                !subject ||
-                !message
-            ) {
-
-                if (status) {
-                    status.textContent =
-                        "Please complete all fields.";
-                }
-
-                return;
-            }
-
-
-            if (status) {
-
-                status.textContent =
-                    "Sending message...";
-
-            }
-
-
-            try {
-
-                const response =
-                    await fetch(
-                        `${SUPABASE_URL}/rest/v1/message`,
-                        {
-                            method: "POST",
-
-                            headers:
-                                supabaseHeaders(),
-
-                            body:
-                                JSON.stringify({
-                                    name: name,
-                                    email: email,
-                                    subject: subject,
-                                    message: message
-                                })
-                        }
-                    );
-
-
-                if (!response.ok) {
-
-                    const errorText =
-                        await response.text();
-
-                    console.error(
-                        errorText
-                    );
-
-                    throw new Error(
-                        "Message could not be sent."
-                    );
-
-                }
-
-
-                form.reset();
-
-
-                if (status) {
-
-                    status.textContent =
-                        "Your message has been sent successfully.";
-
-                }
-
-
-                if (currentSession) {
-                    loadMessages();
-                }
-
-
-            } catch (error) {
-
-                console.error(
-                    "Contact error:",
-                    error
-                );
-
-
-                if (status) {
-
-                    status.textContent =
-                        "Unable to send the message. Please try again.";
-
-                }
-
-            }
-
+    if (!name || !email || !subject || !message) {
+        if (status) {
+            status.textContent = "Please fill in all fields.";
         }
-    );
-}
-
-
-/* =====================================================
-   ADMIN LOGIN
-===================================================== */
-
-function setupAdminLogin() {
-
-    const adminButton =
-        document.getElementById(
-            "adminButton"
-        );
-
-
-    const form =
-        document.getElementById(
-            "adminLoginForm"
-        );
-
-
-    if (adminButton) {
-
-        adminButton.addEventListener(
-            "click",
-            function() {
-
-                if (window.closeSettingsPanel) {
-                    window.closeSettingsPanel();
-                }
-
-                openModal(
-                    "adminLoginModal"
-                );
-
-            }
-        );
-
-    }
-
-
-    if (!form) {
         return;
     }
 
-
-    form.addEventListener(
-        "submit",
-        async function(event) {
-
-            event.preventDefault();
-
-
-            const name =
-                document.getElementById(
-                    "adminName"
-                ).value.trim();
-
-
-            const username =
-                document.getElementById(
-                    "adminUsername"
-                ).value.trim();
-
-
-            const password =
-                document.getElementById(
-                    "adminPassword"
-                ).value;
-
-
-            const loginMessage =
-                document.getElementById(
-                    "loginMessage"
-                );
-
-
-            if (
-                !name ||
-                !username ||
-                !password
-            ) {
-
-                if (loginMessage) {
-
-                    loginMessage.textContent =
-                        "Please complete all login fields.";
-
-                }
-
-                return;
-            }
-
-
-            if (loginMessage) {
-
-                loginMessage.textContent =
-                    "Signing in...";
-
-            }
-
-
-            try {
-
-                const response =
-                    await fetch(
-                        `${SUPABASE_URL}/auth/v1/token?grant_type=password`,
-                        {
-                            method: "POST",
-
-                            headers:
-                                supabaseHeaders(),
-
-                            body:
-                                JSON.stringify({
-                                    email: username,
-                                    password: password
-                                })
-                        }
-                    );
-
-
-                const data =
-                    await response.json();
-
-
-                if (!response.ok) {
-
-                    throw new Error(
-                        data.error_description ||
-                        data.msg ||
-                        "Login failed."
-                    );
-
-                }
-
-
-                if (
-                    !data.user ||
-                    data.user.id !== ADMIN_UID
-                ) {
-
-                    throw new Error(
-                        "This account is not authorized as Daniel Tech admin."
-                    );
-
-                }
-
-
-                saveAdminSession(data);
-
-
-                closeModal(
-                    "adminLoginModal"
-                );
-
-
-                form.reset();
-
-
-                if (loginMessage) {
-                    loginMessage.textContent = "";
-                }
-
-
-                openModal(
-                    "dashboardModal"
-                );
-
-
-                await loadContents();
-
-                await loadMessages();
-
-
-            } catch (error) {
-
-                console.error(
-                    "Login error:",
-                    error
-                );
-
-
-                if (loginMessage) {
-
-                    loginMessage.textContent =
-                        error.message ||
-                        "Login failed.";
-
-                }
-
-            }
-
-        }
-    );
-}
-
-
-/* =====================================================
-   RESTORE ADMIN SESSION
-===================================================== */
-
-function restoreAdminSession() {
-
-    const saved =
-        getSavedAdminSession();
-
-
-    if (!saved) {
-        return;
+    if (status) {
+        status.textContent = "Sending message...";
     }
 
-
-    if (
-        !saved.user ||
-        saved.user.id !== ADMIN_UID
-    ) {
-
-        clearAdminSession();
-
-        return;
-    }
-
-
-    currentSession = saved;
-
-    loadMessages();
-}
-
-
-/* =====================================================
-   ADMIN UPLOAD UI
-===================================================== */
-
-function setupAdminUploadUI() {
-
-    const original =
-        document.getElementById(
-            "contentFile"
-        );
-
-
-    if (!original) {
-        return;
-    }
-
-
-    const wrapper =
-        document.createElement(
-            "div"
-        );
-
-
-    wrapper.className =
-        "upload-area";
-
-
-    const fileInput =
-        document.createElement(
-            "input"
-        );
-
-
-    fileInput.type = "file";
-
-    fileInput.id =
-        "contentUpload";
-
-    fileInput.accept =
-        "image/*,audio/*,video/*,.pdf";
-
-
-    original.replaceWith(
-        fileInput
-    );
-
-
-    const external =
-        document.createElement(
-            "input"
-        );
-
-
-    external.type = "url";
-
-    external.id =
-        "contentExternalUrl";
-
-    external.placeholder =
-        "Or paste an external file URL";
-
-
-    fileInput.insertAdjacentElement(
-        "afterend",
-        external
-    );
-}
-
-
-/* =====================================================
-   UPLOAD FILE TO SUPABASE STORAGE
-===================================================== */
-
-async function uploadFile(file, token) {
-
-    if (!file) {
-        return null;
-    }
-
-
-    const safeName =
-        file.name
-            .replace(
-                /[^a-zA-Z0-9._-]/g,
-                "_"
-            );
-
-
-    const filePath =
-        `${Date.now()}-${safeName}`;
-
-
-    const uploadUrl =
-        `${SUPABASE_URL}/storage/v1/object/${STORAGE_BUCKET}/${encodeURIComponent(filePath)}`;
-
-
-    const response =
-        await fetch(
-            uploadUrl,
+    try {
+        const response = await fetch(
+            `${SUPABASE_URL}/rest/v1/message`,
             {
                 method: "POST",
 
                 headers: {
-                    "apikey": SUPABASE_KEY,
-
-                    "Authorization":
-                        `Bearer ${token}`,
-
-                    "Content-Type":
-                        file.type ||
-                        "application/octet-stream"
+                    apikey: SUPABASE_KEY,
+                    Authorization: `Bearer ${SUPABASE_KEY}`,
+                    "Content-Type": "application/json",
+                    Prefer: "return=minimal"
                 },
 
-                body: file
+                body: JSON.stringify({
+                    name,
+                    email,
+                    subject,
+                    message
+                })
             }
         );
 
+        if (!response.ok) {
+            throw new Error("Message could not be sent");
+        }
 
-    if (!response.ok) {
-
-        const error =
-            await response.text();
-
-        console.error(error);
-
-        throw new Error(
-            "File upload failed."
-        );
-
-    }
-
-
-    return {
-        path: filePath,
-
-        url:
-            `${SUPABASE_URL}/storage/v1/object/public/${STORAGE_BUCKET}/${encodeURIComponent(filePath)}`
-    };
-}
-
-
-/* =====================================================
-   DELETE STORAGE FILE
-===================================================== */
-
-async function deleteStorageFile(
-    filePath,
-    token
-) {
-
-    if (!filePath) {
-        return;
-    }
-
-
-    const response =
-        await fetch(
-            `${SUPABASE_URL}/storage/v1/object/${STORAGE_BUCKET}/${filePath}`,
-            {
-                method: "DELETE",
-
-                headers: {
-                    "apikey": SUPABASE_KEY,
-
-                    "Authorization":
-                        `Bearer ${token}`
-                }
-            }
-        );
-
-
-    if (!response.ok) {
-
-        console.warn(
-            "Storage file could not be deleted."
-        );
-
-    }
-}
-
-
-/* =====================================================
-   ADMIN PUBLISH CONTENT
-===================================================== */
-
-function setupContentPublishing() {
-
-    const saveButton =
-        document.getElementById(
-            "saveContentButton"
-        );
-
-
-    if (!saveButton) {
-        return;
-    }
-
-
-    saveButton.addEventListener(
-        "click",
-        publishContent
-    );
-}
-
-
-/* =====================================================
-   PUBLISH CONTENT FUNCTION
-===================================================== */
-
-async function publishContent() {
-
-    if (!currentSession) {
-
-        alert(
-            "Please login as administrator first."
-        );
-
-        return;
-    }
-
-
-    const title =
-        document.getElementById(
-            "contentTitle"
-        ).value.trim();
-
-
-    const category =
-        document.getElementById(
-            "contentCategory"
-        ).value;
-
-
-    const contentText =
-        document.getElementById(
-            "contentText"
-        ).value.trim();
-
-
-    const fileInput =
-        document.getElementById(
-            "contentUpload"
-        );
-
-
-    const externalInput =
-        document.getElementById(
-            "contentExternalUrl"
-        );
-
-
-    const status =
-        document.getElementById(
-            "contentStatus"
-        );
-
-
-    if (!title) {
+        event.target.reset();
 
         if (status) {
             status.textContent =
-                "Please enter a title.";
+                "Your message has been sent successfully.";
+        }
+
+    } catch (error) {
+        console.error(error);
+
+        if (status) {
+            status.textContent =
+                "There was a problem sending your message.";
+        }
+    }
+});
+
+/* =========================
+   ADMIN LOGIN
+========================= */
+
+$("adminButton")?.addEventListener("click", () => {
+    hide($("settingsPanel"));
+
+    show($("adminLoginModal"));
+    show($("overlay"));
+});
+
+$("adminLoginForm")?.addEventListener("submit", async (event) => {
+    event.preventDefault();
+
+    const username = $("adminUsername")?.value.trim();
+    const password = $("adminPassword")?.value;
+
+    const message = $("loginMessage");
+
+    if (!username || !password) {
+        if (message) {
+            message.textContent =
+                "Please enter your email and password.";
         }
 
         return;
     }
 
-
-    if (status) {
-
-        status.textContent =
-            "Publishing content...";
-
+    if (message) {
+        message.textContent = "Signing in...";
     }
 
-
     try {
+        const response = await fetch(
+            `${SUPABASE_URL}/auth/v1/token?grant_type=password`,
+            {
+                method: "POST",
 
-        let fileUrl = null;
+                headers: {
+                    apikey: SUPABASE_KEY,
+                    "Content-Type": "application/json"
+                },
 
-        let fileName = null;
+                body: JSON.stringify({
+                    email: username,
+                    password: password
+                })
+            }
+        );
 
-        let fileType = null;
+        const data = await response.json();
 
-
-        const selectedFile =
-            fileInput &&
-            fileInput.files &&
-            fileInput.files[0];
-
-
-        if (selectedFile) {
-
-            const uploaded =
-                await uploadFile(
-                    selectedFile,
-                    currentSession.access_token
-                );
-
-
-            fileUrl =
-                uploaded.url;
-
-            fileName =
-                selectedFile.name;
-
-            fileType =
-                selectedFile.type;
-
-        } else if (
-            externalInput &&
-            externalInput.value.trim()
-        ) {
-
-            fileUrl =
-                externalInput.value.trim();
-
-            fileName =
-                fileUrl.split("/").pop() ||
-                "External file";
-
-            fileType =
-                "";
-
+        if (!response.ok) {
+            throw new Error(
+                data.error_description ||
+                data.msg ||
+                "Login failed"
+            );
         }
 
+        if (!data.user || data.user.id !== ADMIN_UID) {
+            if (message) {
+                message.textContent =
+                    "This account is not authorized as Daniel Tech Admin.";
+            }
 
-        const body = {
+            return;
+        }
 
-            title: title,
+        state.session = data;
 
-            category: category,
+        localStorage.setItem(
+            "danielTechSession",
+            JSON.stringify(data)
+        );
 
-            content_text:
-                contentText || null,
+        hide($("adminLoginModal"));
+        show($("dashboardModal"));
 
-            file_url:
-                fileUrl,
+        hide($("overlay"));
 
-            file_name:
-                fileName,
+        setupAdminDashboard();
 
-            file_type:
-                fileType
+    } catch (error) {
+        console.error(error);
 
-        };
+        if (message) {
+            message.textContent =
+                error.message ||
+                "Login failed.";
+        }
+    }
+});
 
+/* =========================
+   RESTORE ADMIN SESSION
+========================= */
+
+function restoreAdminSession() {
+    const saved =
+        localStorage.getItem("danielTechSession");
+
+    if (!saved) return;
+
+    try {
+        const session = JSON.parse(saved);
+
+        if (
+            session?.user?.id === ADMIN_UID &&
+            session?.access_token
+        ) {
+            state.session = session;
+        } else {
+            localStorage.removeItem("danielTechSession");
+        }
+
+    } catch {
+        localStorage.removeItem("danielTechSession");
+    }
+}
+
+/* =========================
+   ADMIN DASHBOARD
+========================= */
+
+function setupAdminDashboard() {
+    if (!state.session) return;
+
+    loadAdminMessages();
+    renderAdminContents();
+}
+
+$("addNewsButton")?.addEventListener("click", () => {
+    openEditor("News");
+});
+
+$("addTipButton")?.addEventListener("click", () => {
+    openEditor("Tip");
+});
+
+$("addVideoButton")?.addEventListener("click", () => {
+    openEditor("Video");
+});
+
+$("addPdfButton")?.addEventListener("click", () => {
+    openEditor("PDF");
+});
+
+function openEditor(category) {
+    state.editingId = null;
+
+    if ($("contentTitle")) {
+        $("contentTitle").value = "";
+    }
+
+    if ($("contentText")) {
+        $("contentText").value = "";
+    }
+
+    if ($("contentCategory")) {
+        $("contentCategory").value = category;
+    }
+
+    if ($("contentFile")) {
+        $("contentFile").value = "";
+    }
+
+    if ($("contentStatus")) {
+        $("contentStatus").textContent =
+            `Ready to add ${category}.`;
+    }
+
+    show($("adminEditor"));
+}
+
+$("saveContentButton")?.addEventListener("click", saveContent);
+
+/* =========================
+   SAVE CONTENT
+========================= */
+
+async function saveContent() {
+    if (!state.session?.access_token) {
+        return;
+    }
+
+    const title =
+        $("contentTitle")?.value.trim();
+
+    const category =
+        $("contentCategory")?.value.trim();
+
+    const contentText =
+        $("contentText")?.value.trim();
+
+    const file =
+        $("contentFile")?.files?.[0];
+
+    const status =
+        $("contentStatus");
+
+    if (!title || !category) {
+        if (status) {
+            status.textContent =
+                "Please enter a title and category.";
+        }
+
+        return;
+    }
+
+    if (status) {
+        status.textContent = "Saving content...";
+    }
+
+    let fileUrl = null;
+    let fileName = null;
+    let fileType = null;
+
+    try {
+        if (file) {
+            const safeName =
+                file.name.replace(
+                    /[^a-zA-Z0-9._-]/g,
+                    "_"
+                );
+
+            const filePath =
+                `${Date.now()}-${safeName}`;
+
+            const uploadResponse =
+                await fetch(
+                    `${SUPABASE_URL}/storage/v1/object/${STORAGE_BUCKET}/${encodeURIComponent(filePath)}`,
+                    {
+                        method: "POST",
+
+                        headers: {
+                            apikey: SUPABASE_KEY,
+                            Authorization:
+                                `Bearer ${state.session.access_token}`,
+                            "Content-Type":
+                                file.type ||
+                                "application/octet-stream"
+                        },
+
+                        body: file
+                    }
+                );
+
+            if (!uploadResponse.ok) {
+                const uploadError =
+                    await uploadResponse.text();
+
+                throw new Error(
+                    uploadError ||
+                    "File upload failed"
+                );
+            }
+
+            fileUrl =
+                `${SUPABASE_URL}/storage/v1/object/public/${STORAGE_BUCKET}/${encodeURIComponent(filePath)}`;
+
+            fileName = file.name;
+            fileType = file.type;
+        }
 
         const response =
             await fetch(
@@ -1983,934 +836,494 @@ async function publishContent() {
                     method: "POST",
 
                     headers: {
-                        ...supabaseHeaders(
-                            currentSession.access_token
-                        ),
-
-                        "Prefer":
+                        apikey: SUPABASE_KEY,
+                        Authorization:
+                            `Bearer ${state.session.access_token}`,
+                        "Content-Type":
+                            "application/json",
+                        Prefer:
                             "return=representation"
                     },
 
-                    body:
-                        JSON.stringify(body)
+                    body: JSON.stringify({
+                        title,
+                        category,
+                        content_text: contentText || null,
+                        file_url: fileUrl,
+                        file_name: fileName,
+                        file_type: fileType
+                    })
                 }
             );
 
-
         if (!response.ok) {
-
-            const error =
+            const errorText =
                 await response.text();
 
-            console.error(error);
-
             throw new Error(
-                "Content could not be published."
+                errorText ||
+                "Content could not be published"
             );
-
         }
-
-
-        document.getElementById(
-            "contentTitle"
-        ).value = "";
-
-
-        document.getElementById(
-            "contentText"
-        ).value = "";
-
-
-        if (fileInput) {
-            fileInput.value = "";
-        }
-
-
-        if (externalInput) {
-            externalInput.value = "";
-        }
-
 
         if (status) {
-
             status.textContent =
                 "Content published successfully.";
-
         }
 
+        $("contentTitle").value = "";
+        $("contentText").value = "";
+        $("contentFile").value = "";
 
         await loadContents();
 
-
     } catch (error) {
-
-        console.error(
-            "Publishing error:",
-            error
-        );
-
+        console.error(error);
 
         if (status) {
-
             status.textContent =
                 error.message ||
-                "Publishing failed.";
-
+                "There was a problem saving the content.";
         }
-
     }
 }
 
-
-/* =====================================================
+/* =========================
    ADMIN CONTENT LIST
-===================================================== */
+========================= */
 
-function renderAdminContent(contents) {
-
+function renderAdminContents() {
     const container =
-        document.getElementById(
-            "adminContentList"
-        );
+        $("adminContentList");
 
+    if (!container) return;
 
-    if (!container) {
-        return;
-    }
-
-
-    if (!contents.length) {
-
-        container.innerHTML = `
-            <p class="empty-content">
-                No content available.
-            </p>
-        `;
+    if (!state.contents.length) {
+        container.innerHTML =
+            "<p>No published content.</p>";
 
         return;
     }
-
 
     container.innerHTML =
-        contents
-            .map(content => {
+        state.contents.map((item) => `
+            <div class="admin-content-item">
 
-                return `
-                    <div class="admin-content-item">
+                <div>
+                    <strong>
+                        ${escapeHTML(item.title)}
+                    </strong>
 
-                        <div>
+                    <span>
+                        ${escapeHTML(item.category)}
+                    </span>
 
-                            <h4>
-                                ${escapeHtml(
-                                    content.title
-                                )}
-                            </h4>
+                    <small>
+                        ${formatDate(item.created_at)}
+                    </small>
+                </div>
 
-                            <p>
-                                ${escapeHtml(
-                                    content.category
-                                )}
-                                |
-                                ${formatDate(
-                                    content.created_at
-                                )}
-                            </p>
+                <button
+                    type="button"
+                    class="delete-content-button"
+                    data-id="${escapeHTML(item.id)}"
+                >
+                    Delete
+                </button>
 
-                        </div>
-
-                        <button
-                            type="button"
-                            class="delete-content"
-                            data-content-id="${content.id}"
-                            data-file-url="${escapeHtml(
-                                content.file_url || ""
-                            )}">
-                            Delete
-                        </button>
-
-                    </div>
-                `;
-
-            })
-            .join("");
-
+            </div>
+        `).join("");
 
     container
-        .querySelectorAll(
-            ".delete-content"
-        )
-        .forEach(button => {
+        .querySelectorAll(".delete-content-button")
+        .forEach((button) => {
+            button.addEventListener("click", () => {
+                const id = button.dataset.id;
 
-            button.addEventListener(
-                "click",
-                function() {
-
-                    deleteContent(
-                        button.dataset.contentId,
-                        button.dataset.fileUrl
-                    );
-
-                }
-            );
-
+                deleteContent(id);
+            });
         });
 }
 
-
-/* =====================================================
+/* =========================
    DELETE CONTENT
-===================================================== */
+========================= */
 
-async function deleteContent(
-    id,
-    fileUrl
-) {
-
-    if (!currentSession) {
+async function deleteContent(id) {
+    if (!state.session?.access_token) {
         return;
     }
 
-
-    const confirmed =
-        confirm(
-            "Are you sure you want to delete this content?"
+    const item =
+        state.contents.find(
+            (content) =>
+                String(content.id) === String(id)
         );
 
+    const confirmed =
+        window.confirm(
+            "Delete this content?"
+        );
 
-    if (!confirmed) {
-        return;
-    }
-
+    if (!confirmed) return;
 
     try {
-
         const response =
             await fetch(
                 `${SUPABASE_URL}/rest/v1/contents?id=eq.${encodeURIComponent(id)}`,
                 {
                     method: "DELETE",
 
-                    headers:
-                        supabaseHeaders(
-                            currentSession.access_token
-                        )
+                    headers: {
+                        apikey: SUPABASE_KEY,
+                        Authorization:
+                            `Bearer ${state.session.access_token}`
+                    }
                 }
             );
 
-
         if (!response.ok) {
-
             throw new Error(
-                "Content could not be deleted."
+                "Could not delete content"
             );
-
         }
 
+        if (item?.file_url) {
+            try {
+                const publicPart =
+                    `/storage/v1/object/public/${STORAGE_BUCKET}/`;
 
-        if (
-            fileUrl &&
-            fileUrl.includes(
-                `/storage/v1/object/public/${STORAGE_BUCKET}/`
-            )
-        ) {
+                const index =
+                    item.file_url.indexOf(publicPart);
 
-            const marker =
-                `/storage/v1/object/public/${STORAGE_BUCKET}/`;
+                if (index !== -1) {
+                    const filePath =
+                        decodeURIComponent(
+                            item.file_url.substring(
+                                index + publicPart.length
+                            )
+                        );
 
-            const path =
-                decodeURIComponent(
-                    fileUrl.split(marker)[1] || ""
-                );
+                    await fetch(
+                        `${SUPABASE_URL}/storage/v1/object/${STORAGE_BUCKET}`,
+                        {
+                            method: "DELETE",
 
+                            headers: {
+                                apikey: SUPABASE_KEY,
+                                Authorization:
+                                    `Bearer ${state.session.access_token}`,
+                                "Content-Type":
+                                    "application/json"
+                            },
 
-            if (path) {
+                            body: JSON.stringify({
+                                prefixes: [filePath]
+                            })
+                        }
+                    );
+                }
 
-                await deleteStorageFile(
-                    path,
-                    currentSession.access_token
-                );
-
+            } catch (fileError) {
+                console.error(fileError);
             }
-
         }
-
 
         await loadContents();
 
-
     } catch (error) {
-
-        console.error(
-            "Delete content error:",
-            error
-        );
-
+        console.error(error);
 
         alert(
-            "Content could not be deleted."
+            "There was a problem deleting the content."
         );
-
     }
 }
 
+/* =========================
+   VISITOR MESSAGES
+========================= */
 
-/* =====================================================
-   QUICK CONTENT BUTTONS
-===================================================== */
-
-function setupQuickContentButtons() {
-
-    const buttons = {
-
-        addNewsButton: "news",
-
-        addTipButton: "tip",
-
-        addVideoButton: "video",
-
-        addPdfButton: "pdf"
-
-    };
-
-
-    Object.keys(buttons)
-        .forEach(id => {
-
-            const button =
-                document.getElementById(id);
-
-
-            if (!button) {
-                return;
-            }
-
-
-            button.addEventListener(
-                "click",
-                function() {
-
-                    const category =
-                        buttons[id];
-
-
-                    selectedContentType =
-                        category;
-
-
-                    const select =
-                        document.getElementById(
-                            "contentCategory"
-                        );
-
-
-                    if (select) {
-
-                        select.value =
-                            category;
-
-                    }
-
-
-                    const editor =
-                        document.getElementById(
-                            "adminEditor"
-                        );
-
-
-                    if (editor) {
-
-                        editor.scrollIntoView({
-                            behavior: "smooth",
-                            block: "start"
-                        });
-
-                    }
-
-                }
-            );
-
-        });
-}
-
-
-/* =====================================================
-   ADMIN MESSAGES SECTION
-===================================================== */
-
-function createMessagesSection() {
-
-    const dashboard =
-        document.querySelector(
-            "#dashboardModal .dashboard-box"
-        );
-
-
-    const logoutButton =
-        document.getElementById(
-            "logoutButton"
-        );
-
-
-    if (!dashboard || !logoutButton) {
+async function loadAdminMessages() {
+    if (!state.session?.access_token) {
         return;
     }
 
+    let section =
+        $("adminMessagesSection");
 
-    if (
-        document.getElementById(
-            "messagesSection"
-        )
-    ) {
-        return;
-    }
+    if (!section) {
+        section =
+            document.createElement("section");
 
+        section.id =
+            "adminMessagesSection";
 
-    const section =
-        document.createElement(
-            "div"
-        );
+        section.className =
+            "admin-messages-section";
 
+        section.innerHTML = `
+            <h3>Visitor Messages</h3>
 
-    section.id =
-        "messagesSection";
-
-
-    section.className =
-        "admin-messages-section";
-
-
-    section.innerHTML = `
-
-        <h3>
-            Visitor Messages
-        </h3>
-
-        <button
-            type="button"
-            id="refreshMessagesButton"
-            class="dashboard-button">
-            Refresh Messages
-        </button>
-
-        <div
-            id="adminMessagesList"
-            class="admin-messages-list">
-
-            <p>
-                Login to load visitor messages.
-            </p>
-
-        </div>
-
-    `;
-
-
-    dashboard.insertBefore(
-        section,
-        logoutButton
-    );
-
-
-    const refresh =
-        document.getElementById(
-            "refreshMessagesButton"
-        );
-
-
-    if (refresh) {
-
-        refresh.addEventListener(
-            "click",
-            loadMessages
-        );
-
-    }
-}
-
-
-/* =====================================================
-   LOAD VISITOR MESSAGES
-===================================================== */
-
-async function loadMessages() {
-
-    const container =
-        document.getElementById(
-            "adminMessagesList"
-        );
-
-
-    if (!container) {
-        return;
-    }
-
-
-    if (!currentSession) {
-
-        container.innerHTML = `
-            <p>
-                Login to load visitor messages.
-            </p>
+            <div
+                id="adminMessagesList"
+                class="admin-messages-list"
+            >
+                Loading messages...
+            </div>
         `;
 
-        return;
+        $("logoutButton")
+            ?.parentElement
+            ?.insertBefore(
+                section,
+                $("logoutButton")
+            );
     }
 
-
-    container.innerHTML = `
-        <p>
-            Loading messages...
-        </p>
-    `;
-
+    const list =
+        $("adminMessagesList");
 
     try {
-
         const response =
             await fetch(
                 `${SUPABASE_URL}/rest/v1/message?select=*&order=created_at.desc`,
                 {
-                    method: "GET",
-
-                    headers:
-                        supabaseHeaders(
-                            currentSession.access_token
-                        )
+                    headers: {
+                        apikey: SUPABASE_KEY,
+                        Authorization:
+                            `Bearer ${state.session.access_token}`
+                    }
                 }
             );
 
-
         if (!response.ok) {
-
-            const error =
-                await response.text();
-
-            console.error(error);
-
             throw new Error(
-                "Messages could not be loaded."
+                "Could not load messages"
             );
-
         }
-
 
         const messages =
             await response.json();
 
+        if (!messages.length) {
+            list.innerHTML =
+                "<p>No visitor messages yet.</p>";
 
-        renderMessages(messages);
+            return;
+        }
 
+        list.innerHTML =
+            messages.map((item) => `
+                <div
+                    class="admin-message-item"
+                    data-message-id="${escapeHTML(item.id)}"
+                >
+
+                    <strong>
+                        ${escapeHTML(item.name)}
+                    </strong>
+
+                    <div>
+                        <small>
+                            ${escapeHTML(item.email)}
+                        </small>
+                    </div>
+
+                    <h4>
+                        ${escapeHTML(item.subject)}
+                    </h4>
+
+                    <p>
+                        ${escapeHTML(item.message)}
+                    </p>
+
+                    <small>
+                        ${formatDate(item.created_at)}
+                    </small>
+
+                    <br>
+
+                    <button
+                        type="button"
+                        class="delete-message-button"
+                        data-id="${escapeHTML(item.id)}"
+                    >
+                        Delete
+                    </button>
+
+                </div>
+            `).join("");
+
+        list
+            .querySelectorAll(".delete-message-button")
+            .forEach((button) => {
+                button.addEventListener(
+                    "click",
+                    () => {
+                        deleteMessage(
+                            button.dataset.id
+                        );
+                    }
+                );
+            });
 
     } catch (error) {
+        console.error(error);
 
-        console.error(
-            "Messages error:",
-            error
-        );
-
-
-        container.innerHTML = `
-            <p>
-                Unable to load messages.
-            </p>
-        `;
-
+        list.innerHTML =
+            "<p>Unable to load visitor messages.</p>";
     }
 }
 
-
-/* =====================================================
-   RENDER VISITOR MESSAGES
-===================================================== */
-
-function renderMessages(messages) {
-
-    const container =
-        document.getElementById(
-            "adminMessagesList"
-        );
-
-
-    if (!container) {
-        return;
-    }
-
-
-    if (!messages.length) {
-
-        container.innerHTML = `
-            <p class="empty-content">
-                No visitor messages yet.
-            </p>
-        `;
-
-        return;
-    }
-
-
-    container.innerHTML =
-        messages
-            .map(message => {
-
-                return `
-                    <div
-                        class="admin-message-item"
-                        data-message-id="${message.id}">
-
-                        <h4>
-                            ${escapeHtml(
-                                message.subject ||
-                                "No subject"
-                            )}
-                        </h4>
-
-                        <p>
-                            <strong>Name:</strong>
-                            ${escapeHtml(
-                                message.name
-                            )}
-                        </p>
-
-                        <p>
-                            <strong>Email:</strong>
-                            ${escapeHtml(
-                                message.email
-                            )}
-                        </p>
-
-                        <p>
-                            <strong>Message:</strong>
-                            ${escapeHtml(
-                                message.message
-                            )}
-                        </p>
-
-                        <small>
-                            ${formatDate(
-                                message.created_at
-                            )}
-                        </small>
-
-                        <button
-                            type="button"
-                            class="delete-message delete-content"
-                            data-message-id="${message.id}">
-                            Delete Message
-                        </button>
-
-                    </div>
-                `;
-
-            })
-            .join("");
-
-
-    container
-        .querySelectorAll(
-            ".delete-message"
-        )
-        .forEach(button => {
-
-            button.addEventListener(
-                "click",
-                function() {
-
-                    deleteMessage(
-                        button.dataset.messageId
-                    );
-
-                }
-            );
-
-        });
-}
-
-
-/* =====================================================
+/* =========================
    DELETE MESSAGE
-===================================================== */
+========================= */
 
 async function deleteMessage(id) {
-
-    if (!currentSession) {
+    if (!state.session?.access_token) {
         return;
     }
-
 
     const confirmed =
-        confirm(
-            "Are you sure you want to delete this message?"
+        window.confirm(
+            "Delete this visitor message?"
         );
 
-
-    if (!confirmed) {
-        return;
-    }
-
+    if (!confirmed) return;
 
     try {
-
         const response =
             await fetch(
                 `${SUPABASE_URL}/rest/v1/message?id=eq.${encodeURIComponent(id)}`,
                 {
                     method: "DELETE",
 
-                    headers:
-                        supabaseHeaders(
-                            currentSession.access_token
-                        )
+                    headers: {
+                        apikey: SUPABASE_KEY,
+                        Authorization:
+                            `Bearer ${state.session.access_token}`
+                    }
                 }
             );
 
-
         if (!response.ok) {
-
             throw new Error(
-                "Message could not be deleted."
+                "Could not delete message"
             );
-
         }
 
-
-        await loadMessages();
-
+        await loadAdminMessages();
 
     } catch (error) {
-
-        console.error(
-            "Delete message error:",
-            error
-        );
-
+        console.error(error);
 
         alert(
-            "Message could not be deleted."
+            "There was a problem deleting the message."
         );
-
     }
 }
 
-
-/* =====================================================
+/* =========================
    LOGOUT
-===================================================== */
+========================= */
 
-function setupLogout() {
+$("logoutButton")?.addEventListener("click", () => {
+    state.session = null;
 
-    const logoutButton =
-        document.getElementById(
-            "logoutButton"
-        );
+    localStorage.removeItem(
+        "danielTechSession"
+    );
 
+    hide($("dashboardModal"));
+    hide($("overlay"));
 
-    if (!logoutButton) {
-        return;
+    if ($("adminLoginForm")) {
+        $("adminLoginForm").reset();
     }
 
+    if ($("loginMessage")) {
+        $("loginMessage").textContent = "";
+    }
+});
 
-    logoutButton.addEventListener(
-        "click",
-        function() {
+/* =========================
+   CLOSE MODALS
+========================= */
 
-            clearAdminSession();
+document
+    .querySelectorAll(".close-modal")
+    .forEach((button) => {
+        button.addEventListener("click", () => {
+            const modal =
+                button.closest(".modal");
 
-            closeModal(
-                "dashboardModal"
-            );
-
-
-            const message =
-                document.getElementById(
-                    "loginMessage"
-                );
-
-
-            if (message) {
-                message.textContent = "";
+            if (modal) {
+                hide(modal);
             }
 
-        }
-    );
-}
+            hide($("overlay"));
+        });
+    });
 
+/* =========================
+   ESCAPE KEY
+========================= */
 
-/* =====================================================
+document.addEventListener("keydown", (event) => {
+    if (event.key !== "Escape") return;
+
+    document
+        .querySelectorAll(
+            ".modal.show, .settings-panel.show"
+        )
+        .forEach((element) => {
+            hide(element);
+        });
+
+    hide($("overlay"));
+});
+
+/* =========================
    BACK TO TOP
-===================================================== */
+========================= */
 
-function setupBackToTop() {
+window.addEventListener("scroll", () => {
+    const button = $("backTop");
 
-    const button =
-        document.getElementById(
-            "backTop"
-        );
+    if (!button) return;
 
-
-    if (!button) {
-        return;
+    if (window.scrollY > 400) {
+        button.classList.add("show");
+    } else {
+        button.classList.remove("show");
     }
+});
 
+$("backTop")?.addEventListener("click", () => {
+    window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+    });
+});
 
-    window.addEventListener(
-        "scroll",
-        function() {
-
-            if (
-                window.scrollY > 400
-            ) {
-
-                button.classList.add(
-                    "show"
-                );
-
-            } else {
-
-                button.classList.remove(
-                    "show"
-                );
-
-            }
-
-        }
-    );
-
-
-    button.addEventListener(
-        "click",
-        function() {
-
-            window.scrollTo({
-                top: 0,
-                behavior: "smooth"
-            });
-
-        }
-    );
-}
-
-
-/* =====================================================
-   ESC KEY
-===================================================== */
-
-function setupEscapeKey() {
-
-    document.addEventListener(
-        "keydown",
-        function(event) {
-
-            if (
-                event.key !== "Escape"
-            ) {
-                return;
-            }
-
-
-            document
-                .querySelectorAll(
-                    ".modal.open"
-                )
-                .forEach(modal => {
-
-                    modal.classList.remove(
-                        "open"
-                    );
-
-                });
-
-
-            if (
-                window.closeSettingsPanel
-            ) {
-
-                window.closeSettingsPanel();
-
-            }
-
-        }
-    );
-}
-
-
-/* =====================================================
+/* =========================
    ADMIN USERNAME FIELD
-===================================================== */
+========================= */
 
-function setupAdminUsernameField() {
-
-    const input =
-        document.getElementById(
-            "adminUsername"
-        );
-
-
-    if (!input) {
-        return;
-    }
-
-
-    input.type = "email";
-
-    input.placeholder =
+if ($("adminUsername")) {
+    $("adminUsername").type = "email";
+    $("adminUsername").placeholder =
         "Admin email";
-
-    input.autocomplete =
-        "username";
 }
 
+/* =========================
+   START WEBSITE
+========================= */
 
-/* =====================================================
-   INITIALIZATION
-===================================================== */
+restoreAdminSession();
+loadContents();
 
-document.addEventListener(
-    "DOMContentLoaded",
-    async function() {
-
-        setupMobileMenu();
-
-        restoreDarkMode();
-
-        setupDarkMode();
-
-        setupSettings();
-
-        setupModalCloseButtons();
-
-        setupAbout();
-
-        setupServices();
-
-        setupFeatures();
-
-        setupComments();
-
-        setupContactForm();
-
-        setupAdminLogin();
-
-        setupAdminUsernameField();
-
-        setupContentPublishing();
-
-        setupQuickContentButtons();
-
-        setupLogout();
-
-        setupBackToTop();
-
-        setupEscapeKey();
-
-        setupAdminUploadUI();
-
-        createMessagesSection();
-
-        restoreAdminSession();
-
-        await loadContents();
-
-        showPage("home");
-
-    }
-);
+if (state.session) {
+    setupAdminDashboard();
+}
