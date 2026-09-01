@@ -4,6 +4,14 @@
 ========================================= */
 
 
+/* =========================================
+   SUPABASE CONNECTION
+========================================= */
+
+const SUPABASE_URL = "WEKA_PROJECT_URL_YAKO_HAPA";
+const SUPABASE_KEY = "WEKA_PUBLISHABLE_KEY_YAKO_HAPA";
+
+
 /* PAGE NAVIGATION */
 
 const pages = document.querySelectorAll(".page");
@@ -76,21 +84,29 @@ document.querySelectorAll("[data-page]").forEach(button => {
 });
 
 
-/* MOBILE MENU */
+/* =========================================
+   MOBILE MENU
+========================================= */
 
 const menuButton = document.getElementById("menuButton");
 const navbar = document.querySelector(".navbar");
 
-menuButton.addEventListener("click", () => {
+if (menuButton) {
 
-    navbar.classList.toggle("active");
+    menuButton.addEventListener("click", () => {
 
-});
+        navbar.classList.toggle("active");
+
+    });
+
+}
 
 
 function closeMobileMenu() {
 
-    navbar.classList.remove("active");
+    if (navbar) {
+        navbar.classList.remove("active");
+    }
 
 }
 
@@ -108,15 +124,23 @@ function updateThemeButtons() {
 
     if (document.body.classList.contains("dark")) {
 
-        themeButton.textContent = "Light Mode";
+        if (themeButton) {
+            themeButton.textContent = "Light Mode";
+        }
 
-        settingsThemeButton.textContent = "Light Mode";
+        if (settingsThemeButton) {
+            settingsThemeButton.textContent = "Light Mode";
+        }
 
     } else {
 
-        themeButton.textContent = "Dark Mode";
+        if (themeButton) {
+            themeButton.textContent = "Dark Mode";
+        }
 
-        settingsThemeButton.textContent = "Dark Mode";
+        if (settingsThemeButton) {
+            settingsThemeButton.textContent = "Dark Mode";
+        }
 
     }
 
@@ -140,12 +164,16 @@ function toggleTheme() {
 }
 
 
-themeButton.addEventListener("click", toggleTheme);
+if (themeButton) {
+    themeButton.addEventListener("click", toggleTheme);
+}
 
-settingsThemeButton.addEventListener(
-    "click",
-    toggleTheme
-);
+if (settingsThemeButton) {
+    settingsThemeButton.addEventListener(
+        "click",
+        toggleTheme
+    );
+}
 
 
 /* LOAD SAVED THEME */
@@ -181,36 +209,50 @@ const overlay =
 
 function openSettings() {
 
-    settingsPanel.classList.add("active");
+    if (settingsPanel) {
+        settingsPanel.classList.add("active");
+    }
 
-    overlay.classList.add("active");
+    if (overlay) {
+        overlay.classList.add("active");
+    }
 
 }
 
 
 function closeSettingsPanel() {
 
-    settingsPanel.classList.remove("active");
+    if (settingsPanel) {
+        settingsPanel.classList.remove("active");
+    }
 
-    overlay.classList.remove("active");
+    if (overlay) {
+        overlay.classList.remove("active");
+    }
 
 }
 
 
-settingsButton.addEventListener(
-    "click",
-    openSettings
-);
+if (settingsButton) {
+    settingsButton.addEventListener(
+        "click",
+        openSettings
+    );
+}
 
-closeSettings.addEventListener(
-    "click",
-    closeSettingsPanel
-);
+if (closeSettings) {
+    closeSettings.addEventListener(
+        "click",
+        closeSettingsPanel
+    );
+}
 
-overlay.addEventListener(
-    "click",
-    closeSettingsPanel
-);
+if (overlay) {
+    overlay.addEventListener(
+        "click",
+        closeSettingsPanel
+    );
+}
 
 
 /* =========================================
@@ -224,13 +266,19 @@ const aboutModal =
     document.getElementById("aboutModal");
 
 
-aboutButton.addEventListener("click", () => {
+if (aboutButton) {
 
-    closeSettingsPanel();
+    aboutButton.addEventListener("click", () => {
 
-    aboutModal.classList.add("active");
+        closeSettingsPanel();
 
-});
+        if (aboutModal) {
+            aboutModal.classList.add("active");
+        }
+
+    });
+
+}
 
 
 /* =========================================
@@ -247,14 +295,21 @@ document.querySelectorAll(".modal-close")
 
         if (modalId) {
 
-            document
-                .getElementById(modalId)
-                .classList.remove("active");
+            const modal =
+                document.getElementById(modalId);
+
+            if (modal) {
+                modal.classList.remove("active");
+            }
 
         } else {
 
-            button.closest(".modal")
-                .classList.remove("active");
+            const modal =
+                button.closest(".modal");
+
+            if (modal) {
+                modal.classList.remove("active");
+            }
 
         }
 
@@ -323,18 +378,26 @@ document.querySelectorAll(".read-service")
         const service =
             button.dataset.service;
 
-        serviceTitle.textContent = service;
+        if (serviceTitle) {
+            serviceTitle.textContent = service;
+        }
 
-        serviceDetails.innerHTML = `
-            <p>${serviceInformation[service]}</p>
+        if (serviceDetails) {
 
-            <p>
-                More tips and updates about this service
-                can be added by the administrator.
-            </p>
-        `;
+            serviceDetails.innerHTML = `
+                <p>${serviceInformation[service] || ""}</p>
 
-        serviceModal.classList.add("active");
+                <p>
+                    More tips and updates about this service
+                    can be added by the administrator.
+                </p>
+            `;
+
+        }
+
+        if (serviceModal) {
+            serviceModal.classList.add("active");
+        }
 
     });
 
@@ -385,18 +448,26 @@ document.querySelectorAll(".program-button")
         const feature =
             button.dataset.feature;
 
-        featureTitle.textContent = feature;
+        if (featureTitle) {
+            featureTitle.textContent = feature;
+        }
 
-        featureDetails.innerHTML = `
-            <p>${featureInformation[feature]}</p>
+        if (featureDetails) {
 
-            <p>
-                New tips for this category can be added
-                from the Admin Dashboard.
-            </p>
-        `;
+            featureDetails.innerHTML = `
+                <p>${featureInformation[feature] || ""}</p>
 
-        featureModal.classList.add("active");
+                <p>
+                    New tips for this category can be added
+                    from the Admin Dashboard.
+                </p>
+            `;
+
+        }
+
+        if (featureModal) {
+            featureModal.classList.add("active");
+        }
 
     });
 
@@ -434,6 +505,10 @@ function renderBlog() {
 
     const homeLatest =
         document.getElementById("homeLatest");
+
+    if (!blogGrid || !homeLatest) {
+        return;
+    }
 
     blogGrid.innerHTML = "";
 
@@ -522,8 +597,6 @@ function renderBlog() {
         blogGrid.appendChild(article);
 
 
-        /* HOME LATEST */
-
         const latestCard =
             document.createElement("article");
 
@@ -577,6 +650,10 @@ const commentsList =
 
 function renderComments() {
 
+    if (!commentsList) {
+        return;
+    }
+
     commentsList.innerHTML = "";
 
     comments.forEach(comment => {
@@ -603,56 +680,209 @@ function renderComments() {
 }
 
 
-commentForm.addEventListener("submit", event => {
+if (commentForm) {
 
-    event.preventDefault();
+    commentForm.addEventListener("submit", event => {
 
-    const name =
-        document.getElementById("commentName").value;
+        event.preventDefault();
 
-    const text =
-        document.getElementById("commentText").value;
+        const name =
+            document.getElementById("commentName").value;
+
+        const text =
+            document.getElementById("commentText").value;
 
 
-    comments.push({
-        name: name,
-        text: text
+        comments.push({
+            name: name,
+            text: text
+        });
+
+
+        localStorage.setItem(
+            "danielTechComments",
+            JSON.stringify(comments)
+        );
+
+
+        commentForm.reset();
+
+        renderComments();
+
     });
 
-
-    localStorage.setItem(
-        "danielTechComments",
-        JSON.stringify(comments)
-    );
-
-
-    commentForm.reset();
-
-    renderComments();
-
-});
+}
 
 
 renderComments();
 
 
 /* =========================================
-   CONTACT FORM
+   CONTACT FORM - SUPABASE
 ========================================= */
 
-document
-    .getElementById("contactForm")
-    .addEventListener("submit", event => {
+const contactForm =
+    document.getElementById("contactForm");
 
-        event.preventDefault();
 
-        alert(
-            "Your message has been received."
-        );
+if (contactForm) {
 
-        event.target.reset();
+    contactForm.addEventListener(
+        "submit",
+        async event => {
 
-    });
+            event.preventDefault();
+
+            const form = event.target;
+
+            /*
+                These selectors work with the
+                first text input, email input,
+                and textarea inside the contact form.
+            */
+
+            const nameInput =
+                form.querySelector(
+                    'input[type="text"]'
+                );
+
+            const emailInput =
+                form.querySelector(
+                    'input[type="email"]'
+                );
+
+            const messageInput =
+                form.querySelector("textarea");
+
+
+            if (
+                !nameInput ||
+                !emailInput ||
+                !messageInput
+            ) {
+
+                alert(
+                    "Contact form fields could not be found."
+                );
+
+                return;
+
+            }
+
+
+            const name =
+                nameInput.value.trim();
+
+            const email =
+                emailInput.value.trim();
+
+            const message =
+                messageInput.value.trim();
+
+
+            if (
+                !name ||
+                !email ||
+                !message
+            ) {
+
+                alert(
+                    "Please fill in all fields."
+                );
+
+                return;
+
+            }
+
+
+            if (
+                SUPABASE_URL.includes("WEKA_") ||
+                SUPABASE_KEY.includes("WEKA_")
+            ) {
+
+                alert(
+                    "Supabase is not configured yet."
+                );
+
+                return;
+
+            }
+
+
+            try {
+
+                const response =
+                    await fetch(
+                        `${SUPABASE_URL}/rest/v1/messages`,
+                        {
+                            method: "POST",
+
+                            headers: {
+                                "Content-Type":
+                                    "application/json",
+
+                                "apikey":
+                                    SUPABASE_KEY,
+
+                                "Authorization":
+                                    `Bearer ${SUPABASE_KEY}`,
+
+                                "Prefer":
+                                    "return=minimal"
+                            },
+
+                            body:
+                                JSON.stringify({
+                                    name: name,
+                                    email: email,
+                                    message: message
+                                })
+                        }
+                    );
+
+
+                if (!response.ok) {
+
+                    const errorText =
+                        await response.text();
+
+                    console.error(
+                        "Supabase error:",
+                        errorText
+                    );
+
+                    throw new Error(
+                        "Message could not be sent."
+                    );
+
+                }
+
+
+                alert(
+                    "Your message has been sent successfully."
+                );
+
+
+                form.reset();
+
+
+            } catch (error) {
+
+                console.error(
+                    "Contact form error:",
+                    error
+                );
+
+                alert(
+                    "Sorry, your message could not be sent. Please try again."
+                );
+
+            }
+
+        }
+    );
+
+}
 
 
 /* =========================================
@@ -675,13 +905,19 @@ const loginMessage =
     document.getElementById("loginMessage");
 
 
-adminButton.addEventListener("click", () => {
+if (adminButton) {
 
-    closeSettingsPanel();
+    adminButton.addEventListener("click", () => {
 
-    adminModal.classList.add("active");
+        closeSettingsPanel();
 
-});
+        if (adminModal) {
+            adminModal.classList.add("active");
+        }
+
+    });
+
+}
 
 
 /*
@@ -692,50 +928,75 @@ adminButton.addEventListener("click", () => {
 */
 
 
-adminLoginForm.addEventListener("submit", event => {
+if (adminLoginForm) {
 
-    event.preventDefault();
+    adminLoginForm.addEventListener(
+        "submit",
+        event => {
 
-
-    const name =
-        document.getElementById("adminName").value.trim();
-
-    const username =
-        document.getElementById("adminUsername").value.trim();
-
-    const password =
-        document.getElementById("adminPassword").value;
+            event.preventDefault();
 
 
-    if (
-        name !== "" &&
-        username === "admin" &&
-        password === "danieltech"
-    ) {
+            const name =
+                document
+                    .getElementById("adminName")
+                    .value
+                    .trim();
 
-        localStorage.setItem(
-            "danielTechAdmin",
-            "true"
-        );
+            const username =
+                document
+                    .getElementById("adminUsername")
+                    .value
+                    .trim();
 
-        adminModal.classList.remove("active");
+            const password =
+                document
+                    .getElementById("adminPassword")
+                    .value;
 
-        dashboardModal.classList.add("active");
 
-        adminLoginForm.reset();
+            if (
+                name !== "" &&
+                username === "admin" &&
+                password === "danieltech"
+            ) {
 
-        loginMessage.textContent = "";
+                localStorage.setItem(
+                    "danielTechAdmin",
+                    "true"
+                );
 
-        renderAdminContents();
+                if (adminModal) {
+                    adminModal.classList.remove("active");
+                }
 
-    } else {
+                if (dashboardModal) {
+                    dashboardModal.classList.add("active");
+                }
 
-        loginMessage.textContent =
-            "Invalid admin details.";
+                adminLoginForm.reset();
 
-    }
+                if (loginMessage) {
+                    loginMessage.textContent = "";
+                }
 
-});
+                renderAdminContents();
+
+            } else {
+
+                if (loginMessage) {
+
+                    loginMessage.textContent =
+                        "Invalid admin details.";
+
+                }
+
+            }
+
+        }
+    );
+
+}
 
 
 /* =========================================
@@ -746,81 +1007,113 @@ const saveContentButton =
     document.getElementById("saveContentButton");
 
 
-saveContentButton.addEventListener("click", () => {
+if (saveContentButton) {
 
-    const title =
-        document.getElementById("contentTitle").value.trim();
+    saveContentButton.addEventListener(
+        "click",
+        () => {
 
-    const category =
-        document.getElementById("contentCategory").value;
+            const title =
+                document
+                    .getElementById("contentTitle")
+                    .value
+                    .trim();
 
-    const text =
-        document.getElementById("contentText").value.trim();
+            const category =
+                document
+                    .getElementById("contentCategory")
+                    .value;
 
-    const file =
-        document.getElementById("contentFile").value.trim();
+            const text =
+                document
+                    .getElementById("contentText")
+                    .value
+                    .trim();
 
-
-    if (
-        title === "" ||
-        text === ""
-    ) {
-
-        alert(
-            "Please enter title and content."
-        );
-
-        return;
-
-    }
-
-
-    const newContent = {
-
-        id: Date.now(),
-
-        title: title,
-
-        category: category,
-
-        text: text,
-
-        file: file,
-
-        date: new Date().toLocaleDateString()
-
-    };
+            const file =
+                document
+                    .getElementById("contentFile")
+                    .value
+                    .trim();
 
 
-    contents.push(newContent);
+            if (
+                title === "" ||
+                text === ""
+            ) {
 
-    saveContents();
+                alert(
+                    "Please enter title and content."
+                );
 
-    renderBlog();
+                return;
 
-    renderAdminContents();
-
-
-    document.getElementById("contentTitle").value = "";
-
-    document.getElementById("contentText").value = "";
-
-    document.getElementById("contentFile").value = "";
+            }
 
 
-    alert(
-        "Content added successfully."
+            const newContent = {
+
+                id: Date.now(),
+
+                title: title,
+
+                category: category,
+
+                text: text,
+
+                file: file,
+
+                date:
+                    new Date()
+                        .toLocaleDateString()
+
+            };
+
+
+            contents.push(newContent);
+
+            saveContents();
+
+            renderBlog();
+
+            renderAdminContents();
+
+
+            document.getElementById(
+                "contentTitle"
+            ).value = "";
+
+            document.getElementById(
+                "contentText"
+            ).value = "";
+
+            document.getElementById(
+                "contentFile"
+            ).value = "";
+
+
+            alert(
+                "Content added successfully."
+            );
+
+        }
     );
 
-});
+}
 
 
-/* ADMIN CONTENT LIST */
+/* =========================================
+   ADMIN CONTENT LIST
+========================================= */
 
 function renderAdminContents() {
 
     const list =
         document.getElementById("adminContentList");
+
+    if (!list) {
+        return;
+    }
 
     list.innerHTML = "";
 
@@ -905,83 +1198,128 @@ function renderAdminContents() {
    QUICK ADMIN CATEGORY BUTTONS
 ========================================= */
 
-document
-    .getElementById("addNewsButton")
-    .addEventListener("click", () => {
+const addNewsButton =
+    document.getElementById("addNewsButton");
 
-        document.getElementById(
-            "contentCategory"
-        ).value = "News";
+if (addNewsButton) {
 
-        document.getElementById(
-            "contentTitle"
-        ).focus();
+    addNewsButton.addEventListener(
+        "click",
+        () => {
 
-    });
+            document.getElementById(
+                "contentCategory"
+            ).value = "News";
 
+            document.getElementById(
+                "contentTitle"
+            ).focus();
 
-document
-    .getElementById("addTipButton")
-    .addEventListener("click", () => {
+        }
+    );
 
-        document.getElementById(
-            "contentCategory"
-        ).value = "Tips";
-
-        document.getElementById(
-            "contentTitle"
-        ).focus();
-
-    });
+}
 
 
-document
-    .getElementById("addVideoButton")
-    .addEventListener("click", () => {
+const addTipButton =
+    document.getElementById("addTipButton");
 
-        document.getElementById(
-            "contentCategory"
-        ).value = "Video";
+if (addTipButton) {
 
-        document.getElementById(
-            "contentTitle"
-        ).focus();
+    addTipButton.addEventListener(
+        "click",
+        () => {
 
-    });
+            document.getElementById(
+                "contentCategory"
+            ).value = "Tips";
+
+            document.getElementById(
+                "contentTitle"
+            ).focus();
+
+        }
+    );
+
+}
 
 
-document
-    .getElementById("addPdfButton")
-    .addEventListener("click", () => {
+const addVideoButton =
+    document.getElementById("addVideoButton");
 
-        document.getElementById(
-            "contentCategory"
-        ).value = "PDF";
+if (addVideoButton) {
 
-        document.getElementById(
-            "contentTitle"
-        ).focus();
+    addVideoButton.addEventListener(
+        "click",
+        () => {
 
-    });
+            document.getElementById(
+                "contentCategory"
+            ).value = "Video";
+
+            document.getElementById(
+                "contentTitle"
+            ).focus();
+
+        }
+    );
+
+}
+
+
+const addPdfButton =
+    document.getElementById("addPdfButton");
+
+if (addPdfButton) {
+
+    addPdfButton.addEventListener(
+        "click",
+        () => {
+
+            document.getElementById(
+                "contentCategory"
+            ).value = "PDF";
+
+            document.getElementById(
+                "contentTitle"
+            ).focus();
+
+        }
+    );
+
+}
 
 
 /* =========================================
    LOGOUT
 ========================================= */
 
-document
-    .getElementById("logoutButton")
-    .addEventListener("click", () => {
+const logoutButton =
+    document.getElementById("logoutButton");
 
-        localStorage.removeItem(
-            "danielTechAdmin"
-        );
 
-        dashboardModal.classList.remove(
-            "active"
-        );
+if (logoutButton) {
 
-    });
+    logoutButton.addEventListener(
+        "click",
+        () => {
+
+            localStorage.removeItem(
+                "danielTechAdmin"
+            );
+
+            if (dashboardModal) {
+
+                dashboardModal.classList.remove(
+                    "active"
+                );
+
+            }
+
+        }
+    );
+
+}
 
 
 /* =========================================
@@ -992,29 +1330,33 @@ const backTop =
     document.getElementById("backTop");
 
 
-window.addEventListener("scroll", () => {
+if (backTop) {
 
-    if (window.scrollY > 400) {
+    window.addEventListener("scroll", () => {
 
-        backTop.classList.add("show");
+        if (window.scrollY > 400) {
 
-    } else {
+            backTop.classList.add("show");
 
-        backTop.classList.remove("show");
+        } else {
 
-    }
+            backTop.classList.remove("show");
 
-});
+        }
 
-
-backTop.addEventListener("click", () => {
-
-    window.scrollTo({
-        top: 0,
-        behavior: "smooth"
     });
 
-});
+
+    backTop.addEventListener("click", () => {
+
+        window.scrollTo({
+            top: 0,
+            behavior: "smooth"
+        });
+
+    });
+
+}
 
 
 /* =========================================
