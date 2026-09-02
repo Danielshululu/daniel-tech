@@ -1748,3 +1748,1041 @@ document.addEventListener(
 
     }
 );
+/* =========================================================
+   DANIEL TECH - ADMIN SERVICES & FEATURES MANAGER
+   ========================================================= */
+
+let servicesData = [];
+let featuresData = [];
+let editingServiceId = null;
+let editingFeatureId = null;
+
+
+/* =========================================================
+   LOAD SERVICES
+   ========================================================= */
+
+async function loadServices() {
+    try {
+        const response = await fetch(
+            `${SUPABASE_URL}/rest/v1/services?select=*&order=display_order.asc,created_at.asc`,
+            {
+                method: "GET",
+                headers: getHeaders()
+            }
+        );
+
+        if (!response.ok) {
+            throw new Error(await response.text());
+        }
+
+        servicesData = await response.json();
+
+        renderServicesOnWebsite();
+        renderAdminServices();
+
+    } catch (error) {
+        console.error("Load services error:", error);
+    }
+}
+
+
+/* =========================================================
+   LOAD FEATURES
+   ========================================================= */
+
+async function loadFeatures() {
+    try {
+        const response = await fetch(
+            `${SUPABASE_URL}/rest/v1/features?select=*&order=display_order.asc,created_at.asc`,
+            {
+                method: "GET",
+                headers: getHeaders()
+            }
+        );
+
+        if (!response.ok) {
+            throw new Error(await response.text());
+        }
+
+        featuresData = await response.json();
+
+        renderFeaturesOnWebsite();
+        renderAdminFeatures();
+
+    } catch (error) {
+        console.error("Load features error:", error);
+    }
+}
+
+
+/* =========================================================
+   PUBLIC SERVICES
+   ========================================================= */
+
+function renderServicesOnWebsite() {
+
+    const buttons =
+        document.querySelectorAll(".service-view-button");
+
+    buttons.forEach(button => {
+
+        const key =
+            button.dataset.service;
+
+        const service =
+            servicesData.find(item =>
+                String(item.icon || "") === String(key)
+            );
+
+        if (!service) return;
+
+        button.dataset.serviceId = service.id;
+
+        button.addEventListener("click", function () {
+
+            $("serviceModalTitle").textContent =
+                service.title;
+
+            $("serviceModalText").textContent =
+                service.description;
+
+            show($("serviceModal"));
+            openOverlay();
+
+        }, { once: true });
+
+    });
+}
+
+
+/* =========================================================
+   PUBLIC FEATURES
+   ========================================================= */
+
+function renderFeaturesOnWebsite() {
+
+    const buttons =
+        document.querySelectorAll(".feature-view-button");
+
+    buttons.forEach(button => {
+
+        const key =
+            button.dataset.feature;
+
+        const feature =
+            featuresData.find(item =>
+                String(item.icon || "") === String(key)
+            );
+
+        if (!feature) return;
+
+        button.dataset.featureId = feature.id;
+
+        button.addEventListener("click", function () {
+
+            $("featureModalTitle").textContent =
+                feature.title;
+
+            $("featureModalText").textContent =
+                feature.description;
+
+            show($("featureModal"));
+            openOverlay();
+
+        }, { once: true });
+
+    });
+}
+
+
+/* =========================================================
+   ADMIN MANAGEMENT PANEL
+   ========================================================= */
+
+function createManagementPanel() {
+
+    if (!isAdmin()) return;
+
+    const dashboard =
+        $("dashboardModal");
+
+    if (!dashboard) return;
+
+    if ($("servicesFeaturesManager")) {
+        return;
+    }
+
+    const manager =
+        document.createElement("section");
+
+    manager.id =
+        "servicesFeaturesManager";
+
+    manager.className =
+        "admin-management-section";
+
+    manager.innerHTML = `
+
+        <div class="section-heading small-heading">
+            <p>WEBSITE MANAGEMENT</p>
+            <h3>Services & Features</h3>
+            <span>
+                Add, edit or remove the services and features displayed on the website.
+            </span>
+        </div>
+
+
+        <!-- SERVICES -->
+
+        <div class="admin-manager-block">
+
+            <div class="admin-manager-header">
+
+                <div>
+                    <h3>Services</h3>
+                    <p>Manage the services shown on your website.</p>
+                </div>
+
+                <button
+                    type="button"
+                    id="newServiceButton">
+                    Add Service
+                </button>
+
+            </div>
+
+
+            <div
+                id="serviceEditor"
+                class="admin-editor"
+                style="display:none;">
+
+                <input
+                    type="hidden"
+                    id="editServiceId">
+
+                <input
+                    type="text"
+                    id="serviceTitleInput"
+                    placeholder="Service title">
+
+                <textarea
+                    id="serviceDescriptionInput"
+                    placeholder="Service description"></textarea>
+
+                <input
+                    type="text"
+                    id="serviceIconInput"
+                    placeholder="Service icon/key e.g. web">
+
+                <input
+                    type="number"
+                    id="serviceOrderInput"
+                    placeholder="Display order">
+
+                <div class="admin-editor-buttons">
+
+                    <button
+                        type="button"
+                        id="saveServiceButton">
+                        Save Service
+                    </button>
+
+                    <button
+                        type="button"
+                        id="cancelServiceButton">
+                        Cancel
+                    </button>
+
+                </div>
+
+                <p id="serviceEditorStatus"></p>
+
+            </div>
+
+
+            <div
+                id="adminServicesList"
+                class="admin-management-list">
+            </div>
+
+        </div>
+
+
+        <!-- FEATURES -->
+
+        <div class="admin-manager-block">
+
+            <div class="admin-manager-header">
+
+                <div>
+                    <h3>Features</h3>
+                    <p>Manage the features shown on your website.</p>
+                </div>
+
+                <button
+                    type="button"
+                    id="newFeatureButton">
+                    Add Feature
+                </button>
+
+            </div>
+
+
+            <div
+                id="featureEditor"
+                class="admin-editor"
+                style="display:none;">
+
+                <input
+                    type="hidden"
+                    id="editFeatureId">
+
+                <input
+                    type="text"
+                    id="featureTitleInput"
+                    placeholder="Feature title">
+
+                <textarea
+                    id="featureDescriptionInput"
+                    placeholder="Feature description"></textarea>
+
+                <input
+                    type="text"
+                    id="featureIconInput"
+                    placeholder="Feature icon/key e.g. computer-tips">
+
+                <input
+                    type="number"
+                    id="featureOrderInput"
+                    placeholder="Display order">
+
+                <div class="admin-editor-buttons">
+
+                    <button
+                        type="button"
+                        id="saveFeatureButton">
+                        Save Feature
+                    </button>
+
+                    <button
+                        type="button"
+                        id="cancelFeatureButton">
+                        Cancel
+                    </button>
+
+                </div>
+
+                <p id="featureEditorStatus"></p>
+
+            </div>
+
+
+            <div
+                id="adminFeaturesList"
+                class="admin-management-list">
+            </div>
+
+        </div>
+
+    `;
+
+
+    const logout =
+        $("logoutButton");
+
+    if (logout) {
+
+        logout.parentNode.insertBefore(
+            manager,
+            logout
+        );
+
+    } else {
+
+        const box =
+            dashboard.querySelector(".modal-box");
+
+        if (box) {
+            box.appendChild(manager);
+        }
+    }
+
+
+    setupManagementButtons();
+
+    renderAdminServices();
+    renderAdminFeatures();
+}
+
+
+/* =========================================================
+   RENDER ADMIN SERVICES
+   ========================================================= */
+
+function renderAdminServices() {
+
+    const list =
+        $("adminServicesList");
+
+    if (!list) return;
+
+    if (!servicesData.length) {
+
+        list.innerHTML = `
+            <p class="empty-content">
+                No services available.
+            </p>
+        `;
+
+        return;
+    }
+
+    list.innerHTML =
+        servicesData.map(service => `
+
+            <div class="admin-management-item">
+
+                <div>
+
+                    <strong>
+                        ${escapeHTML(service.title)}
+                    </strong>
+
+                    <p>
+                        ${escapeHTML(service.description)}
+                    </p>
+
+                    <small>
+                        Key: ${escapeHTML(service.icon || "")}
+                    </small>
+
+                </div>
+
+                <div class="admin-management-actions">
+
+                    <button
+                        type="button"
+                        class="edit-service-button"
+                        data-id="${service.id}">
+                        Edit
+                    </button>
+
+                    <button
+                        type="button"
+                        class="delete-service-button"
+                        data-id="${service.id}">
+                        Delete
+                    </button>
+
+                </div>
+
+            </div>
+
+        `).join("");
+}
+
+
+/* =========================================================
+   RENDER ADMIN FEATURES
+   ========================================================= */
+
+function renderAdminFeatures() {
+
+    const list =
+        $("adminFeaturesList");
+
+    if (!list) return;
+
+    if (!featuresData.length) {
+
+        list.innerHTML = `
+            <p class="empty-content">
+                No features available.
+            </p>
+        `;
+
+        return;
+    }
+
+    list.innerHTML =
+        featuresData.map(feature => `
+
+            <div class="admin-management-item">
+
+                <div>
+
+                    <strong>
+                        ${escapeHTML(feature.title)}
+                    </strong>
+
+                    <p>
+                        ${escapeHTML(feature.description)}
+                    </p>
+
+                    <small>
+                        Key: ${escapeHTML(feature.icon || "")}
+                    </small>
+
+                </div>
+
+                <div class="admin-management-actions">
+
+                    <button
+                        type="button"
+                        class="edit-feature-button"
+                        data-id="${feature.id}">
+                        Edit
+                    </button>
+
+                    <button
+                        type="button"
+                        class="delete-feature-button"
+                        data-id="${feature.id}">
+                        Delete
+                    </button>
+
+                </div>
+
+            </div>
+
+        `).join("");
+}
+
+
+/* =========================================================
+   MANAGEMENT BUTTONS
+   ========================================================= */
+
+function setupManagementButtons() {
+
+    const newService =
+        $("newServiceButton");
+
+    if (newService) {
+
+        newService.onclick = function () {
+
+            editingServiceId = null;
+
+            $("serviceTitleInput").value = "";
+            $("serviceDescriptionInput").value = "";
+            $("serviceIconInput").value = "";
+            $("serviceOrderInput").value =
+                servicesData.length + 1;
+
+            $("serviceEditor").style.display =
+                "block";
+
+            $("serviceEditorStatus").textContent =
+                "Ready to add a service.";
+
+        };
+    }
+
+
+    const cancelService =
+        $("cancelServiceButton");
+
+    if (cancelService) {
+
+        cancelService.onclick = function () {
+
+            $("serviceEditor").style.display =
+                "none";
+
+            editingServiceId = null;
+
+        };
+    }
+
+
+    const saveService =
+        $("saveServiceButton");
+
+    if (saveService) {
+
+        saveService.onclick =
+            saveServiceToDatabase;
+
+    }
+
+
+    const newFeature =
+        $("newFeatureButton");
+
+    if (newFeature) {
+
+        newFeature.onclick = function () {
+
+            editingFeatureId = null;
+
+            $("featureTitleInput").value = "";
+            $("featureDescriptionInput").value = "";
+            $("featureIconInput").value = "";
+            $("featureOrderInput").value =
+                featuresData.length + 1;
+
+            $("featureEditor").style.display =
+                "block";
+
+            $("featureEditorStatus").textContent =
+                "Ready to add a feature.";
+
+        };
+    }
+
+
+    const cancelFeature =
+        $("cancelFeatureButton");
+
+    if (cancelFeature) {
+
+        cancelFeature.onclick = function () {
+
+            $("featureEditor").style.display =
+                "none";
+
+            editingFeatureId = null;
+
+        };
+    }
+
+
+    const saveFeature =
+        $("saveFeatureButton");
+
+    if (saveFeature) {
+
+        saveFeature.onclick =
+            saveFeatureToDatabase;
+
+    }
+}
+
+
+/* =========================================================
+   SAVE SERVICE
+   ========================================================= */
+
+async function saveServiceToDatabase() {
+
+    if (!isAdmin()) return;
+
+    const title =
+        $("serviceTitleInput").value.trim();
+
+    const description =
+        $("serviceDescriptionInput").value.trim();
+
+    const icon =
+        $("serviceIconInput").value.trim();
+
+    const displayOrder =
+        Number(
+            $("serviceOrderInput").value
+        ) || 0;
+
+    const status =
+        $("serviceEditorStatus");
+
+    if (!title || !description) {
+
+        status.textContent =
+            "Please enter title and description.";
+
+        return;
+    }
+
+    status.textContent =
+        "Saving service...";
+
+    try {
+
+        const payload = {
+            title,
+            description,
+            icon: icon || null,
+            display_order: displayOrder
+        };
+
+        let response;
+
+        if (editingServiceId) {
+
+            response =
+                await fetch(
+                    `${SUPABASE_URL}/rest/v1/services?id=eq.${editingServiceId}`,
+                    {
+                        method: "PATCH",
+                        headers: {
+                            ...getHeaders(
+                                state.session.access_token
+                            ),
+                            Prefer: "return=representation"
+                        },
+                        body: JSON.stringify(payload)
+                    }
+                );
+
+        } else {
+
+            response =
+                await fetch(
+                    `${SUPABASE_URL}/rest/v1/services`,
+                    {
+                        method: "POST",
+                        headers: {
+                            ...getHeaders(
+                                state.session.access_token
+                            ),
+                            Prefer: "return=representation"
+                        },
+                        body: JSON.stringify(payload)
+                    }
+                );
+        }
+
+        if (!response.ok) {
+            throw new Error(
+                await response.text()
+            );
+        }
+
+        status.textContent =
+            "Service saved successfully.";
+
+        $("serviceEditor").style.display =
+            "none";
+
+        editingServiceId = null;
+
+        await loadServices();
+
+    } catch (error) {
+
+        console.error(
+            "Save service error:",
+            error
+        );
+
+        status.textContent =
+            error.message ||
+            "Unable to save service.";
+    }
+}
+
+
+/* =========================================================
+   SAVE FEATURE
+   ========================================================= */
+
+async function saveFeatureToDatabase() {
+
+    if (!isAdmin()) return;
+
+    const title =
+        $("featureTitleInput").value.trim();
+
+    const description =
+        $("featureDescriptionInput").value.trim();
+
+    const icon =
+        $("featureIconInput").value.trim();
+
+    const displayOrder =
+        Number(
+            $("featureOrderInput").value
+        ) || 0;
+
+    const status =
+        $("featureEditorStatus");
+
+    if (!title || !description) {
+
+        status.textContent =
+            "Please enter title and description.";
+
+        return;
+    }
+
+    status.textContent =
+        "Saving feature...";
+
+    try {
+
+        const payload = {
+            title,
+            description,
+            icon: icon || null,
+            display_order: displayOrder
+        };
+
+        let response;
+
+        if (editingFeatureId) {
+
+            response =
+                await fetch(
+                    `${SUPABASE_URL}/rest/v1/features?id=eq.${editingFeatureId}`,
+                    {
+                        method: "PATCH",
+                        headers: {
+                            ...getHeaders(
+                                state.session.access_token
+                            ),
+                            Prefer: "return=representation"
+                        },
+                        body: JSON.stringify(payload)
+                    }
+                );
+
+        } else {
+
+            response =
+                await fetch(
+                    `${SUPABASE_URL}/rest/v1/features`,
+                    {
+                        method: "POST",
+                        headers: {
+                            ...getHeaders(
+                                state.session.access_token
+                            ),
+                            Prefer: "return=representation"
+                        },
+                        body: JSON.stringify(payload)
+                    }
+                );
+        }
+
+        if (!response.ok) {
+            throw new Error(
+                await response.text()
+            );
+        }
+
+        status.textContent =
+            "Feature saved successfully.";
+
+        $("featureEditor").style.display =
+            "none";
+
+        editingFeatureId = null;
+
+        await loadFeatures();
+
+    } catch (error) {
+
+        console.error(
+            "Save feature error:",
+            error
+        );
+
+        status.textContent =
+            error.message ||
+            "Unable to save feature.";
+    }
+}
+
+
+/* =========================================================
+   EDIT / DELETE SERVICES & FEATURES
+   ========================================================= */
+
+document.addEventListener("click", async function (event) {
+
+    const editService =
+        event.target.closest(".edit-service-button");
+
+    if (editService && isAdmin()) {
+
+        const service =
+            servicesData.find(
+                item =>
+                    String(item.id) ===
+                    String(editService.dataset.id)
+            );
+
+        if (!service) return;
+
+        editingServiceId =
+            service.id;
+
+        $("serviceTitleInput").value =
+            service.title || "";
+
+        $("serviceDescriptionInput").value =
+            service.description || "";
+
+        $("serviceIconInput").value =
+            service.icon || "";
+
+        $("serviceOrderInput").value =
+            service.display_order || 0;
+
+        $("serviceEditor").style.display =
+            "block";
+
+        $("serviceEditorStatus").textContent =
+            "Editing service.";
+
+        return;
+    }
+
+
+    const deleteService =
+        event.target.closest(".delete-service-button");
+
+    if (deleteService && isAdmin()) {
+
+        if (!confirm("Delete this service?")) {
+            return;
+        }
+
+        const id =
+            deleteService.dataset.id;
+
+        const response =
+            await fetch(
+                `${SUPABASE_URL}/rest/v1/services?id=eq.${id}`,
+                {
+                    method: "DELETE",
+                    headers: {
+                        ...getHeaders(
+                            state.session.access_token
+                        ),
+                        Prefer: "return=minimal"
+                    }
+                }
+            );
+
+        if (!response.ok) {
+
+            console.error(
+                "Delete service failed:",
+                await response.text()
+            );
+
+            return;
+        }
+
+        await loadServices();
+
+        return;
+    }
+
+
+    const editFeature =
+        event.target.closest(".edit-feature-button");
+
+    if (editFeature && isAdmin()) {
+
+        const feature =
+            featuresData.find(
+                item =>
+                    String(item.id) ===
+                    String(editFeature.dataset.id)
+            );
+
+        if (!feature) return;
+
+        editingFeatureId =
+            feature.id;
+
+        $("featureTitleInput").value =
+            feature.title || "";
+
+        $("featureDescriptionInput").value =
+            feature.description || "";
+
+        $("featureIconInput").value =
+            feature.icon || "";
+
+        $("featureOrderInput").value =
+            feature.display_order || 0;
+
+        $("featureEditor").style.display =
+            "block";
+
+        $("featureEditorStatus").textContent =
+            "Editing feature.";
+
+        return;
+    }
+
+
+    const deleteFeature =
+        event.target.closest(".delete-feature-button");
+
+    if (deleteFeature && isAdmin()) {
+
+        if (!confirm("Delete this feature?")) {
+            return;
+        }
+
+        const id =
+            deleteFeature.dataset.id;
+
+        const response =
+            await fetch(
+                `${SUPABASE_URL}/rest/v1/features?id=eq.${id}`,
+                {
+                    method: "DELETE",
+                    headers: {
+                        ...getHeaders(
+                            state.session.access_token
+                        ),
+                        Prefer: "return=minimal"
+                    }
+                }
+            );
+
+        if (!response.ok) {
+
+            console.error(
+                "Delete feature failed:",
+                await response.text()
+            );
+
+            return;
+        }
+
+        await loadFeatures();
+    }
+});
+
+
+/* =========================================================
+   LOAD MANAGEMENT DATA AFTER LOGIN
+   ========================================================= */
+
+const originalOpenDashboard =
+    openDashboard;
+
+openDashboard = function () {
+
+    originalOpenDashboard();
+
+    if (!isAdmin()) return;
+
+    createManagementPanel();
+
+    loadServices();
+    loadFeatures();
+};
+
+
+/* =========================================================
+   INITIAL LOAD
+   ========================================================= */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
+
+        loadServices();
+        loadFeatures();
+
+    }
+);
