@@ -1,6 +1,13 @@
 /* =========================================================
-   DANIEL TECH - MAIN SCRIPT
-   Supabase + Website + Admin Dashboard
+   DANIEL TECH
+   COMPLETE SCRIPT.JS
+   Supabase + Navigation + Content + Services + Features
+   Admin + Messages + File Upload
+   ========================================================= */
+
+
+/* =========================================================
+   SUPABASE CONFIGURATION
    ========================================================= */
 
 const SUPABASE_URL =
@@ -12,15 +19,27 @@ const SUPABASE_KEY =
 const ADMIN_UID =
     "05fef3eb-16a3-4554-9d9b-de7d2b29144b";
 
-const STORAGE_BUCKET = "daniel-files";
+const STORAGE_BUCKET =
+    "daniel-files";
+
+
+/* =========================================================
+   APPLICATION STATE
+   ========================================================= */
 
 const state = {
     session: null,
+
     contents: [],
-    editingId: null,
+
     services: [],
+
     features: [],
+
+    editingContentId: null,
+
     editingServiceId: null,
+
     editingFeatureId: null
 };
 
@@ -33,22 +52,11 @@ function $(id) {
     return document.getElementById(id);
 }
 
-function show(element) {
-    if (element) {
-        element.style.display = "flex";
-        element.classList.add("active");
-    }
-}
-
-function hide(element) {
-    if (element) {
-        element.style.display = "none";
-        element.classList.remove("active");
-    }
-}
 
 function escapeHTML(value) {
-    if (value === null || value === undefined) return "";
+    if (value === null || value === undefined) {
+        return "";
+    }
 
     return String(value)
         .replace(/&/g, "&amp;")
@@ -58,49 +66,72 @@ function escapeHTML(value) {
         .replace(/'/g, "&#039;");
 }
 
+
 function formatDate(date) {
-    if (!date) return "";
+    if (!date) {
+        return "";
+    }
 
     try {
-        return new Date(date).toLocaleDateString("en-GB", {
-            day: "2-digit",
-            month: "short",
-            year: "numeric"
-        });
+        return new Date(date).toLocaleDateString(
+            "en-GB",
+            {
+                day: "2-digit",
+                month: "short",
+                year: "numeric"
+            }
+        );
     } catch {
         return "";
     }
 }
 
-function getHeaders(authenticated = false) {
-    const headers = {
-        apikey: SUPABASE_KEY,
-        "Content-Type": "application/json"
-    };
 
-    if (authenticated && state.session?.access_token) {
-        headers.Authorization = `Bearer ${state.session.access_token}`;
+function show(element) {
+    if (!element) {
+        return;
     }
 
-    return headers;
+    element.style.display = "flex";
+    element.classList.add("active");
 }
+
+
+function hide(element) {
+    if (!element) {
+        return;
+    }
+
+    element.style.display = "none";
+    element.classList.remove("active");
+}
+
+
+/* =========================================================
+   OVERLAY
+   ========================================================= */
 
 function openOverlay() {
     const overlay = $("overlay");
 
-    if (overlay) {
-        overlay.style.display = "block";
-        overlay.classList.add("active");
+    if (!overlay) {
+        return;
     }
+
+    overlay.style.display = "block";
+    overlay.classList.add("active");
 }
+
 
 function closeOverlay() {
     const overlay = $("overlay");
 
-    if (overlay) {
-        overlay.style.display = "none";
-        overlay.classList.remove("active");
+    if (!overlay) {
+        return;
     }
+
+    overlay.style.display = "none";
+    overlay.classList.remove("active");
 }
 
 
@@ -109,26 +140,44 @@ function closeOverlay() {
    ========================================================= */
 
 function closeAllModals() {
-    document.querySelectorAll(".modal").forEach(modal => {
-        hide(modal);
-    });
+
+    document
+        .querySelectorAll(".modal")
+        .forEach(modal => {
+            hide(modal);
+        });
 
     closeOverlay();
 }
 
-document.addEventListener("click", function (event) {
-    const closeButton = event.target.closest("[data-close-modal]");
 
-    if (closeButton) {
+document.addEventListener(
+    "click",
+    function (event) {
+
+        const closeButton =
+            event.target.closest(
+                "[data-close-modal]"
+            );
+
+        if (!closeButton) {
+            return;
+        }
+
         closeAllModals();
     }
-});
+);
 
-document.addEventListener("keydown", function (event) {
-    if (event.key === "Escape") {
-        closeAllModals();
+
+document.addEventListener(
+    "keydown",
+    function (event) {
+
+        if (event.key === "Escape") {
+            closeAllModals();
+        }
     }
-});
+);
 
 
 /* =========================================================
@@ -136,160 +185,424 @@ document.addEventListener("keydown", function (event) {
    ========================================================= */
 
 function navigateTo(pageName) {
-    document.querySelectorAll("[data-page]").forEach(button => {
-        button.classList.remove("active");
-    });
 
-    document.querySelectorAll(".page").forEach(page => {
-        page.style.display = "none";
-        page.classList.remove("active");
-    });
+    document
+        .querySelectorAll(".page")
+        .forEach(page => {
 
-    const target = document.getElementById(pageName);
+            page.style.display = "none";
 
-    if (target) {
-        target.style.display = "block";
-        target.classList.add("active");
+            page.classList.remove(
+                "active-page"
+            );
+        });
+
+
+    const target =
+        $(pageName);
+
+    if (!target) {
+        return;
     }
 
-    const activeButton = document.querySelector(
-        `[data-page="${pageName}"]`
+
+    target.style.display = "block";
+
+    target.classList.add(
+        "active-page"
     );
 
-    if (activeButton) {
-        activeButton.classList.add("active");
-    }
+
+    document
+        .querySelectorAll("[data-page]")
+        .forEach(button => {
+
+            if (
+                button.dataset.page ===
+                pageName
+            ) {
+
+                button.classList.add(
+                    "active"
+                );
+
+            } else {
+
+                button.classList.remove(
+                    "active"
+                );
+            }
+        });
+
 
     window.scrollTo({
         top: 0,
         behavior: "smooth"
     });
 
-    const mobileMenu = $("mobileMenu");
+
+    const mobileMenu =
+        $("mobileMenu");
 
     if (mobileMenu) {
-        mobileMenu.classList.remove("active");
+        mobileMenu.classList.remove(
+            "active"
+        );
     }
 }
 
-document.addEventListener("click", function (event) {
-    const navigationButton = event.target.closest("[data-page]");
 
-    if (!navigationButton) return;
+document.addEventListener(
+    "click",
+    function (event) {
 
-    event.preventDefault();
+        const button =
+            event.target.closest(
+                "[data-page]"
+            );
 
-    const page = navigationButton.dataset.page;
+        if (!button) {
+            return;
+        }
 
-    if (page) {
-        navigateTo(page);
+        event.preventDefault();
+
+        const page =
+            button.dataset.page;
+
+        if (page) {
+            navigateTo(page);
+        }
     }
-});
+);
+
+
+/* =========================================================
+   SETTINGS PANEL
+   ========================================================= */
+
+function openSettings() {
+
+    const panel =
+        $("settingsPanel");
+
+    if (!panel) {
+        return;
+    }
+
+    panel.classList.add(
+        "active"
+    );
+
+    panel.style.display = "block";
+}
+
+
+function closeSettings() {
+
+    const panel =
+        $("settingsPanel");
+
+    if (!panel) {
+        return;
+    }
+
+    panel.classList.remove(
+        "active"
+    );
+
+    panel.style.display = "none";
+}
+
+
+document.addEventListener(
+    "click",
+    function (event) {
+
+        const settingsButton =
+            event.target.closest(
+                "#settingsButton"
+            );
+
+        if (
+            settingsButton
+        ) {
+
+            event.preventDefault();
+
+            openSettings();
+
+            return;
+        }
+
+
+        const closeButton =
+            event.target.closest(
+                "#closeSettings"
+            );
+
+        if (closeButton) {
+
+            event.preventDefault();
+
+            closeSettings();
+
+            return;
+        }
+    }
+);
 
 
 /* =========================================================
    MOBILE MENU
    ========================================================= */
 
-document.addEventListener("click", function (event) {
-    const menuButton = event.target.closest(
-        "#menuButton, #mobileMenuButton, .menu-button"
-    );
+document.addEventListener(
+    "click",
+    function (event) {
 
-    if (!menuButton) return;
+        const menuButton =
+            event.target.closest(
+                "#menuButton"
+            );
 
-    const mobileMenu = $("mobileMenu");
+        if (!menuButton) {
+            return;
+        }
 
-    if (mobileMenu) {
-        mobileMenu.classList.toggle("active");
+        const nav =
+            $("mainNav");
+
+        if (!nav) {
+            return;
+        }
+
+        nav.classList.toggle(
+            "active"
+        );
     }
-});
+);
 
 
 /* =========================================================
-   DARK MODE / SETTINGS
+   DARK MODE
    ========================================================= */
 
-function restoreDarkMode() {
-    const saved = localStorage.getItem("danielTechDarkMode");
+function applyDarkMode(enabled) {
 
-    if (saved === "true") {
-        document.body.classList.add("dark-mode");
+    if (enabled) {
+
+        document.body.classList.add(
+            "dark-mode"
+        );
+
+    } else {
+
+        document.body.classList.remove(
+            "dark-mode"
+        );
     }
-}
 
-document.addEventListener("click", function (event) {
-    const darkModeButton = event.target.closest(
-        "#darkModeButton, #themeButton, .theme-button"
-    );
-
-    if (!darkModeButton) return;
-
-    document.body.classList.toggle("dark-mode");
 
     localStorage.setItem(
         "danielTechDarkMode",
-        document.body.classList.contains("dark-mode")
+        enabled ? "true" : "false"
     );
-});
+
+
+    const checkbox =
+        $("settingsDarkMode");
+
+    if (checkbox) {
+        checkbox.checked =
+            enabled;
+    }
+}
+
+
+function restoreDarkMode() {
+
+    const saved =
+        localStorage.getItem(
+            "danielTechDarkMode"
+        );
+
+    const enabled =
+        saved === "true";
+
+    applyDarkMode(
+        enabled
+    );
+}
+
+
+document.addEventListener(
+    "click",
+    function (event) {
+
+        const button =
+            event.target.closest(
+                "#darkModeButton"
+            );
+
+        if (!button) {
+            return;
+        }
+
+        const enabled =
+            !document.body.classList.contains(
+                "dark-mode"
+            );
+
+        applyDarkMode(
+            enabled
+        );
+    }
+);
+
+
+document.addEventListener(
+    "change",
+    function (event) {
+
+        if (
+            event.target.id !==
+            "settingsDarkMode"
+        ) {
+            return;
+        }
+
+        applyDarkMode(
+            event.target.checked
+        );
+    }
+);
 
 
 /* =========================================================
    ABOUT
    ========================================================= */
 
-function setupAbout() {
-    const aboutButtons = document.querySelectorAll(
-        '[data-about], #aboutButton'
-    );
+document.addEventListener(
+    "click",
+    function (event) {
 
-    aboutButtons.forEach(button => {
-        button.addEventListener("click", function () {
-            navigateTo("about");
-        });
-    });
+        const button =
+            event.target.closest(
+                "#aboutButton"
+            );
+
+        if (!button) {
+            return;
+        }
+
+        const modal =
+            $("aboutModal");
+
+        if (!modal) {
+            return;
+        }
+
+        show(modal);
+
+        openOverlay();
+    }
+);
+
+
+/* =========================================================
+   SUPABASE HEADERS
+   ========================================================= */
+
+function getHeaders(authenticated = false) {
+
+    const headers = {
+        apikey: SUPABASE_KEY,
+        "Content-Type": "application/json"
+    };
+
+
+    if (
+        authenticated &&
+        state.session &&
+        state.session.access_token
+    ) {
+
+        headers.Authorization =
+            `Bearer ${state.session.access_token}`;
+    }
+
+
+    return headers;
 }
 
 
 /* =========================================================
-   AUTH SESSION
+   ADMIN CHECK
    ========================================================= */
 
 function isAdmin() {
+
     return (
-        state.session?.user?.id === ADMIN_UID
+        state.session &&
+        state.session.user &&
+        state.session.user.id ===
+        ADMIN_UID
     );
 }
 
 
+/* =========================================================
+   REFRESH ADMIN SESSION
+   ========================================================= */
+
 async function refreshAdminSession() {
-    if (!state.session?.refresh_token) {
+
+    if (
+        !state.session ||
+        !state.session.refresh_token
+    ) {
         return false;
     }
 
-    try {
-        const response = await fetch(
-            `${SUPABASE_URL}/auth/v1/token?grant_type=refresh_token`,
-            {
-                method: "POST",
-                headers: {
-                    apikey: SUPABASE_KEY,
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                    refresh_token: state.session.refresh_token
-                })
-            }
-        );
 
-        const data = await response.json();
+    try {
+
+        const response =
+            await fetch(
+                `${SUPABASE_URL}/auth/v1/token?grant_type=refresh_token`,
+                {
+                    method: "POST",
+
+                    headers: {
+                        apikey:
+                            SUPABASE_KEY,
+
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    body:
+                        JSON.stringify({
+                            refresh_token:
+                                state.session.refresh_token
+                        })
+                }
+            );
+
+
+        const data =
+            await response.json();
+
 
         if (
             !response.ok ||
             !data.access_token ||
             !data.user
         ) {
-            state.session = null;
+
+            state.session =
+                null;
 
             localStorage.removeItem(
                 "danielTechSession"
@@ -298,24 +611,35 @@ async function refreshAdminSession() {
             return false;
         }
 
+
         state.session = {
-            access_token: data.access_token,
+
+            access_token:
+                data.access_token,
+
             refresh_token:
                 data.refresh_token ||
                 state.session.refresh_token,
-            user: data.user
+
+            user:
+                data.user
         };
+
 
         localStorage.setItem(
             "danielTechSession",
-            JSON.stringify(state.session)
+            JSON.stringify(
+                state.session
+            )
         );
+
 
         return true;
 
     } catch (error) {
+
         console.error(
-            "Session refresh error:",
+            "Session refresh failed:",
             error
         );
 
@@ -324,724 +648,291 @@ async function refreshAdminSession() {
 }
 
 
+/* =========================================================
+   ENSURE ADMIN SESSION
+   ========================================================= */
+
 async function ensureAdminSession() {
-    if (!state.session) {
-        return false;
-    }
 
     if (!isAdmin()) {
         return false;
     }
 
-    const refreshed = await refreshAdminSession();
-
-    return refreshed;
+    return await refreshAdminSession();
 }
 
 
 /* =========================================================
-   REST API HELPER
+   SUPABASE REQUEST
    ========================================================= */
 
-async function supabaseFetch(
+async function supabaseRequest(
     endpoint,
     options = {},
     authenticated = false
 ) {
-    const headers = {
-        ...getHeaders(authenticated),
+
+    let headers = {
+        ...getHeaders(
+            authenticated
+        ),
+
         ...(options.headers || {})
     };
 
-    let response = await fetch(
-        `${SUPABASE_URL}${endpoint}`,
-        {
-            ...options,
-            headers
-        }
-    );
+
+    let response =
+        await fetch(
+            `${SUPABASE_URL}${endpoint}`,
+            {
+                ...options,
+                headers
+            }
+        );
+
 
     if (
         authenticated &&
-        (response.status === 401 || response.status === 403)
+        (
+            response.status === 401 ||
+            response.status === 403
+        )
     ) {
-        const refreshed = await refreshAdminSession();
+
+        const refreshed =
+            await refreshAdminSession();
+
 
         if (refreshed) {
-            const retryHeaders = {
+
+            headers = {
                 ...getHeaders(true),
+
                 ...(options.headers || {})
             };
 
-            response = await fetch(
-                `${SUPABASE_URL}${endpoint}`,
-                {
-                    ...options,
-                    headers: retryHeaders
-                }
-            );
+
+            response =
+                await fetch(
+                    `${SUPABASE_URL}${endpoint}`,
+                    {
+                        ...options,
+                        headers
+                    }
+                );
         }
     }
+
 
     return response;
 }
 
 
 /* =========================================================
-   SERVICES
+   LOGIN
    ========================================================= */
 
-async function loadServices() {
-    try {
-        const response = await supabaseFetch(
-            "/rest/v1/services?select=*&order=display_order.asc,created_at.asc",
-            {},
-            false
-        );
+document.addEventListener(
+    "click",
+    function (event) {
 
-        if (!response.ok) {
-            const errorText = await response.text();
-
-            console.error(
-                "Services loading error:",
-                errorText
+        const adminButton =
+            event.target.closest(
+                "#adminButton"
             );
+
+        if (!adminButton) {
+            return;
+        }
+
+        event.preventDefault();
+
+
+        if (isAdmin()) {
+
+            openDashboard();
 
             return;
         }
 
-        state.services = await response.json();
 
-        renderServicesOnWebsite();
+        const modal =
+            $("adminLoginModal");
 
-        if (isAdmin()) {
-            renderAdminServices();
+        if (!modal) {
+            return;
         }
 
-    } catch (error) {
-        console.error(
-            "Could not load services:",
-            error
-        );
-    }
-}
 
-
-/* =========================================================
-   RENDER SERVICES ON WEBSITE
-   ========================================================= */
-
-function renderServicesOnWebsite() {
-    const buttons = document.querySelectorAll(
-        ".service-view-button"
-    );
-
-    buttons.forEach(button => {
-        const key = button.dataset.service;
-
-        const service = state.services.find(item =>
-            String(item.icon || "").toLowerCase() ===
-            String(key || "").toLowerCase()
-        );
-
-        if (!service) return;
-
-        button.dataset.serviceId = service.id;
-
-        button.textContent = "View Service";
-
-        button.onclick = function (event) {
-            event.preventDefault();
-            event.stopPropagation();
-
-            openServiceDetails(service);
-        };
-    });
-}
-
-
-function openServiceDetails(service) {
-    const title = $("serviceModalTitle");
-    const text = $("serviceModalText");
-    const modal = $("serviceModal");
-
-    if (title) {
-        title.textContent = service.title || "Service";
-    }
-
-    if (text) {
-        text.textContent =
-            service.description ||
-            "No description available.";
-    }
-
-    if (modal) {
         show(modal);
+
         openOverlay();
     }
-}
+);
 
 
 /* =========================================================
-   FEATURES
+   ADMIN LOGIN FORM
    ========================================================= */
 
-async function loadFeatures() {
-    try {
-        const response = await supabaseFetch(
-            "/rest/v1/features?select=*&order=display_order.asc,created_at.asc",
-            {},
-            false
-        );
+document.addEventListener(
+    "submit",
+    async function (event) {
 
-        if (!response.ok) {
-            const errorText = await response.text();
-
-            console.error(
-                "Features loading error:",
-                errorText
+        const form =
+            event.target.closest(
+                "#adminLoginForm"
             );
 
+        if (!form) {
             return;
         }
 
-        state.features = await response.json();
+        event.preventDefault();
 
-        renderFeaturesOnWebsite();
 
-        if (isAdmin()) {
-            renderAdminFeatures();
-        }
+        const username =
+            $("adminUsername")
+                ?.value
+                .trim();
 
-    } catch (error) {
-        console.error(
-            "Could not load features:",
-            error
-        );
-    }
-}
+        const password =
+            $("adminPassword")
+                ?.value;
 
 
-/* =========================================================
-   RENDER FEATURES ON WEBSITE
-   ========================================================= */
+        const message =
+            $("loginMessage");
 
-function renderFeaturesOnWebsite() {
-    const buttons = document.querySelectorAll(
-        ".feature-view-button"
-    );
-
-    buttons.forEach(button => {
-        const key = button.dataset.feature;
-
-        const feature = state.features.find(item =>
-            String(item.icon || "").toLowerCase() ===
-            String(key || "").toLowerCase()
-        );
-
-        if (!feature) return;
-
-        button.dataset.featureId = feature.id;
-
-        button.textContent = "Explore";
-
-        button.onclick = function (event) {
-            event.preventDefault();
-            event.stopPropagation();
-
-            openFeatureDetails(feature);
-        };
-    });
-}
-
-
-function openFeatureDetails(feature) {
-    const title = $("featureModalTitle");
-    const text = $("featureModalText");
-    const modal = $("featureModal");
-
-    if (title) {
-        title.textContent = feature.title || "Feature";
-    }
-
-    if (text) {
-        text.textContent =
-            feature.description ||
-            "No description available.";
-    }
-
-    if (modal) {
-        show(modal);
-        openOverlay();
-    }
-}
-
-
-/* =========================================================
-   CONTENT
-   ========================================================= */
-
-async function loadContents() {
-    try {
-        const response = await supabaseFetch(
-            "/rest/v1/contents?select=*&order=created_at.desc",
-            {},
-            false
-        );
-
-        if (!response.ok) {
-            console.error(
-                "Contents loading failed:",
-                await response.text()
-            );
-
-            return;
-        }
-
-        state.contents = await response.json();
-
-        renderLatestContent();
-        renderBlog();
-        updateNewsBar();
-
-        if (isAdmin()) {
-            renderAdminContent();
-        }
-
-    } catch (error) {
-        console.error(
-            "Contents error:",
-            error
-        );
-    }
-}
-
-
-/* =========================================================
-   LATEST CONTENT
-   ========================================================= */
-
-function renderLatestContent() {
-    const containers = document.querySelectorAll(
-        "[data-latest-content], #latestContent"
-    );
-
-    if (!containers.length) return;
-
-    containers.forEach(container => {
-        if (!state.contents.length) {
-            container.innerHTML =
-                "<p>No content available.</p>";
-
-            return;
-        }
-
-        container.innerHTML = state.contents
-            .slice(0, 6)
-            .map(content => {
-                return `
-                    <article class="content-card">
-                        <h3>
-                            ${escapeHTML(content.title || "")}
-                        </h3>
-
-                        <p>
-                            ${escapeHTML(
-                                content.description ||
-                                content.content ||
-                                ""
-                            )}
-                        </p>
-
-                        <small>
-                            ${formatDate(content.created_at)}
-                        </small>
-                    </article>
-                `;
-            })
-            .join("");
-    });
-}
-
-
-/* =========================================================
-   BLOG
-   ========================================================= */
-
-function renderBlog() {
-    const container =
-        $("blogContainer") ||
-        document.querySelector("[data-blog]");
-
-    if (!container) return;
-
-    const blogs = state.contents.filter(
-        item =>
-            String(item.type || "").toLowerCase() ===
-            "news"
-    );
-
-    if (!blogs.length) {
-        container.innerHTML =
-            "<p>No news available.</p>";
-
-        return;
-    }
-
-    container.innerHTML = blogs
-        .map(item => {
-            return `
-                <article class="blog-card">
-                    <h3>
-                        ${escapeHTML(item.title || "")}
-                    </h3>
-
-                    <p>
-                        ${escapeHTML(
-                            item.description ||
-                            item.content ||
-                            ""
-                        )}
-                    </p>
-
-                    <small>
-                        ${formatDate(item.created_at)}
-                    </small>
-                </article>
-            `;
-        })
-        .join("");
-}
-
-
-/* =========================================================
-   NEWS BAR
-   ========================================================= */
-
-function updateNewsBar() {
-    const newsBar =
-        $("newsBar") ||
-        document.querySelector("[data-news-bar]");
-
-    if (!newsBar) return;
-
-    const news = state.contents.filter(
-        item =>
-            String(item.type || "").toLowerCase() ===
-            "news"
-    );
-
-    if (!news.length) {
-        newsBar.textContent =
-            "Welcome to Daniel Tech";
-
-        return;
-    }
-
-    newsBar.textContent =
-        news[0].title ||
-        "Daniel Tech News";
-}
-
-
-/* =========================================================
-   COMMENTS
-   ========================================================= */
-
-function loadComments() {
-    const container =
-        $("commentsContainer") ||
-        document.querySelector("[data-comments]");
-
-    if (!container) return;
-
-    let comments = [];
-
-    try {
-        comments =
-            JSON.parse(
-                localStorage.getItem(
-                    "danielTechComments"
-                )
-            ) || [];
-    } catch {
-        comments = [];
-    }
-
-    if (!comments.length) {
-        container.innerHTML =
-            "<p>No comments yet.</p>";
-
-        return;
-    }
-
-    container.innerHTML = comments
-        .map(comment => {
-            return `
-                <div class="comment">
-                    <strong>
-                        ${escapeHTML(comment.name)}
-                    </strong>
-
-                    <p>
-                        ${escapeHTML(comment.text)}
-                    </p>
-                </div>
-            `;
-        })
-        .join("");
-}
-
-
-document.addEventListener("submit", function (event) {
-    const form = event.target.closest(
-        "#commentForm, [data-comment-form]"
-    );
-
-    if (!form) return;
-
-    event.preventDefault();
-
-    const name =
-        form.querySelector(
-            '[name="name"]'
-        )?.value.trim();
-
-    const text =
-        form.querySelector(
-            '[name="comment"], [name="text"]'
-        )?.value.trim();
-
-    if (!name || !text) {
-        alert("Please fill in all fields.");
-
-        return;
-    }
-
-    let comments = [];
-
-    try {
-        comments =
-            JSON.parse(
-                localStorage.getItem(
-                    "danielTechComments"
-                )
-            ) || [];
-    } catch {
-        comments = [];
-    }
-
-    comments.unshift({
-        name,
-        text,
-        created_at: new Date().toISOString()
-    });
-
-    localStorage.setItem(
-        "danielTechComments",
-        JSON.stringify(comments)
-    );
-
-    form.reset();
-
-    loadComments();
-});
-
-
-/* =========================================================
-   CONTACT / MESSAGES
-   ========================================================= */
-
-document.addEventListener("submit", async function (event) {
-    const form = event.target.closest(
-        "#contactForm"
-    );
-
-    if (!form) return;
-
-    event.preventDefault();
-
-    const name =
-        form.querySelector(
-            '[name="name"]'
-        )?.value.trim();
-
-    const email =
-        form.querySelector(
-            '[name="email"]'
-        )?.value.trim();
-
-    const message =
-        form.querySelector(
-            '[name="message"]'
-        )?.value.trim();
-
-    if (!name || !email || !message) {
-        alert("Please fill in all fields.");
-
-        return;
-    }
-
-    try {
-        const response = await supabaseFetch(
-            "/rest/v1/message",
-            {
-                method: "POST",
-                headers: {
-                    Prefer: "return=minimal"
-                },
-                body: JSON.stringify({
-                    name,
-                    email,
-                    message
-                })
-            },
-            false
-        );
-
-        if (!response.ok) {
-            throw new Error(
-                await response.text()
-            );
-        }
-
-        alert(
-            "Your message has been sent successfully."
-        );
-
-        form.reset();
-
-    } catch (error) {
-        console.error(error);
-
-        alert(
-            "Failed to send your message. Please try again."
-        );
-    }
-});
-
-
-/* =========================================================
-   ADMIN LOGIN
-   ========================================================= */
-
-document.addEventListener("click", function (event) {
-    const adminButton = event.target.closest(
-        "#adminButton, #loginButton, .admin-button"
-    );
-
-    if (!adminButton) return;
-
-    event.preventDefault();
-
-    if (isAdmin()) {
-        openDashboard();
-    } else {
-        const loginModal = $("loginModal");
-
-        if (loginModal) {
-            show(loginModal);
-            openOverlay();
-        }
-    }
-});
-
-
-document.addEventListener("submit", async function (event) {
-    const form = event.target.closest(
-        "#loginForm"
-    );
-
-    if (!form) return;
-
-    event.preventDefault();
-
-    const email =
-        form.querySelector(
-            '[name="email"]'
-        )?.value.trim();
-
-    const password =
-        form.querySelector(
-            '[name="password"]'
-        )?.value;
-
-    if (!email || !password) {
-        alert(
-            "Please enter email and password."
-        );
-
-        return;
-    }
-
-    try {
-        const response = await fetch(
-            `${SUPABASE_URL}/auth/v1/token?grant_type=password`,
-            {
-                method: "POST",
-                headers: {
-                    apikey: SUPABASE_KEY,
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                    email,
-                    password
-                })
-            }
-        );
-
-        const data = await response.json();
 
         if (
-            !response.ok ||
-            !data.access_token ||
-            !data.user
+            !username ||
+            !password
         ) {
-            throw new Error(
-                data.error_description ||
-                data.msg ||
-                "Login failed"
-            );
+
+            if (message) {
+                message.textContent =
+                    "Please enter your login details.";
+            }
+
+            return;
         }
 
-        state.session = {
-            access_token: data.access_token,
-            refresh_token: data.refresh_token,
-            user: data.user
-        };
 
-        localStorage.setItem(
-            "danielTechSession",
-            JSON.stringify(state.session)
-        );
-
-        if (!isAdmin()) {
-            state.session = null;
-
-            localStorage.removeItem(
-                "danielTechSession"
-            );
-
-            throw new Error(
-                "This account is not authorized as administrator."
-            );
+        if (message) {
+            message.textContent =
+                "Logging in...";
         }
 
-        form.reset();
 
-        closeAllModals();
+        try {
 
-        openDashboard();
+            const response =
+                await fetch(
+                    `${SUPABASE_URL}/auth/v1/token?grant_type=password`,
+                    {
+                        method: "POST",
 
-    } catch (error) {
-        console.error(error);
+                        headers: {
+                            apikey:
+                                SUPABASE_KEY,
 
-        alert(
-            error.message ||
-            "Login failed."
-        );
+                            "Content-Type":
+                                "application/json"
+                        },
+
+                        body:
+                            JSON.stringify({
+
+                                email:
+                                    username,
+
+                                password:
+                                    password
+                            })
+                    }
+                );
+
+
+            const data =
+                await response.json();
+
+
+            if (
+                !response.ok ||
+                !data.access_token ||
+                !data.user
+            ) {
+
+                throw new Error(
+                    data.error_description ||
+                    data.msg ||
+                    "Login failed."
+                );
+            }
+
+
+            state.session = {
+
+                access_token:
+                    data.access_token,
+
+                refresh_token:
+                    data.refresh_token,
+
+                user:
+                    data.user
+            };
+
+
+            if (!isAdmin()) {
+
+                state.session =
+                    null;
+
+                throw new Error(
+                    "This account is not the Daniel Tech administrator account."
+                );
+            }
+
+
+            localStorage.setItem(
+                "danielTechSession",
+                JSON.stringify(
+                    state.session
+                )
+            );
+
+
+            if (message) {
+                message.textContent =
+                    "Login successful.";
+            }
+
+
+            form.reset();
+
+            closeAllModals();
+
+            openDashboard();
+
+
+        } catch (error) {
+
+            console.error(
+                "Login error:",
+                error
+            );
+
+
+            if (message) {
+                message.textContent =
+                    error.message ||
+                    "Login failed.";
+            }
+        }
     }
-});
+);
 
 
 /* =========================================================
@@ -1049,20 +940,28 @@ document.addEventListener("submit", async function (event) {
    ========================================================= */
 
 async function restoreAdminSession() {
+
     const saved =
         localStorage.getItem(
             "danielTechSession"
         );
 
-    if (!saved) return;
+
+    if (!saved) {
+        return;
+    }
+
 
     try {
-        const session = JSON.parse(saved);
 
-        state.session = session;
+        state.session =
+            JSON.parse(saved);
+
 
         if (!isAdmin()) {
-            state.session = null;
+
+            state.session =
+                null;
 
             localStorage.removeItem(
                 "danielTechSession"
@@ -1071,15 +970,20 @@ async function restoreAdminSession() {
             return;
         }
 
+
         await refreshAdminSession();
 
+
     } catch (error) {
+
         console.error(
             "Session restore failed:",
             error
         );
 
-        state.session = null;
+
+        state.session =
+            null;
 
         localStorage.removeItem(
             "danielTechSession"
@@ -1089,39 +993,53 @@ async function restoreAdminSession() {
 
 
 /* =========================================================
-   ADMIN DASHBOARD
+   OPEN ADMIN DASHBOARD
    ========================================================= */
 
 function openDashboard() {
-    if (!isAdmin()) {
-        const loginModal = $("loginModal");
 
-        if (loginModal) {
-            show(loginModal);
+    if (!isAdmin()) {
+
+        const modal =
+            $("adminLoginModal");
+
+        if (modal) {
+
+            show(modal);
+
             openOverlay();
         }
 
         return;
     }
 
+
     const dashboard =
         $("dashboardModal");
 
+
     if (!dashboard) {
+
         console.error(
-            "dashboardModal was not found."
+            "dashboardModal not found."
         );
 
         return;
     }
 
+
     show(dashboard);
+
     openOverlay();
+
 
     createManagementPanel();
 
+
     renderAdminContent();
+
     renderAdminServices();
+
     renderAdminFeatures();
 
     loadAdminMessages();
@@ -1129,460 +1047,980 @@ function openDashboard() {
 
 
 /* =========================================================
-   CONTENT ADMIN
+   SERVICES - LOAD
    ========================================================= */
 
-function prepareEditor(content = null) {
-    const editor =
-        $("contentEditor") ||
-        $("adminEditor");
+async function loadServices() {
 
-    if (!editor) return;
+    try {
 
-    state.editingId =
-        content?.id || null;
+        const response =
+            await supabaseRequest(
+                "/rest/v1/services?select=*&order=display_order.asc,created_at.asc",
+                {},
+                false
+            );
 
-    const title =
-        editor.querySelector(
-            '[name="title"], #contentTitle'
+
+        if (!response.ok) {
+
+            console.error(
+                "Services error:",
+                await response.text()
+            );
+
+            return;
+        }
+
+
+        state.services =
+            await response.json();
+
+
+        renderServicesOnWebsite();
+
+        renderAdminServices();
+
+
+    } catch (error) {
+
+        console.error(
+            "Could not load services:",
+            error
         );
-
-    const description =
-        editor.querySelector(
-            '[name="description"], #contentDescription'
-        );
-
-    const type =
-        editor.querySelector(
-            '[name="type"], #contentType'
-        );
-
-    if (title) {
-        title.value =
-            content?.title || "";
     }
-
-    if (description) {
-        description.value =
-            content?.description ||
-            content?.content ||
-            "";
-    }
-
-    if (type) {
-        type.value =
-            content?.type || "news";
-    }
-
-    show(editor);
 }
 
 
-document.addEventListener("click", function (event) {
-    const addNews =
-        event.target.closest("#addNewsButton");
+/* =========================================================
+   SERVICES - WEBSITE
+   ========================================================= */
 
-    const addTip =
-        event.target.closest("#addTipButton");
+function renderServicesOnWebsite() {
 
-    const addVideo =
-        event.target.closest("#addVideoButton");
-
-    const addPdf =
-        event.target.closest("#addPdfButton");
-
-    if (
-        addNews ||
-        addTip ||
-        addVideo ||
-        addPdf
-    ) {
-        event.preventDefault();
-
-        let type = "news";
-
-        if (addTip) type = "tip";
-        if (addVideo) type = "video";
-        if (addPdf) type = "pdf";
-
-        prepareEditor({
-            type
-        });
-    }
-});
-
-
-document.addEventListener("submit", async function (event) {
-    const form = event.target.closest(
-        "#contentEditorForm"
-    );
-
-    if (!form) return;
-
-    event.preventDefault();
-
-    if (!(await ensureAdminSession())) {
-        alert(
-            "Admin session expired. Please log in again."
+    const buttons =
+        document.querySelectorAll(
+            ".service-view-button"
         );
 
-        return;
-    }
 
-    const title =
-        form.querySelector(
-            '[name="title"]'
-        )?.value.trim();
+    buttons.forEach(button => {
 
-    const description =
-        form.querySelector(
-            '[name="description"]'
-        )?.value.trim();
+        const key =
+            button.dataset.service;
 
-    const type =
-        form.querySelector(
-            '[name="type"]'
-        )?.value || "news";
 
-    if (!title || !description) {
-        alert(
-            "Please fill in title and description."
-        );
-
-        return;
-    }
-
-    const payload = {
-        title,
-        description,
-        type
-    };
-
-    try {
-        let response;
-
-        if (state.editingId) {
-            response = await supabaseFetch(
-                `/rest/v1/contents?id=eq.${state.editingId}`,
-                {
-                    method: "PATCH",
-                    headers: {
-                        Prefer: "return=representation"
-                    },
-                    body: JSON.stringify(payload)
-                },
-                true
+        const service =
+            state.services.find(
+                item =>
+                    String(
+                        item.icon || ""
+                    ).toLowerCase() ===
+                    String(
+                        key || ""
+                    ).toLowerCase()
             );
-        } else {
-            response = await supabaseFetch(
-                "/rest/v1/contents",
-                {
-                    method: "POST",
-                    headers: {
-                        Prefer: "return=representation"
-                    },
-                    body: JSON.stringify(payload)
-                },
-                true
-            );
+
+
+        if (!service) {
+            return;
         }
 
-        if (!response.ok) {
-            throw new Error(
-                await response.text()
-            );
-        }
 
-        alert(
-            state.editingId
-                ? "Content updated successfully."
-                : "Content added successfully."
-        );
+        button.textContent =
+            "View Service";
 
-        state.editingId = null;
 
-        form.reset();
+        button.onclick =
+            function (event) {
 
-        hide(form);
+                event.preventDefault();
 
-        await loadContents();
+                event.stopPropagation();
 
-    } catch (error) {
-        console.error(error);
-
-        alert(
-            "Could not save content: " +
-            error.message
-        );
-    }
-});
+                openServiceDetails(
+                    service
+                );
+            };
+    });
+}
 
 
 /* =========================================================
-   ADMIN CONTENT LIST
+   SERVICE DETAILS
    ========================================================= */
 
-function renderAdminContent() {
-    const container =
-        $("adminContentList") ||
-        document.querySelector(
-            "[data-admin-content-list]"
+function openServiceDetails(service) {
+
+    const modal =
+        $("serviceModal");
+
+    const title =
+        $("serviceModalTitle");
+
+    const text =
+        $("serviceModalText");
+
+
+    if (title) {
+
+        title.textContent =
+            service.title ||
+            "Service";
+    }
+
+
+    if (text) {
+
+        text.textContent =
+            service.description ||
+            "No service information available.";
+    }
+
+
+    if (modal) {
+
+        show(modal);
+
+        openOverlay();
+    }
+}
+
+
+/* =========================================================
+   FEATURES - LOAD
+   ========================================================= */
+
+async function loadFeatures() {
+
+    try {
+
+        const response =
+            await supabaseRequest(
+                "/rest/v1/features?select=*&order=display_order.asc,created_at.asc",
+                {},
+                false
+            );
+
+
+        if (!response.ok) {
+
+            console.error(
+                "Features error:",
+                await response.text()
+            );
+
+            return;
+        }
+
+
+        state.features =
+            await response.json();
+
+
+        renderFeaturesOnWebsite();
+
+        renderAdminFeatures();
+
+
+    } catch (error) {
+
+        console.error(
+            "Could not load features:",
+            error
+        );
+    }
+}
+
+
+/* =========================================================
+   FEATURES - WEBSITE
+   ========================================================= */
+
+function renderFeaturesOnWebsite() {
+
+    const buttons =
+        document.querySelectorAll(
+            ".feature-view-button"
         );
 
-    if (!container) return;
+
+    buttons.forEach(button => {
+
+        const key =
+            button.dataset.feature;
+
+
+        const feature =
+            state.features.find(
+                item =>
+                    String(
+                        item.icon || ""
+                    ).toLowerCase() ===
+                    String(
+                        key || ""
+                    ).toLowerCase()
+            );
+
+
+        if (!feature) {
+            return;
+        }
+
+
+        button.textContent =
+            "Explore";
+
+
+        button.onclick =
+            function (event) {
+
+                event.preventDefault();
+
+                event.stopPropagation();
+
+                openFeatureDetails(
+                    feature
+                );
+            };
+    });
+}
+
+
+/* =========================================================
+   FEATURE DETAILS
+   ========================================================= */
+
+function openFeatureDetails(feature) {
+
+    const modal =
+        $("featureModal");
+
+    const title =
+        $("featureModalTitle");
+
+    const text =
+        $("featureModalText");
+
+
+    if (title) {
+
+        title.textContent =
+            feature.title ||
+            "Feature";
+    }
+
+
+    if (text) {
+
+        text.textContent =
+            feature.description ||
+            "No feature information available.";
+    }
+
+
+    if (modal) {
+
+        show(modal);
+
+        openOverlay();
+    }
+}
+
+
+/* =========================================================
+   CONTENT - LOAD
+   ========================================================= */
+
+async function loadContents() {
+
+    try {
+
+        const response =
+            await supabaseRequest(
+                "/rest/v1/contents?select=*&order=created_at.desc",
+                {},
+                false
+            );
+
+
+        if (!response.ok) {
+
+            console.error(
+                "Contents error:",
+                await response.text()
+            );
+
+            return;
+        }
+
+
+        state.contents =
+            await response.json();
+
+
+        renderLatestContent();
+
+        renderBlog();
+
+        updateNewsBar();
+
+        renderAdminContent();
+
+
+    } catch (error) {
+
+        console.error(
+            "Could not load contents:",
+            error
+        );
+    }
+}
+
+
+/* =========================================================
+   CONTENT DESCRIPTION HELPER
+   ========================================================= */
+
+function getContentText(item) {
+
+    return (
+        item.description ||
+        item.content ||
+        item.text ||
+        ""
+    );
+}
+
+
+/* =========================================================
+   LATEST CONTENT
+   ========================================================= */
+
+function renderLatestContent() {
+
+    const container =
+        $("latestContent");
+
+
+    if (!container) {
+        return;
+    }
+
 
     if (!state.contents.length) {
-        container.innerHTML =
-            "<p>No content available.</p>";
+
+        container.innerHTML = `
+            <div class="empty-content">
+                No content has been published yet.
+            </div>
+        `;
 
         return;
     }
 
-    container.innerHTML = state.contents
-        .map(item => {
-            return `
-                <div class="admin-content-item">
 
-                    <div>
-                        <strong>
+    container.innerHTML =
+        state.contents
+            .slice(0, 6)
+            .map(item => {
+
+                return `
+                    <article class="content-card">
+
+                        <div class="card-number">
+                            ${escapeHTML(
+                                String(
+                                    item.id || ""
+                                )
+                            )}
+                        </div>
+
+                        <h3>
                             ${escapeHTML(
                                 item.title || ""
                             )}
-                        </strong>
+                        </h3>
+
+                        <p>
+                            ${escapeHTML(
+                                getContentText(
+                                    item
+                                )
+                            )}
+                        </p>
 
                         <small>
-                            ${escapeHTML(
-                                item.type || ""
-                            )}
-                            -
                             ${formatDate(
                                 item.created_at
                             )}
                         </small>
-                    </div>
 
-                    <div class="admin-actions">
+                    </article>
+                `;
 
-                        <button
-                            type="button"
-                            class="edit-content-button"
-                            data-id="${item.id}">
-                            Edit
-                        </button>
-
-                        <button
-                            type="button"
-                            class="delete-content-button"
-                            data-id="${item.id}">
-                            Delete
-                        </button>
-
-                    </div>
-
-                </div>
-            `;
-        })
-        .join("");
+            })
+            .join("");
 }
 
 
-document.addEventListener("click", async function (event) {
-    const editButton =
-        event.target.closest(
-            ".edit-content-button"
+/* =========================================================
+   BLOG
+   ========================================================= */
+
+function renderBlog() {
+
+    const container =
+        $("blogGrid");
+
+
+    if (!container) {
+        return;
+    }
+
+
+    const blogItems =
+        state.contents.filter(
+            item => {
+
+                const type =
+                    String(
+                        item.type ||
+                        item.category ||
+                        ""
+                    ).toLowerCase();
+
+                return (
+                    type === "news" ||
+                    type === "blog"
+                );
+            }
         );
 
-    const deleteButton =
-        event.target.closest(
-            ".delete-content-button"
-        );
 
-    if (editButton) {
-        const id =
-            editButton.dataset.id;
+    if (!blogItems.length) {
 
-        const content =
-            state.contents.find(
-                item =>
-                    String(item.id) ===
-                    String(id)
-            );
-
-        if (content) {
-            prepareEditor(content);
-        }
+        container.innerHTML = `
+            <div class="empty-content">
+                No blog content has been published yet.
+            </div>
+        `;
 
         return;
     }
 
-    if (deleteButton) {
-        const id =
-            deleteButton.dataset.id;
 
-        if (!confirm(
-            "Are you sure you want to delete this content?"
-        )) {
+    container.innerHTML =
+        blogItems
+            .map(item => {
+
+                return `
+                    <article class="blog-card">
+
+                        <p class="modal-label">
+                            ${escapeHTML(
+                                item.type ||
+                                "NEWS"
+                            )}
+                        </p>
+
+                        <h3>
+                            ${escapeHTML(
+                                item.title || ""
+                            )}
+                        </h3>
+
+                        <p>
+                            ${escapeHTML(
+                                getContentText(
+                                    item
+                                )
+                            )}
+                        </p>
+
+                        <small>
+                            ${formatDate(
+                                item.created_at
+                            )}
+                        </small>
+
+                    </article>
+                `;
+
+            })
+            .join("");
+}
+
+
+/* =========================================================
+   NEWS BAR
+   ========================================================= */
+
+function updateNewsBar() {
+
+    const newsContainer =
+        $("newsContent");
+
+
+    if (!newsContainer) {
+        return;
+    }
+
+
+    const news =
+        state.contents.filter(
+            item =>
+                String(
+                    item.type ||
+                    item.category ||
+                    ""
+                ).toLowerCase() ===
+                "news"
+        );
+
+
+    if (!news.length) {
+
+        newsContainer.textContent =
+            "Welcome to Daniel Tech.";
+
+        return;
+    }
+
+
+    newsContainer.textContent =
+        news
+            .slice(0, 5)
+            .map(
+                item =>
+                    item.title
+            )
+            .filter(Boolean)
+            .join("   |   ");
+}
+
+
+/* =========================================================
+   COMMENTS
+   ========================================================= */
+
+function loadComments() {
+
+    const container =
+        $("commentsList");
+
+
+    if (!container) {
+        return;
+    }
+
+
+    let comments = [];
+
+
+    try {
+
+        comments =
+            JSON.parse(
+                localStorage.getItem(
+                    "danielTechComments"
+                )
+            ) || [];
+
+    } catch {
+
+        comments = [];
+    }
+
+
+    if (!comments.length) {
+
+        container.innerHTML = `
+            <p class="empty-content">
+                No comments yet.
+            </p>
+        `;
+
+        return;
+    }
+
+
+    container.innerHTML =
+        comments
+            .map(comment => {
+
+                return `
+                    <div class="comment-item">
+
+                        <strong>
+                            ${escapeHTML(
+                                comment.name
+                            )}
+                        </strong>
+
+                        <p>
+                            ${escapeHTML(
+                                comment.text
+                            )}
+                        </p>
+
+                    </div>
+                `;
+
+            })
+            .join("");
+}
+
+
+/* =========================================================
+   COMMENT FORM
+   ========================================================= */
+
+document.addEventListener(
+    "submit",
+    function (event) {
+
+        const form =
+            event.target.closest(
+                "#commentForm"
+            );
+
+
+        if (!form) {
             return;
         }
 
-        if (!(await ensureAdminSession())) {
+
+        event.preventDefault();
+
+
+        const nameInput =
+            $("commentName");
+
+        const textInput =
+            $("commentText");
+
+
+        const name =
+            nameInput?.value.trim();
+
+        const text =
+            textInput?.value.trim();
+
+
+        if (!name || !text) {
+
             alert(
-                "Admin session expired. Please log in again."
+                "Please enter your name and comment."
             );
 
             return;
         }
 
+
+        let comments = [];
+
+
         try {
+
+            comments =
+                JSON.parse(
+                    localStorage.getItem(
+                        "danielTechComments"
+                    )
+                ) || [];
+
+        } catch {
+
+            comments = [];
+        }
+
+
+        comments.unshift({
+
+            name,
+
+            text,
+
+            created_at:
+                new Date().toISOString()
+        });
+
+
+        localStorage.setItem(
+            "danielTechComments",
+            JSON.stringify(
+                comments
+            )
+        );
+
+
+        form.reset();
+
+        loadComments();
+    }
+);
+
+
+/* =========================================================
+   CONTACT FORM
+   ========================================================= */
+
+document.addEventListener(
+    "submit",
+    async function (event) {
+
+        const form =
+            event.target.closest(
+                "#contactForm"
+            );
+
+
+        if (!form) {
+            return;
+        }
+
+
+        event.preventDefault();
+
+
+        const name =
+            $("contactName")
+                ?.value.trim();
+
+        const email =
+            $("contactEmail")
+                ?.value.trim();
+
+        const subject =
+            $("contactSubject")
+                ?.value.trim();
+
+        const message =
+            $("contactMessage")
+                ?.value.trim();
+
+        const status =
+            $("contactStatus");
+
+
+        if (
+            !name ||
+            !email ||
+            !subject ||
+            !message
+        ) {
+
+            if (status) {
+                status.textContent =
+                    "Please fill in all fields.";
+            }
+
+            return;
+        }
+
+
+        if (status) {
+            status.textContent =
+                "Sending...";
+        }
+
+
+        try {
+
             const response =
-                await supabaseFetch(
-                    `/rest/v1/contents?id=eq.${id}`,
+                await supabaseRequest(
+                    "/rest/v1/message",
                     {
-                        method: "DELETE"
+                        method: "POST",
+
+                        headers: {
+                            Prefer:
+                                "return=minimal"
+                        },
+
+                        body:
+                            JSON.stringify({
+
+                                name,
+
+                                email,
+
+                                subject,
+
+                                message
+                            })
                     },
-                    true
+                    false
                 );
 
+
             if (!response.ok) {
+
                 throw new Error(
                     await response.text()
                 );
             }
 
-            await loadContents();
 
-            alert(
-                "Content deleted successfully."
-            );
+            if (status) {
+                status.textContent =
+                    "Message sent successfully.";
+            }
+
+
+            form.reset();
+
 
         } catch (error) {
-            console.error(error);
 
-            alert(
-                "Delete failed: " +
-                error.message
+            console.error(
+                "Contact error:",
+                error
             );
+
+
+            if (status) {
+                status.textContent =
+                    "Failed to send message. Please try again.";
+            }
         }
     }
-});
+);
 
 
 /* =========================================================
-   FILE UPLOAD
-   ========================================================= */
-
-async function uploadFile(file) {
-    if (!file) {
-        throw new Error(
-            "No file selected."
-        );
-    }
-
-    if (!(await ensureAdminSession())) {
-        throw new Error(
-            "Admin session expired. Please log in again."
-        );
-    }
-
-    const safeName =
-        file.name
-            .replace(/[^a-zA-Z0-9._-]/g, "_");
-
-    const path =
-        `${Date.now()}-${safeName}`;
-
-    const response =
-        await supabaseFetch(
-            `/storage/v1/object/${STORAGE_BUCKET}/${path}`,
-            {
-                method: "POST",
-                headers: {
-                    "Content-Type":
-                        file.type ||
-                        "application/octet-stream",
-                    "x-upsert": "false"
-                },
-                body: file
-            },
-            true
-        );
-
-    if (!response.ok) {
-        throw new Error(
-            await response.text()
-        );
-    }
-
-    return `${SUPABASE_URL}/storage/v1/object/public/${STORAGE_BUCKET}/${path}`;
-}
-
-
-/* =========================================================
-   ADMIN SERVICES & FEATURES MANAGER
+   ADMIN MANAGEMENT PANEL
    ========================================================= */
 
 function createManagementPanel() {
-    if (!isAdmin()) return;
+
+    if (!isAdmin()) {
+        return;
+    }
+
 
     const dashboard =
         $("dashboardModal");
 
-    if (!dashboard) return;
 
-    let box =
+    if (!dashboard) {
+        return;
+    }
+
+
+    if (
         dashboard.querySelector(
             ".management-panel"
+        )
+    ) {
+        return;
+    }
+
+
+    const panel =
+        document.createElement(
+            "div"
         );
 
-    if (box) return;
 
-    box =
-        document.createElement("div");
-
-    box.className =
+    panel.className =
         "management-panel";
 
-    box.innerHTML = `
+
+    panel.innerHTML = `
+
         <div class="management-header">
-            <h2>Services & Features Manager</h2>
+
+            <p class="modal-label">
+                WEBSITE MANAGEMENT
+            </p>
+
+            <h2>
+                Services & Features
+            </h2>
+
         </div>
+
+
+        <!-- SERVICES -->
 
         <section class="management-section">
 
             <div class="management-section-header">
-                <h3>Services</h3>
+
+                <h3>
+                    Services
+                </h3>
 
                 <button
                     type="button"
                     id="addServiceButton">
                     Add Service
                 </button>
+
             </div>
+
 
             <div
                 id="serviceEditor"
                 class="management-editor"
                 style="display:none;">
 
-                <input
-                    type="text"
-                    id="serviceTitle"
-                    placeholder="Service title">
+                <div class="form-group">
 
-                <textarea
-                    id="serviceDescription"
-                    placeholder="Service description"></textarea>
+                    <label>
+                        Service Title
+                    </label>
 
-                <input
-                    type="text"
-                    id="serviceIcon"
-                    placeholder="Icon key e.g. web">
+                    <input
+                        type="text"
+                        id="serviceTitle"
+                        placeholder="Example: Web Development">
 
-                <input
-                    type="number"
-                    id="serviceOrder"
-                    placeholder="Display order"
-                    value="0">
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>
+                        Service Description
+                    </label>
+
+                    <textarea
+                        id="serviceDescription"
+                        placeholder="Describe the service"></textarea>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>
+                        Service Key
+                    </label>
+
+                    <input
+                        type="text"
+                        id="serviceIcon"
+                        placeholder="Example: web">
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>
+                        Display Order
+                    </label>
+
+                    <input
+                        type="number"
+                        id="serviceOrder"
+                        value="0">
+
+                </div>
+
 
                 <div class="management-actions">
 
@@ -1602,47 +2040,90 @@ function createManagementPanel() {
 
             </div>
 
+
             <div id="adminServicesList"></div>
 
         </section>
 
 
+        <!-- FEATURES -->
+
         <section class="management-section">
 
             <div class="management-section-header">
-                <h3>Features</h3>
+
+                <h3>
+                    Features
+                </h3>
 
                 <button
                     type="button"
                     id="addFeatureButton">
                     Add Feature
                 </button>
+
             </div>
+
 
             <div
                 id="featureEditor"
                 class="management-editor"
                 style="display:none;">
 
-                <input
-                    type="text"
-                    id="featureTitle"
-                    placeholder="Feature title">
+                <div class="form-group">
 
-                <textarea
-                    id="featureDescription"
-                    placeholder="Feature description"></textarea>
+                    <label>
+                        Feature Title
+                    </label>
 
-                <input
-                    type="text"
-                    id="featureIcon"
-                    placeholder="Feature key e.g. programming">
+                    <input
+                        type="text"
+                        id="featureTitle"
+                        placeholder="Example: Programming">
 
-                <input
-                    type="number"
-                    id="featureOrder"
-                    placeholder="Display order"
-                    value="0">
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>
+                        Feature Description
+                    </label>
+
+                    <textarea
+                        id="featureDescription"
+                        placeholder="Describe the feature"></textarea>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>
+                        Feature Key
+                    </label>
+
+                    <input
+                        type="text"
+                        id="featureIcon"
+                        placeholder="Example: programming">
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>
+                        Display Order
+                    </label>
+
+                    <input
+                        type="number"
+                        id="featureOrder"
+                        value="0">
+
+                </div>
+
 
                 <div class="management-actions">
 
@@ -1662,58 +2143,82 @@ function createManagementPanel() {
 
             </div>
 
+
             <div id="adminFeaturesList"></div>
 
         </section>
+
     `;
+
 
     const logout =
         $("logoutButton");
 
-    if (logout) {
+
+    if (
+        logout &&
+        logout.parentNode
+    ) {
+
         logout.parentNode.insertBefore(
-            box,
+            panel,
             logout
         );
-    } else {
-        const modalBox =
-            dashboard.querySelector(
-                ".modal-box"
-            ) ||
-            dashboard.firstElementChild ||
-            dashboard;
 
-        modalBox.appendChild(box);
+    } else {
+
+        const box =
+            dashboard.querySelector(
+                ".dashboard-box"
+            );
+
+        if (box) {
+            box.appendChild(panel);
+        }
     }
+
 
     setupManagementButtons();
 }
 
 
 /* =========================================================
-   ADMIN SERVICES LIST
+   SERVICE ADMIN LIST
    ========================================================= */
 
 function renderAdminServices() {
+
     const container =
         $("adminServicesList");
 
-    if (!container) return;
+
+    if (!container) {
+        return;
+    }
+
 
     if (!state.services.length) {
-        container.innerHTML =
-            "<p>No services available.</p>";
+
+        container.innerHTML = `
+            <p class="empty-content">
+                No services available.
+            </p>
+        `;
 
         return;
     }
 
+
     container.innerHTML =
         state.services
             .map(service => {
+
                 return `
+
                     <div class="management-item">
 
                         <div>
+
                             <strong>
                                 ${escapeHTML(
                                     service.title
@@ -1732,7 +2237,9 @@ function renderAdminServices() {
                                     service.icon || ""
                                 )}
                             </small>
+
                         </div>
+
 
                         <div class="management-actions">
 
@@ -1753,36 +2260,51 @@ function renderAdminServices() {
                         </div>
 
                     </div>
+
                 `;
+
             })
             .join("");
 }
 
 
 /* =========================================================
-   ADMIN FEATURES LIST
+   FEATURE ADMIN LIST
    ========================================================= */
 
 function renderAdminFeatures() {
+
     const container =
         $("adminFeaturesList");
 
-    if (!container) return;
+
+    if (!container) {
+        return;
+    }
+
 
     if (!state.features.length) {
-        container.innerHTML =
-            "<p>No features available.</p>";
+
+        container.innerHTML = `
+            <p class="empty-content">
+                No features available.
+            </p>
+        `;
 
         return;
     }
 
+
     container.innerHTML =
         state.features
             .map(feature => {
+
                 return `
+
                     <div class="management-item">
 
                         <div>
+
                             <strong>
                                 ${escapeHTML(
                                     feature.title
@@ -1801,7 +2323,9 @@ function renderAdminFeatures() {
                                     feature.icon || ""
                                 )}
                             </small>
+
                         </div>
+
 
                         <div class="management-actions">
 
@@ -1822,7 +2346,9 @@ function renderAdminFeatures() {
                         </div>
 
                     </div>
+
                 `;
+
             })
             .join("");
 }
@@ -1843,6 +2369,7 @@ function setupManagementButtons() {
     const cancelService =
         $("cancelServiceButton");
 
+
     const addFeature =
         $("addFeatureButton");
 
@@ -1854,70 +2381,102 @@ function setupManagementButtons() {
 
 
     if (addService) {
-        addService.onclick = function () {
 
-            state.editingServiceId = null;
+        addService.onclick =
+            function () {
 
-            $("serviceTitle").value = "";
-            $("serviceDescription").value = "";
-            $("serviceIcon").value = "";
-            $("serviceOrder").value = "0";
+                state.editingServiceId =
+                    null;
 
-            show(
-                $("serviceEditor")
-            );
-        };
+
+                $("serviceTitle").value =
+                    "";
+
+                $("serviceDescription").value =
+                    "";
+
+                $("serviceIcon").value =
+                    "";
+
+                $("serviceOrder").value =
+                    "0";
+
+
+                show(
+                    $("serviceEditor")
+                );
+            };
     }
 
 
     if (cancelService) {
-        cancelService.onclick = function () {
 
-            state.editingServiceId = null;
+        cancelService.onclick =
+            function () {
 
-            hide(
-                $("serviceEditor")
-            );
-        };
+                state.editingServiceId =
+                    null;
+
+                hide(
+                    $("serviceEditor")
+                );
+            };
     }
 
 
     if (saveService) {
+
         saveService.onclick =
             saveServiceToDatabase;
     }
 
 
     if (addFeature) {
-        addFeature.onclick = function () {
 
-            state.editingFeatureId = null;
+        addFeature.onclick =
+            function () {
 
-            $("featureTitle").value = "";
-            $("featureDescription").value = "";
-            $("featureIcon").value = "";
-            $("featureOrder").value = "0";
+                state.editingFeatureId =
+                    null;
 
-            show(
-                $("featureEditor")
-            );
-        };
+
+                $("featureTitle").value =
+                    "";
+
+                $("featureDescription").value =
+                    "";
+
+                $("featureIcon").value =
+                    "";
+
+                $("featureOrder").value =
+                    "0";
+
+
+                show(
+                    $("featureEditor")
+                );
+            };
     }
 
 
     if (cancelFeature) {
-        cancelFeature.onclick = function () {
 
-            state.editingFeatureId = null;
+        cancelFeature.onclick =
+            function () {
 
-            hide(
-                $("featureEditor")
-            );
-        };
+                state.editingFeatureId =
+                    null;
+
+                hide(
+                    $("featureEditor")
+                );
+            };
     }
 
 
     if (saveFeature) {
+
         saveFeature.onclick =
             saveFeatureToDatabase;
     }
@@ -1930,47 +2489,64 @@ function setupManagementButtons() {
 
 async function saveServiceToDatabase() {
 
-    if (!(await ensureAdminSession())) {
+    if (
+        !(await ensureAdminSession())
+    ) {
+
         alert(
-            "Admin session expired. Please log in again."
+            "Admin session expired. Please login again."
         );
 
         return;
     }
 
+
     const title =
         $("serviceTitle")
-            ?.value.trim();
+            ?.value
+            .trim();
 
     const description =
         $("serviceDescription")
-            ?.value.trim();
+            ?.value
+            .trim();
 
     const icon =
         $("serviceIcon")
-            ?.value.trim();
+            ?.value
+            .trim();
 
-    const displayOrder =
+    const order =
         Number(
             $("serviceOrder")
                 ?.value || 0
         );
 
 
-    if (!title || !description || !icon) {
+    if (
+        !title ||
+        !description ||
+        !icon
+    ) {
+
         alert(
-            "Please fill in title, description and icon key."
+            "Please fill in title, description and service key."
         );
 
         return;
     }
 
 
-    const payload = {
+    const data = {
+
         title,
+
         description,
+
         icon,
-        display_order: displayOrder
+
+        display_order:
+            order
     };
 
 
@@ -1978,20 +2554,25 @@ async function saveServiceToDatabase() {
 
         let response;
 
-        if (state.editingServiceId) {
+
+        if (
+            state.editingServiceId
+        ) {
 
             response =
-                await supabaseFetch(
+                await supabaseRequest(
                     `/rest/v1/services?id=eq.${state.editingServiceId}`,
                     {
                         method: "PATCH",
+
                         headers: {
                             Prefer:
                                 "return=representation"
                         },
+
                         body:
                             JSON.stringify(
-                                payload
+                                data
                             )
                     },
                     true
@@ -2000,17 +2581,19 @@ async function saveServiceToDatabase() {
         } else {
 
             response =
-                await supabaseFetch(
+                await supabaseRequest(
                     "/rest/v1/services",
                     {
                         method: "POST",
+
                         headers: {
                             Prefer:
                                 "return=representation"
                         },
+
                         body:
                             JSON.stringify(
-                                payload
+                                data
                             )
                     },
                     true
@@ -2019,30 +2602,40 @@ async function saveServiceToDatabase() {
 
 
         if (!response.ok) {
+
             throw new Error(
                 await response.text()
             );
         }
 
 
-        state.editingServiceId = null;
+        state.editingServiceId =
+            null;
+
 
         hide(
             $("serviceEditor")
         );
 
+
         await loadServices();
+
 
         alert(
             "Service saved successfully."
         );
 
+
     } catch (error) {
 
-        console.error(error);
+        console.error(
+            "Save service error:",
+            error
+        );
+
 
         alert(
-            "Could not save service: " +
+            "Could not save service:\n" +
             error.message
         );
     }
@@ -2055,9 +2648,12 @@ async function saveServiceToDatabase() {
 
 async function saveFeatureToDatabase() {
 
-    if (!(await ensureAdminSession())) {
+    if (
+        !(await ensureAdminSession())
+    ) {
+
         alert(
-            "Admin session expired. Please log in again."
+            "Admin session expired. Please login again."
         );
 
         return;
@@ -2066,24 +2662,32 @@ async function saveFeatureToDatabase() {
 
     const title =
         $("featureTitle")
-            ?.value.trim();
+            ?.value
+            .trim();
 
     const description =
         $("featureDescription")
-            ?.value.trim();
+            ?.value
+            .trim();
 
     const icon =
         $("featureIcon")
-            ?.value.trim();
+            ?.value
+            .trim();
 
-    const displayOrder =
+    const order =
         Number(
             $("featureOrder")
                 ?.value || 0
         );
 
 
-    if (!title || !description || !icon) {
+    if (
+        !title ||
+        !description ||
+        !icon
+    ) {
+
         alert(
             "Please fill in title, description and feature key."
         );
@@ -2092,11 +2696,16 @@ async function saveFeatureToDatabase() {
     }
 
 
-    const payload = {
+    const data = {
+
         title,
+
         description,
+
         icon,
-        display_order: displayOrder
+
+        display_order:
+            order
     };
 
 
@@ -2104,20 +2713,25 @@ async function saveFeatureToDatabase() {
 
         let response;
 
-        if (state.editingFeatureId) {
+
+        if (
+            state.editingFeatureId
+        ) {
 
             response =
-                await supabaseFetch(
+                await supabaseRequest(
                     `/rest/v1/features?id=eq.${state.editingFeatureId}`,
                     {
                         method: "PATCH",
+
                         headers: {
                             Prefer:
                                 "return=representation"
                         },
+
                         body:
                             JSON.stringify(
-                                payload
+                                data
                             )
                     },
                     true
@@ -2126,17 +2740,19 @@ async function saveFeatureToDatabase() {
         } else {
 
             response =
-                await supabaseFetch(
+                await supabaseRequest(
                     "/rest/v1/features",
                     {
                         method: "POST",
+
                         headers: {
                             Prefer:
                                 "return=representation"
                         },
+
                         body:
                             JSON.stringify(
-                                payload
+                                data
                             )
                     },
                     true
@@ -2145,30 +2761,40 @@ async function saveFeatureToDatabase() {
 
 
         if (!response.ok) {
+
             throw new Error(
                 await response.text()
             );
         }
 
 
-        state.editingFeatureId = null;
+        state.editingFeatureId =
+            null;
+
 
         hide(
             $("featureEditor")
         );
 
+
         await loadFeatures();
+
 
         alert(
             "Feature saved successfully."
         );
 
+
     } catch (error) {
 
-        console.error(error);
+        console.error(
+            "Save feature error:",
+            error
+        );
+
 
         alert(
-            "Could not save feature: " +
+            "Could not save feature:\n" +
             error.message
         );
     }
@@ -2176,226 +2802,926 @@ async function saveFeatureToDatabase() {
 
 
 /* =========================================================
-   EDIT / DELETE SERVICES & FEATURES
+   EDIT / DELETE SERVICE
    ========================================================= */
 
-document.addEventListener("click", async function (event) {
+document.addEventListener(
+    "click",
+    async function (event) {
 
-    const editService =
-        event.target.closest(
-            ".edit-service-button"
-        );
-
-    const deleteService =
-        event.target.closest(
-            ".delete-service-button"
-        );
-
-    const editFeature =
-        event.target.closest(
-            ".edit-feature-button"
-        );
-
-    const deleteFeature =
-        event.target.closest(
-            ".delete-feature-button"
-        );
-
-
-    /* ---------- EDIT SERVICE ---------- */
-
-    if (editService) {
-
-        const id =
-            editService.dataset.id;
-
-        const service =
-            state.services.find(
-                item =>
-                    String(item.id) ===
-                    String(id)
+        const editButton =
+            event.target.closest(
+                ".edit-service-button"
             );
 
-        if (!service) return;
 
-        state.editingServiceId =
-            service.id;
+        const deleteButton =
+            event.target.closest(
+                ".delete-service-button"
+            );
 
-        $("serviceTitle").value =
-            service.title || "";
 
-        $("serviceDescription").value =
-            service.description || "";
+        /* EDIT */
 
-        $("serviceIcon").value =
-            service.icon || "";
+        if (editButton) {
 
-        $("serviceOrder").value =
-            service.display_order || 0;
+            const id =
+                editButton.dataset.id;
 
-        show(
-            $("serviceEditor")
-        );
 
+            const service =
+                state.services.find(
+                    item =>
+                        String(item.id) ===
+                        String(id)
+                );
+
+
+            if (!service) {
+                return;
+            }
+
+
+            state.editingServiceId =
+                service.id;
+
+
+            $("serviceTitle").value =
+                service.title || "";
+
+
+            $("serviceDescription").value =
+                service.description || "";
+
+
+            $("serviceIcon").value =
+                service.icon || "";
+
+
+            $("serviceOrder").value =
+                service.display_order || 0;
+
+
+            show(
+                $("serviceEditor")
+            );
+
+
+            return;
+        }
+
+
+        /* DELETE */
+
+        if (deleteButton) {
+
+            const id =
+                deleteButton.dataset.id;
+
+
+            if (
+                !confirm(
+                    "Are you sure you want to delete this service?"
+                )
+            ) {
+                return;
+            }
+
+
+            if (
+                !(await ensureAdminSession())
+            ) {
+
+                alert(
+                    "Admin session expired. Please login again."
+                );
+
+                return;
+            }
+
+
+            try {
+
+                const response =
+                    await supabaseRequest(
+                        `/rest/v1/services?id=eq.${id}`,
+                        {
+                            method: "DELETE"
+                        },
+                        true
+                    );
+
+
+                if (!response.ok) {
+
+                    throw new Error(
+                        await response.text()
+                    );
+                }
+
+
+                await loadServices();
+
+
+                alert(
+                    "Service deleted successfully."
+                );
+
+
+            } catch (error) {
+
+                console.error(error);
+
+
+                alert(
+                    "Could not delete service:\n" +
+                    error.message
+                );
+            }
+        }
+    }
+);
+
+
+/* =========================================================
+   EDIT / DELETE FEATURE
+   ========================================================= */
+
+document.addEventListener(
+    "click",
+    async function (event) {
+
+        const editButton =
+            event.target.closest(
+                ".edit-feature-button"
+            );
+
+
+        const deleteButton =
+            event.target.closest(
+                ".delete-feature-button"
+            );
+
+
+        /* EDIT */
+
+        if (editButton) {
+
+            const id =
+                editButton.dataset.id;
+
+
+            const feature =
+                state.features.find(
+                    item =>
+                        String(item.id) ===
+                        String(id)
+                );
+
+
+            if (!feature) {
+                return;
+            }
+
+
+            state.editingFeatureId =
+                feature.id;
+
+
+            $("featureTitle").value =
+                feature.title || "";
+
+
+            $("featureDescription").value =
+                feature.description || "";
+
+
+            $("featureIcon").value =
+                feature.icon || "";
+
+
+            $("featureOrder").value =
+                feature.display_order || 0;
+
+
+            show(
+                $("featureEditor")
+            );
+
+
+            return;
+        }
+
+
+        /* DELETE */
+
+        if (deleteButton) {
+
+            const id =
+                deleteButton.dataset.id;
+
+
+            if (
+                !confirm(
+                    "Are you sure you want to delete this feature?"
+                )
+            ) {
+                return;
+            }
+
+
+            if (
+                !(await ensureAdminSession())
+            ) {
+
+                alert(
+                    "Admin session expired. Please login again."
+                );
+
+                return;
+            }
+
+
+            try {
+
+                const response =
+                    await supabaseRequest(
+                        `/rest/v1/features?id=eq.${id}`,
+                        {
+                            method: "DELETE"
+                        },
+                        true
+                    );
+
+
+                if (!response.ok) {
+
+                    throw new Error(
+                        await response.text()
+                    );
+                }
+
+
+                await loadFeatures();
+
+
+                alert(
+                    "Feature deleted successfully."
+                );
+
+
+            } catch (error) {
+
+                console.error(error);
+
+
+                alert(
+                    "Could not delete feature:\n" +
+                    error.message
+                );
+            }
+        }
+    }
+);
+
+
+/* =========================================================
+   ADMIN CONTENT EDITOR
+   ========================================================= */
+
+function prepareContentEditor(
+    content = null,
+    type = "news"
+) {
+
+    state.editingContentId =
+        content?.id || null;
+
+
+    const editor =
+        $("adminEditor");
+
+
+    if (!editor) {
         return;
     }
 
 
-    /* ---------- DELETE SERVICE ---------- */
+    const title =
+        $("contentTitle");
 
-    if (deleteService) {
+    const category =
+        $("contentCategory");
 
-        const id =
-            deleteService.dataset.id;
+    const text =
+        $("contentText");
 
-        if (!confirm(
-            "Are you sure you want to delete this service?"
-        )) {
-            return;
-        }
+    const file =
+        $("contentFile");
 
-        if (!(await ensureAdminSession())) {
-            alert(
-                "Admin session expired. Please log in again."
+
+    if (title) {
+
+        title.value =
+            content?.title || "";
+    }
+
+
+    if (category) {
+
+        category.value =
+            content?.type ||
+            content?.category ||
+            type;
+    }
+
+
+    if (text) {
+
+        text.value =
+            content
+                ? getContentText(content)
+                : "";
+    }
+
+
+    if (file) {
+        file.value = "";
+    }
+
+
+    show(editor);
+}
+
+
+/* =========================================================
+   ADD CONTENT BUTTONS
+   ========================================================= */
+
+document.addEventListener(
+    "click",
+    function (event) {
+
+        const newsButton =
+            event.target.closest(
+                "#addNewsButton"
+            );
+
+
+        const tipButton =
+            event.target.closest(
+                "#addTipButton"
+            );
+
+
+        const videoButton =
+            event.target.closest(
+                "#addVideoButton"
+            );
+
+
+        const pdfButton =
+            event.target.closest(
+                "#addPdfButton"
+            );
+
+
+        if (newsButton) {
+
+            prepareContentEditor(
+                null,
+                "news"
             );
 
             return;
         }
 
+
+        if (tipButton) {
+
+            prepareContentEditor(
+                null,
+                "tip"
+            );
+
+            return;
+        }
+
+
+        if (videoButton) {
+
+            prepareContentEditor(
+                null,
+                "video"
+            );
+
+            return;
+        }
+
+
+        if (pdfButton) {
+
+            prepareContentEditor(
+                null,
+                "pdf"
+            );
+
+            return;
+        }
+    }
+);
+
+
+/* =========================================================
+   SAVE CONTENT BUTTON
+   ========================================================= */
+
+document.addEventListener(
+    "click",
+    async function (event) {
+
+        const button =
+            event.target.closest(
+                "#saveContentButton"
+            );
+
+
+        if (!button) {
+            return;
+        }
+
+
+        if (
+            !(await ensureAdminSession())
+        ) {
+
+            alert(
+                "Admin session expired. Please login again."
+            );
+
+            return;
+        }
+
+
+        const title =
+            $("contentTitle")
+                ?.value
+                .trim();
+
+
+        const type =
+            $("contentCategory")
+                ?.value ||
+            "news";
+
+
+        const text =
+            $("contentText")
+                ?.value
+                .trim();
+
+
+        const fileInput =
+            $("contentFile");
+
+
+        const file =
+            fileInput?.files?.[0] ||
+            null;
+
+
+        const status =
+            $("contentStatus");
+
+
+        if (!title || !text) {
+
+            if (status) {
+                status.textContent =
+                    "Please enter title and content.";
+            }
+
+            return;
+        }
+
+
+        if (status) {
+            status.textContent =
+                "Saving...";
+        }
+
+
         try {
 
-            const response =
-                await supabaseFetch(
-                    `/rest/v1/services?id=eq.${id}`,
-                    {
-                        method: "DELETE"
-                    },
-                    true
-                );
+            let fileUrl = null;
+
+
+            if (file) {
+
+                if (status) {
+                    status.textContent =
+                        "Uploading file...";
+                }
+
+
+                fileUrl =
+                    await uploadFile(
+                        file
+                    );
+            }
+
+
+            const payload = {
+
+                title,
+
+                type,
+
+                description:
+                    text
+            };
+
+
+            if (fileUrl) {
+
+                payload.file_url =
+                    fileUrl;
+            }
+
+
+            let response;
+
+
+            if (
+                state.editingContentId
+            ) {
+
+                response =
+                    await supabaseRequest(
+                        `/rest/v1/contents?id=eq.${state.editingContentId}`,
+                        {
+                            method: "PATCH",
+
+                            headers: {
+                                Prefer:
+                                    "return=representation"
+                            },
+
+                            body:
+                                JSON.stringify(
+                                    payload
+                                )
+                        },
+                        true
+                    );
+
+            } else {
+
+                response =
+                    await supabaseRequest(
+                        "/rest/v1/contents",
+                        {
+                            method: "POST",
+
+                            headers: {
+                                Prefer:
+                                    "return=representation"
+                            },
+
+                            body:
+                                JSON.stringify(
+                                    payload
+                                )
+                        },
+                        true
+                    );
+            }
+
 
             if (!response.ok) {
+
                 throw new Error(
                     await response.text()
                 );
             }
 
-            await loadServices();
 
-            alert(
-                "Service deleted successfully."
-            );
+            state.editingContentId =
+                null;
+
+
+            $("contentTitle").value =
+                "";
+
+            $("contentText").value =
+                "";
+
+            $("contentFile").value =
+                "";
+
+
+            if (status) {
+                status.textContent =
+                    "Content published successfully.";
+            }
+
+
+            await loadContents();
+
 
         } catch (error) {
 
-            console.error(error);
-
-            alert(
-                "Could not delete service: " +
-                error.message
+            console.error(
+                "Save content error:",
+                error
             );
+
+
+            if (status) {
+
+                status.textContent =
+                    "Could not save content: " +
+                    error.message;
+            }
         }
+    }
+);
+
+
+/* =========================================================
+   ADMIN CONTENT LIST
+   ========================================================= */
+
+function renderAdminContent() {
+
+    const container =
+        $("adminContentList");
+
+
+    if (!container) {
+        return;
+    }
+
+
+    if (!state.contents.length) {
+
+        container.innerHTML = `
+            <p class="empty-content">
+                No content available.
+            </p>
+        `;
 
         return;
     }
 
 
-    /* ---------- EDIT FEATURE ---------- */
+    container.innerHTML =
+        state.contents
+            .map(item => {
 
-    if (editFeature) {
+                return `
 
-        const id =
-            editFeature.dataset.id;
+                    <div class="admin-content-item">
 
-        const feature =
-            state.features.find(
-                item =>
-                    String(item.id) ===
-                    String(id)
+                        <div>
+
+                            <strong>
+                                ${escapeHTML(
+                                    item.title || ""
+                                )}
+                            </strong>
+
+                            <small>
+                                ${escapeHTML(
+                                    item.type ||
+                                    item.category ||
+                                    ""
+                                )}
+                                -
+                                ${formatDate(
+                                    item.created_at
+                                )}
+                            </small>
+
+                        </div>
+
+
+                        <div class="management-actions">
+
+                            <button
+                                type="button"
+                                class="edit-content-button"
+                                data-id="${item.id}">
+                                Edit
+                            </button>
+
+                            <button
+                                type="button"
+                                class="delete-content-button"
+                                data-id="${item.id}">
+                                Delete
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                `;
+
+            })
+            .join("");
+}
+
+
+/* =========================================================
+   EDIT / DELETE CONTENT
+   ========================================================= */
+
+document.addEventListener(
+    "click",
+    async function (event) {
+
+        const editButton =
+            event.target.closest(
+                ".edit-content-button"
             );
 
-        if (!feature) return;
 
-        state.editingFeatureId =
-            feature.id;
-
-        $("featureTitle").value =
-            feature.title || "";
-
-        $("featureDescription").value =
-            feature.description || "";
-
-        $("featureIcon").value =
-            feature.icon || "";
-
-        $("featureOrder").value =
-            feature.display_order || 0;
-
-        show(
-            $("featureEditor")
-        );
-
-        return;
-    }
-
-
-    /* ---------- DELETE FEATURE ---------- */
-
-    if (deleteFeature) {
-
-        const id =
-            deleteFeature.dataset.id;
-
-        if (!confirm(
-            "Are you sure you want to delete this feature?"
-        )) {
-            return;
-        }
-
-        if (!(await ensureAdminSession())) {
-            alert(
-                "Admin session expired. Please log in again."
+        const deleteButton =
+            event.target.closest(
+                ".delete-content-button"
             );
 
-            return;
-        }
 
-        try {
+        if (editButton) {
 
-            const response =
-                await supabaseFetch(
-                    `/rest/v1/features?id=eq.${id}`,
-                    {
-                        method: "DELETE"
-                    },
-                    true
+            const id =
+                editButton.dataset.id;
+
+
+            const content =
+                state.contents.find(
+                    item =>
+                        String(item.id) ===
+                        String(id)
                 );
 
-            if (!response.ok) {
-                throw new Error(
-                    await response.text()
+
+            if (content) {
+
+                prepareContentEditor(
+                    content,
+                    content.type ||
+                    "news"
                 );
             }
 
-            await loadFeatures();
 
-            alert(
-                "Feature deleted successfully."
-            );
-
-        } catch (error) {
-
-            console.error(error);
-
-            alert(
-                "Could not delete feature: " +
-                error.message
-            );
+            return;
         }
 
-        return;
+
+        if (deleteButton) {
+
+            const id =
+                deleteButton.dataset.id;
+
+
+            if (
+                !confirm(
+                    "Are you sure you want to delete this content?"
+                )
+            ) {
+                return;
+            }
+
+
+            if (
+                !(await ensureAdminSession())
+            ) {
+
+                alert(
+                    "Admin session expired. Please login again."
+                );
+
+                return;
+            }
+
+
+            try {
+
+                const response =
+                    await supabaseRequest(
+                        `/rest/v1/contents?id=eq.${id}`,
+                        {
+                            method: "DELETE"
+                        },
+                        true
+                    );
+
+
+                if (!response.ok) {
+
+                    throw new Error(
+                        await response.text()
+                    );
+                }
+
+
+                await loadContents();
+
+
+                alert(
+                    "Content deleted successfully."
+                );
+
+
+            } catch (error) {
+
+                console.error(error);
+
+
+                alert(
+                    "Could not delete content:\n" +
+                    error.message
+                );
+            }
+        }
+    }
+);
+
+
+/* =========================================================
+   FILE UPLOAD
+   ========================================================= */
+
+async function uploadFile(file) {
+
+    if (!file) {
+
+        throw new Error(
+            "No file selected."
+        );
     }
 
-});
+
+    if (
+        !(await ensureAdminSession())
+    ) {
+
+        throw new Error(
+            "Admin session expired."
+        );
+    }
+
+
+    const safeName =
+        file.name
+            .replace(
+                /[^a-zA-Z0-9._-]/g,
+                "_"
+            );
+
+
+    const path =
+        `${Date.now()}-${safeName}`;
+
+
+    const response =
+        await supabaseRequest(
+            `/storage/v1/object/${STORAGE_BUCKET}/${path}`,
+            {
+                method: "POST",
+
+                headers: {
+                    "Content-Type":
+                        file.type ||
+                        "application/octet-stream",
+
+                    "x-upsert":
+                        "false"
+                },
+
+                body:
+                    file
+            },
+            true
+        );
+
+
+    if (!response.ok) {
+
+        throw new Error(
+            await response.text()
+        );
+    }
+
+
+    return (
+        `${SUPABASE_URL}/storage/v1/object/public/` +
+        `${STORAGE_BUCKET}/${path}`
+    );
+}
 
 
 /* =========================================================
@@ -2404,47 +3730,77 @@ document.addEventListener("click", async function (event) {
 
 async function loadAdminMessages() {
 
+    if (!isAdmin()) {
+        return;
+    }
+
+
     const dashboard =
         $("dashboardModal");
 
-    if (!dashboard) return;
 
-    if (!isAdmin()) return;
-
-    if (!(await ensureAdminSession())) {
+    if (!dashboard) {
         return;
     }
+
 
     let section =
         dashboard.querySelector(
             ".admin-messages-section"
         );
 
+
     if (!section) {
 
         section =
-            document.createElement("section");
+            document.createElement(
+                "section"
+            );
+
 
         section.className =
             "admin-messages-section";
 
+
         section.innerHTML = `
+
             <div class="management-section-header">
-                <h2>Visitor Messages</h2>
+
+                <h2>
+                    Visitor Messages
+                </h2>
+
             </div>
 
             <div id="adminMessagesList"></div>
+
         `;
+
 
         const management =
             dashboard.querySelector(
                 ".management-panel"
             );
 
+
         if (management) {
-            management.after(section);
+
+            management.after(
+                section
+            );
+
         } else {
-            dashboard.appendChild(section);
+
+            const box =
+                dashboard.querySelector(
+                    ".dashboard-box"
+                );
+
+            if (box) {
+                box.appendChild(
+                    section
+                );
+            }
         }
     }
 
@@ -2452,23 +3808,29 @@ async function loadAdminMessages() {
     const container =
         $("adminMessagesList");
 
-    if (!container) return;
+
+    if (!container) {
+        return;
+    }
 
 
     try {
 
         const response =
-            await supabaseFetch(
+            await supabaseRequest(
                 "/rest/v1/message?select=*&order=created_at.desc",
                 {},
                 true
             );
 
+
         if (!response.ok) {
+
             throw new Error(
                 await response.text()
             );
         }
+
 
         const messages =
             await response.json();
@@ -2476,212 +3838,309 @@ async function loadAdminMessages() {
 
         if (!messages.length) {
 
-            container.innerHTML =
-                "<p>No messages available.</p>";
+            container.innerHTML = `
+                <p class="empty-content">
+                    No messages available.
+                </p>
+            `;
 
             return;
         }
 
 
         container.innerHTML =
-            messages.map(message => {
+            messages
+                .map(message => {
 
-                return `
-                    <div class="admin-message-item">
+                    return `
 
-                        <div>
-                            <strong>
-                                ${escapeHTML(
-                                    message.name || ""
-                                )}
-                            </strong>
+                        <div class="admin-message-item">
 
-                            <small>
-                                ${escapeHTML(
-                                    message.email || ""
-                                )}
-                                -
-                                ${formatDate(
-                                    message.created_at
-                                )}
-                            </small>
+                            <div>
 
-                            <p>
-                                ${escapeHTML(
-                                    message.message || ""
-                                )}
-                            </p>
+                                <strong>
+                                    ${escapeHTML(
+                                        message.name ||
+                                        ""
+                                    )}
+                                </strong>
+
+                                <small>
+                                    ${escapeHTML(
+                                        message.email ||
+                                        ""
+                                    )}
+
+                                    -
+
+                                    ${formatDate(
+                                        message.created_at
+                                    )}
+                                </small>
+
+                                ${
+                                    message.subject
+                                    ? `
+                                        <strong>
+                                            ${escapeHTML(
+                                                message.subject
+                                            )}
+                                        </strong>
+                                    `
+                                    : ""
+                                }
+
+                                <p>
+                                    ${escapeHTML(
+                                        message.message ||
+                                        ""
+                                    )}
+                                </p>
+
+                            </div>
+
+
+                            <button
+                                type="button"
+                                class="delete-message-button"
+                                data-id="${message.id}">
+                                Delete
+                            </button>
+
                         </div>
 
-                        <button
-                            type="button"
-                            class="delete-message-button"
-                            data-id="${message.id}">
-                            Delete
-                        </button>
+                    `;
 
-                    </div>
-                `;
-
-            }).join("");
+                })
+                .join("");
 
 
     } catch (error) {
 
         console.error(
-            "Messages loading error:",
+            "Messages error:",
             error
         );
 
-        container.innerHTML =
-            "<p>Unable to load messages.</p>";
+
+        container.innerHTML = `
+            <p class="empty-content">
+                Unable to load messages.
+            </p>
+        `;
     }
 }
 
 
-document.addEventListener("click", async function (event) {
+/* =========================================================
+   DELETE MESSAGE
+   ========================================================= */
 
-    const button =
-        event.target.closest(
-            ".delete-message-button"
-        );
+document.addEventListener(
+    "click",
+    async function (event) {
 
-    if (!button) return;
-
-    const id =
-        button.dataset.id;
-
-    if (!confirm(
-        "Are you sure you want to delete this message?"
-    )) {
-        return;
-    }
-
-    if (!(await ensureAdminSession())) {
-        alert(
-            "Admin session expired. Please log in again."
-        );
-
-        return;
-    }
-
-    try {
-
-        const response =
-            await supabaseFetch(
-                `/rest/v1/message?id=eq.${id}`,
-                {
-                    method: "DELETE"
-                },
-                true
+        const button =
+            event.target.closest(
+                ".delete-message-button"
             );
 
-        if (!response.ok) {
-            throw new Error(
-                await response.text()
-            );
+
+        if (!button) {
+            return;
         }
 
-        await loadAdminMessages();
 
-        alert(
-            "Message deleted successfully."
-        );
+        const id =
+            button.dataset.id;
 
-    } catch (error) {
 
-        console.error(error);
+        if (
+            !confirm(
+                "Are you sure you want to delete this message?"
+            )
+        ) {
+            return;
+        }
 
-        alert(
-            "Could not delete message: " +
-            error.message
-        );
+
+        if (
+            !(await ensureAdminSession())
+        ) {
+
+            alert(
+                "Admin session expired. Please login again."
+            );
+
+            return;
+        }
+
+
+        try {
+
+            const response =
+                await supabaseRequest(
+                    `/rest/v1/message?id=eq.${id}`,
+                    {
+                        method: "DELETE"
+                    },
+                    true
+                );
+
+
+            if (!response.ok) {
+
+                throw new Error(
+                    await response.text()
+                );
+            }
+
+
+            await loadAdminMessages();
+
+
+            alert(
+                "Message deleted successfully."
+            );
+
+
+        } catch (error) {
+
+            console.error(error);
+
+
+            alert(
+                "Could not delete message:\n" +
+                error.message
+            );
+        }
     }
-});
+);
 
 
 /* =========================================================
    LOGOUT
    ========================================================= */
 
-document.addEventListener("click", function (event) {
+document.addEventListener(
+    "click",
+    function (event) {
 
-    const logout =
-        event.target.closest(
-            "#logoutButton"
+        const button =
+            event.target.closest(
+                "#logoutButton"
+            );
+
+
+        if (!button) {
+            return;
+        }
+
+
+        state.session =
+            null;
+
+        state.editingContentId =
+            null;
+
+        state.editingServiceId =
+            null;
+
+        state.editingFeatureId =
+            null;
+
+
+        localStorage.removeItem(
+            "danielTechSession"
         );
 
-    if (!logout) return;
 
-    event.preventDefault();
+        closeAllModals();
 
-    state.session = null;
-    state.editingId = null;
-    state.editingServiceId = null;
-    state.editingFeatureId = null;
 
-    localStorage.removeItem(
-        "danielTechSession"
-    );
-
-    closeAllModals();
-
-    alert(
-        "You have been logged out."
-    );
-});
+        alert(
+            "You have been logged out."
+        );
+    }
+);
 
 
 /* =========================================================
    BACK TO TOP
    ========================================================= */
 
-document.addEventListener("click", function (event) {
+window.addEventListener(
+    "scroll",
+    function () {
 
-    const button =
-        event.target.closest(
-            "#backToTop, .back-to-top"
-        );
-
-    if (!button) return;
-
-    window.scrollTo({
-        top: 0,
-        behavior: "smooth"
-    });
-});
+        const button =
+            $("backTop");
 
 
-window.addEventListener("scroll", function () {
+        if (!button) {
+            return;
+        }
 
-    const button =
-        $("backToTop");
 
-    if (!button) return;
+        if (
+            window.scrollY >
+            400
+        ) {
 
-    if (window.scrollY > 400) {
-        button.style.display = "block";
-    } else {
-        button.style.display = "none";
+            button.style.display =
+                "block";
+
+        } else {
+
+            button.style.display =
+                "none";
+        }
     }
-});
+);
+
+
+document.addEventListener(
+    "click",
+    function (event) {
+
+        const button =
+            event.target.closest(
+                "#backTop"
+            );
+
+
+        if (!button) {
+            return;
+        }
+
+
+        window.scrollTo({
+            top: 0,
+            behavior: "smooth"
+        });
+    }
+);
 
 
 /* =========================================================
-   PROTECT DASHBOARD
+   OVERLAY CLICK
    ========================================================= */
 
-function protectDashboard() {
+document.addEventListener(
+    "click",
+    function (event) {
 
-    const dashboard =
-        $("dashboardModal");
+        if (
+            event.target.id ===
+            "overlay"
+        ) {
 
-    if (!dashboard) return;
+            closeAllModals();
 
-    if (!isAdmin()) {
-        hide(dashboard);
+            closeSettings();
+        }
     }
-}
+);
 
 
 /* =========================================================
@@ -2692,25 +4151,36 @@ document.addEventListener(
     "DOMContentLoaded",
     async function () {
 
+        console.log(
+            "Daniel Tech starting..."
+        );
+
+
         restoreDarkMode();
 
-        setupAbout();
+
+        navigateTo(
+            "home"
+        );
+
 
         loadComments();
 
-        navigateTo("home");
 
         await restoreAdminSession();
 
-        protectDashboard();
 
         await loadContents();
 
+
         await loadServices();
+
 
         await loadFeatures();
 
+
         if (isAdmin()) {
+
             createManagementPanel();
 
             renderAdminContent();
@@ -2720,8 +4190,9 @@ document.addEventListener(
             renderAdminFeatures();
         }
 
+
         console.log(
-            "Daniel Tech initialized successfully."
+            "Daniel Tech loaded successfully."
         );
     }
 );
