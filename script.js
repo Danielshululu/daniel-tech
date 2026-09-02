@@ -8,6 +8,11 @@ const SUPABASE_URL =
 const SUPABASE_KEY =
     "sb_publishable_x4riqGTgHI3btFxG5RXLpA_7RNBneJA";
 
+// This MUST match the "User UID" of your admin account, shown in
+// Supabase → Authentication → Users. If admin login keeps saying
+// "not authorized", open the browser console (press F12) right
+// after attempting to log in — this file now prints the exact ID
+// that came back from Supabase, and what to paste here instead.
 const ADMIN_UID =
     "05fef3eb-16a3-4554-9d9b-de7d2b29144b";
 
@@ -515,6 +520,8 @@ async function loadContents() {
         );
 
         if (!response.ok) {
+            const errorText = await response.text();
+            console.error("loadContents failed:", response.status, errorText);
             throw new Error("Unable to load content.");
         }
 
@@ -781,6 +788,7 @@ if (contactForm) {
 
             if (!response.ok) {
                 const errorText = await response.text();
+                console.error("Contact insert failed:", response.status, errorText);
                 throw new Error(errorText);
             }
 
@@ -888,6 +896,7 @@ if (adminLoginForm) {
             const data = await response.json();
 
             if (!response.ok) {
+                console.error("Supabase auth error:", data);
                 throw new Error(
                     data.error_description ||
                     data.msg ||
@@ -907,7 +916,22 @@ if (adminLoginForm) {
             const allowedUid =
                 ADMIN_UID.trim().toLowerCase();
 
+            // DEBUG: if you keep seeing "not authorized", open the
+            // browser console (F12 → Console) and check this line.
+            console.log(
+                "Daniel Tech admin check — logged in user id:",
+                returnedUid,
+                "| expected ADMIN_UID:",
+                allowedUid
+            );
+
             if (returnedUid !== allowedUid) {
+
+                console.warn(
+                    "UID mismatch. If this IS your admin account, " +
+                    "update ADMIN_UID in script.js to:",
+                    returnedUid
+                );
 
                 if (message) {
                     message.textContent =
@@ -1120,6 +1144,7 @@ async function uploadFile(file) {
 
     if (!response.ok) {
         const error = await response.text();
+        console.error("File upload failed:", response.status, error);
         throw new Error(error || "File upload failed.");
     }
 
@@ -1235,6 +1260,8 @@ if (saveContentButton) {
             if (!response.ok) {
                 const errorText =
                     await response.text();
+
+                console.error("Save content failed:", response.status, errorText);
 
                 throw new Error(
                     errorText || "Unable to publish content."
