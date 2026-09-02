@@ -240,17 +240,26 @@ body.dark-mode .admin-message-item {
 }
 
 #newsContent {
-    color: var(--gray);
-
     display: inline-block;
     white-space: nowrap;
 
     padding-left: 100%;
 
-    animation: newsScroll 38s linear infinite;
+    font-size: 15px;
+    font-weight: 800;
+    color: var(--text);
+
+    animation: newsScroll 55s linear infinite;
 }
 
-.news-container:hover #newsContent {
+.news-ticker {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    position: relative;
+}
+
+.news-ticker:hover #newsContent {
     animation-play-state: paused;
 }
 
