@@ -1,5 +1,5 @@
 /* =========================================================
-   DANIEL TECH - MAIN SCRIPT
+   DANIEL TECH - MAIN JAVASCRIPT
    ========================================================= */
 
 const SUPABASE_URL =
@@ -8,27 +8,16 @@ const SUPABASE_URL =
 const SUPABASE_KEY =
     "sb_publishable_x4riqGTgHI3btFxG5RXLpA_7RNBneJA";
 
-/*
-   IMPORTANT:
-   This UID is kept unchanged.
-   Database RLS should use auth.uid() on the Supabase side.
-*/
 const ADMIN_UID =
     "05fef3eb-16a3-4554-9d9b-de7d2b29144b";
-
-/*
-   Admin email used by Supabase Auth.
-   Login is authenticated by Supabase Auth first,
-   then the returned user's email is checked.
-*/
-const ADMIN_EMAIL =
-    "danielshululu770@gmail.com";
 
 const STORAGE_BUCKET =
     "daniel-files";
 
-const SESSION_KEY =
-    "danielTechSession";
+
+/* =========================================================
+   STATE
+   ========================================================= */
 
 const state = {
     session: null,
@@ -41,10 +30,24 @@ const state = {
    HELPERS
    ========================================================= */
 
-const $ = (id) => document.getElementById(id);
+function $(id) {
+    return document.getElementById(id);
+}
+
+function show(element) {
+    if (!element) return;
+    element.classList.add("active");
+    element.style.display = "flex";
+}
+
+function hide(element) {
+    if (!element) return;
+    element.classList.remove("active");
+    element.style.display = "none";
+}
 
 function escapeHTML(value) {
-    return String(value ?? "")
+    return String(value || "")
         .replace(/&/g, "&amp;")
         .replace(/</g, "&lt;")
         .replace(/>/g, "&gt;")
@@ -52,48 +55,52 @@ function escapeHTML(value) {
         .replace(/'/g, "&#039;");
 }
 
-function show(element) {
-    if (element) {
-        element.classList.add("show");
-    }
-}
-
-function hide(element) {
-    if (element) {
-        element.classList.remove("show");
-    }
-}
-
 function formatDate(date) {
     if (!date) return "";
 
-    const parsed = new Date(date);
-
-    if (Number.isNaN(parsed.getTime())) {
+    try {
+        return new Date(date).toLocaleDateString("en-GB", {
+            day: "2-digit",
+            month: "short",
+            year: "numeric"
+        });
+    } catch {
         return "";
     }
-
-    return parsed.toLocaleDateString("en-TZ", {
-        year: "numeric",
-        month: "long",
-        day: "numeric"
-    });
 }
 
-function getAccessToken() {
-    return state.session?.access_token || null;
-}
-
-function authHeaders(extra = {}) {
-    const token = getAccessToken();
-
-    return {
+function getHeaders(token = null) {
+    const headers = {
         apikey: SUPABASE_KEY,
-        ...(token
-            ? { Authorization: `Bearer ${token}` }
-            : {}),
-        ...extra
+        "Content-Type": "application/json"
     };
+
+    if (token) {
+        headers.Authorization = `Bearer ${token}`;
+    }
+
+    return headers;
+}
+
+
+/* =========================================================
+   OVERLAY
+   ========================================================= */
+
+function openOverlay() {
+    const overlay = $("overlay");
+    if (overlay) {
+        overlay.classList.add("active");
+        overlay.style.display = "block";
+    }
+}
+
+function closeOverlay() {
+    const overlay = $("overlay");
+    if (overlay) {
+        overlay.classList.remove("active");
+        overlay.style.display = "none";
+    }
 }
 
 
@@ -101,42 +108,49 @@ function authHeaders(extra = {}) {
    NAVIGATION
    ========================================================= */
 
-document.querySelectorAll("[data-page]").forEach((element) => {
-
-    element.addEventListener("click", (event) => {
-
-        event.preventDefault();
-
-        const page =
-            element.getAttribute("data-page");
-
-        document
-            .querySelectorAll(".page")
-            .forEach((section) => {
-                section.classList.remove("active-page");
-                section.classList.remove("active");
-            });
-
-        const target =
-            document.getElementById(page);
-
-        if (target) {
-            target.classList.add("active-page");
-            target.classList.add("active");
-
-            window.scrollTo({
-                top: 0,
-                behavior: "smooth"
-            });
-        }
-
-        /*
-           Correct ID from index.html:
-           mainNav
-        */
-        $("mainNav")?.classList.remove("open");
+function navigateTo(pageName) {
+    document.querySelectorAll(".page").forEach(page => {
+        page.classList.remove("active-page");
     });
 
+    const target = $(pageName);
+
+    if (target) {
+        target.classList.add("active-page");
+    }
+
+    document.querySelectorAll("[data-page]").forEach(link => {
+        link.classList.remove("active");
+    });
+
+    document.querySelectorAll(`[data-page="${pageName}"]`).forEach(link => {
+        link.classList.add("active");
+    });
+
+    const mainNav = $("mainNav");
+
+    if (mainNav) {
+        mainNav.classList.remove("active");
+    }
+
+    window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+    });
+}
+
+document.addEventListener("click", function (event) {
+    const pageButton = event.target.closest("[data-page]");
+
+    if (!pageButton) return;
+
+    event.preventDefault();
+
+    const page = pageButton.getAttribute("data-page");
+
+    if (page) {
+        navigateTo(page);
+    }
 });
 
 
@@ -144,256 +158,297 @@ document.querySelectorAll("[data-page]").forEach((element) => {
    MOBILE MENU
    ========================================================= */
 
-$("menuButton")?.addEventListener("click", () => {
+const menuButton = $("menuButton");
 
-    $("mainNav")?.classList.toggle("open");
+if (menuButton) {
+    menuButton.addEventListener("click", function () {
+        const mainNav = $("mainNav");
 
-});
+        if (!mainNav) return;
+
+        mainNav.classList.toggle("active");
+    });
+}
 
 
 /* =========================================================
    DARK MODE
    ========================================================= */
 
-function applyDarkMode(enabled) {
-
-    document.body.classList.toggle(
-        "dark-mode",
-        enabled
-    );
+function setDarkMode(enabled) {
+    document.body.classList.toggle("dark-mode", enabled);
 
     localStorage.setItem(
         "danielTechDarkMode",
         enabled ? "true" : "false"
     );
 
-    if ($("settingsDarkMode")) {
-        $("settingsDarkMode").checked = enabled;
+    const settingsToggle = $("settingsDarkMode");
+
+    if (settingsToggle) {
+        settingsToggle.checked = enabled;
     }
 }
 
-const savedDarkMode =
-    localStorage.getItem("danielTechDarkMode") === "true";
+function restoreDarkMode() {
+    const saved = localStorage.getItem("danielTechDarkMode");
 
-applyDarkMode(savedDarkMode);
+    const enabled = saved === "true";
 
-$("darkModeButton")?.addEventListener(
-    "click",
-    () => {
+    setDarkMode(enabled);
+}
 
+const darkModeButton = $("darkModeButton");
+
+if (darkModeButton) {
+    darkModeButton.addEventListener("click", function () {
         const enabled =
-            !document.body.classList.contains(
-                "dark-mode"
-            );
+            !document.body.classList.contains("dark-mode");
 
-        applyDarkMode(enabled);
-    }
-);
-
-$("settingsDarkMode")?.addEventListener(
-    "change",
-    (event) => {
-
-        applyDarkMode(
-            event.target.checked
-        );
-    }
-);
+        setDarkMode(enabled);
+    });
+}
 
 
 /* =========================================================
    SETTINGS
    ========================================================= */
 
-$("settingsButton")?.addEventListener(
-    "click",
-    () => {
+function openSettings() {
+    const panel = $("settingsPanel");
 
-        show($("settingsPanel"));
-        show($("overlay"));
-    }
-);
+    if (!panel) return;
 
-$("closeSettings")?.addEventListener(
-    "click",
-    () => {
+    panel.classList.add("active");
+    panel.style.display = "block";
 
-        hide($("settingsPanel"));
-        hide($("overlay"));
-    }
-);
+    openOverlay();
+}
 
-$("overlay")?.addEventListener(
-    "click",
-    () => {
+function closeSettings() {
+    const panel = $("settingsPanel");
 
-        hide($("settingsPanel"));
-        hide($("aboutModal"));
-        hide($("serviceModal"));
-        hide($("featureModal"));
-        hide($("adminLoginModal"));
-        hide($("dashboardModal"));
-        hide($("overlay"));
-    }
-);
+    if (!panel) return;
+
+    panel.classList.remove("active");
+    panel.style.display = "none";
+
+    closeOverlay();
+}
+
+const settingsButton = $("settingsButton");
+
+if (settingsButton) {
+    settingsButton.addEventListener("click", function (event) {
+        event.preventDefault();
+        event.stopPropagation();
+
+        openSettings();
+    });
+}
+
+const closeSettingsButton = $("closeSettings");
+
+if (closeSettingsButton) {
+    closeSettingsButton.addEventListener("click", function () {
+        closeSettings();
+    });
+}
+
+const settingsDarkMode = $("settingsDarkMode");
+
+if (settingsDarkMode) {
+    settingsDarkMode.addEventListener("change", function () {
+        setDarkMode(this.checked);
+    });
+}
+
+const overlay = $("overlay");
+
+if (overlay) {
+    overlay.addEventListener("click", function () {
+        closeSettings();
+        closeAllModals();
+    });
+}
 
 
 /* =========================================================
    ABOUT
    ========================================================= */
 
-$("aboutButton")?.addEventListener(
-    "click",
-    () => {
+function openAbout() {
+    closeSettings();
 
-        hide($("settingsPanel"));
+    const modal = $("aboutModal");
 
-        show($("aboutModal"));
-        show($("overlay"));
-    }
-);
+    if (!modal) return;
+
+    show(modal);
+    openOverlay();
+}
+
+const aboutButton = $("aboutButton");
+
+if (aboutButton) {
+    aboutButton.addEventListener("click", function () {
+        openAbout();
+    });
+}
 
 
 /* =========================================================
-   SERVICES
+   SERVICE DATA
    ========================================================= */
 
 const serviceData = {
-
     web: {
         title: "Web Development",
         text:
-            "Professional websites and web applications designed for businesses, organizations, schools and personal projects."
+            "Modern, responsive and professional websites for businesses, organizations and personal projects."
     },
 
     graphics: {
         title: "Graphics Design",
         text:
-            "Creative graphics, posters, logos, social media designs and other digital designs."
+            "Professional digital designs for logos, posters, social media and other creative projects."
     },
 
     security: {
         title: "Cyber Security",
         text:
-            "Basic cybersecurity guidance, security awareness and protection of digital accounts and systems."
+            "Technology security guidance, digital safety awareness and basic cybersecurity solutions."
     },
 
     computer: {
         title: "Computer Services",
         text:
-            "Computer setup, software installation, troubleshooting, maintenance and technical support."
+            "Computer setup, software installation, troubleshooting and general ICT support."
     },
 
     software: {
         title: "Software Solutions",
         text:
-            "Useful software solutions and digital tools designed to simplify everyday work."
+            "Software solutions and digital tools designed to make everyday work easier."
     },
 
     ai: {
         title: "AI Solutions",
         text:
-            "Information and practical solutions using modern artificial intelligence tools."
+            "Practical use of artificial intelligence tools for learning, productivity and digital projects."
     }
-
 };
 
-document
-    .querySelectorAll(".service-view-button")
-    .forEach((button) => {
 
-        button.addEventListener(
-            "click",
-            (event) => {
+document.querySelectorAll(".service-view-button").forEach(button => {
+    button.addEventListener("click", function () {
+        const key = this.dataset.service;
+        const data = serviceData[key];
 
-                event.stopPropagation();
+        if (!data) return;
 
-                const serviceKey =
-                    button.dataset.service;
+        $("serviceModalTitle").textContent = data.title;
+        $("serviceModalText").textContent = data.text;
 
-                const service =
-                    serviceData[serviceKey];
-
-                if (!service) return;
-
-                $("serviceModalTitle").textContent =
-                    service.title;
-
-                $("serviceModalText").textContent =
-                    service.text;
-
-                show($("serviceModal"));
-                show($("overlay"));
-            }
-        );
-
+        show($("serviceModal"));
+        openOverlay();
     });
+});
 
 
 /* =========================================================
-   FEATURES
+   FEATURE DATA
    ========================================================= */
 
 const featureData = {
+    "computer-tips": {
+        title: "Computer Tips",
+        text:
+            "Learn useful computer tricks, maintenance tips and productivity techniques."
+    },
 
-    "computer-tips":
-        "Useful computer tips, shortcuts, maintenance advice and troubleshooting information.",
+    "phone-tips": {
+        title: "Phone Tips",
+        text:
+            "Discover useful smartphone settings, troubleshooting methods and practical tips."
+    },
 
-    "phone-tips":
-        "Practical smartphone tips, settings, security advice and useful tricks.",
+    "ai-tools": {
+        title: "AI Tools",
+        text:
+            "Learn about useful artificial intelligence tools and how they can improve productivity."
+    },
 
-    "ai-tools":
-        "Discover useful AI tools and learn how they can help with work, study and creativity.",
+    gaming: {
+        title: "Gaming",
+        text:
+            "Gaming tips, software information, performance improvements and guides."
+    },
 
-    gaming:
-        "Gaming information, tips, software and useful resources for gamers.",
+    programming: {
+        title: "Programming",
+        text:
+            "Programming concepts, coding tutorials and useful development resources."
+    },
 
-    programming:
-        "Programming tutorials, coding tips and resources for beginners and developers.",
-
-    "software-tips":
-        "Helpful software guides, installation information and practical computer solutions."
-
+    "software-tips": {
+        title: "Software Tips",
+        text:
+            "Guides for installing, configuring and using useful computer software."
+    }
 };
 
-document
-    .querySelectorAll(".feature-view-button")
-    .forEach((button) => {
 
-        button.addEventListener(
-            "click",
-            (event) => {
+document.querySelectorAll(".feature-view-button").forEach(button => {
+    button.addEventListener("click", function () {
+        const key = this.dataset.feature;
+        const data = featureData[key];
 
-                event.stopPropagation();
+        if (!data) return;
 
-                const featureKey =
-                    button.dataset.feature;
+        $("featureModalTitle").textContent = data.title;
+        $("featureModalText").textContent = data.text;
 
-                const text =
-                    featureData[featureKey];
-
-                if (!text) return;
-
-                const title =
-                    button
-                        .closest(".feature-card")
-                        ?.querySelector("h3")
-                        ?.textContent
-                        .trim() ||
-                    featureKey;
-
-                $("featureModalTitle").textContent =
-                    title;
-
-                $("featureModalText").textContent =
-                    text;
-
-                show($("featureModal"));
-                show($("overlay"));
-            }
-        );
-
+        show($("featureModal"));
+        openOverlay();
     });
+});
+
+
+/* =========================================================
+   MODALS
+   ========================================================= */
+
+function closeAllModals() {
+    document.querySelectorAll(".modal").forEach(modal => {
+        modal.classList.remove("active");
+        modal.style.display = "none";
+    });
+
+    closeOverlay();
+}
+
+document.querySelectorAll("[data-close-modal]").forEach(button => {
+    button.addEventListener("click", function () {
+        const modalId = this.dataset.closeModal;
+
+        const modal = $(modalId);
+
+        if (modal) {
+            hide(modal);
+        }
+
+        closeOverlay();
+    });
+});
+
+
+document.addEventListener("keydown", function (event) {
+    if (event.key === "Escape") {
+        closeSettings();
+        closeAllModals();
+    }
+});
 
 
 /* =========================================================
@@ -401,64 +456,44 @@ document
    ========================================================= */
 
 function createMedia(content) {
+    if (!content.file_url) return "";
 
-    if (!content?.file_url) {
-        return "";
-    }
-
-    const url =
-        escapeHTML(content.file_url);
-
-    const fileType =
-        content.file_type || "";
+    const url = escapeHTML(content.file_url);
+    const fileName = escapeHTML(content.file_name || "File");
+    const fileType = String(content.file_type || "").toLowerCase();
 
     if (fileType.startsWith("image/")) {
-
         return `
             <div class="content-media">
-                <img
-                    src="${url}"
-                    alt="${escapeHTML(content.title)}"
-                    loading="lazy">
-            </div>
-        `;
-    }
-
-    if (fileType.startsWith("audio/")) {
-
-        return `
-            <div class="content-media">
-                <audio controls>
-                    <source
-                        src="${url}"
-                        type="${escapeHTML(fileType)}">
-                </audio>
+                <img src="${url}" alt="${fileName}" loading="lazy">
             </div>
         `;
     }
 
     if (fileType.startsWith("video/")) {
-
         return `
             <div class="content-media">
-                <video controls>
-                    <source
-                        src="${url}"
-                        type="${escapeHTML(fileType)}">
+                <video controls preload="metadata">
+                    <source src="${url}" type="${fileType}">
                 </video>
+            </div>
+        `;
+    }
+
+    if (fileType.startsWith("audio/")) {
+        return `
+            <div class="content-media">
+                <audio controls preload="metadata">
+                    <source src="${url}" type="${fileType}">
+                </audio>
             </div>
         `;
     }
 
     return `
         <div class="content-file">
-            <a
-                href="${url}"
-                target="_blank"
-                rel="noopener noreferrer">
-                Open ${escapeHTML(
-                    content.file_name || "file"
-                )}
+            <a href="${url}" target="_blank" rel="noopener noreferrer">
+                Open ${fileName}
             </a>
         </div>
     `;
@@ -466,48 +501,37 @@ function createMedia(content) {
 
 
 /* =========================================================
-   LOAD CONTENTS
+   LOAD CONTENT
    ========================================================= */
 
 async function loadContents() {
-
     try {
-
-        const response =
-            await fetch(
-                `${SUPABASE_URL}/rest/v1/contents?select=*&order=created_at.desc`,
-                {
-                    method: "GET",
-                    headers: authHeaders()
-                }
-            );
+        const response = await fetch(
+            `${SUPABASE_URL}/rest/v1/contents?select=*&order=created_at.desc`,
+            {
+                method: "GET",
+                headers: getHeaders()
+            }
+        );
 
         if (!response.ok) {
-
-            const errorText =
-                await response.text();
-
-            throw new Error(
-                errorText ||
-                "Could not load contents"
-            );
+            throw new Error("Unable to load content.");
         }
 
-        state.contents =
-            await response.json();
+        const data = await response.json();
+
+        state.contents = Array.isArray(data) ? data : [];
 
         renderLatestContent();
         renderBlog();
-        renderAdminContents();
         updateNewsBar();
 
+        if (state.session) {
+            renderAdminContent();
+        }
+
     } catch (error) {
-
-        console.error(
-            "loadContents:",
-            error
-        );
-
+        console.error("Content loading error:", error);
     }
 }
 
@@ -517,56 +541,44 @@ async function loadContents() {
    ========================================================= */
 
 function renderLatestContent() {
-
-    const container =
-        $("latestContent");
+    const container = $("latestContent");
 
     if (!container) return;
 
-    const latest =
-        state.contents.slice(0, 3);
-
-    if (!latest.length) {
-
+    if (!state.contents.length) {
         container.innerHTML = `
             <div class="empty-content">
                 No content has been published yet.
             </div>
         `;
-
         return;
     }
 
-    container.innerHTML =
-        latest.map((item) => {
+    container.innerHTML = state.contents
+        .slice(0, 6)
+        .map(content => `
+            <article class="content-card">
+                <div class="content-card-body">
 
-            return `
-                <article class="content-card">
-
-                    <span class="content-category">
-                        ${escapeHTML(item.category)}
-                    </span>
+                    <small>
+                        ${escapeHTML(content.category || "Content")}
+                        ${content.created_at ? " • " + formatDate(content.created_at) : ""}
+                    </small>
 
                     <h3>
-                        ${escapeHTML(item.title)}
+                        ${escapeHTML(content.title)}
                     </h3>
 
                     <p>
-                        ${escapeHTML(
-                            item.content_text || ""
-                        )}
+                        ${escapeHTML(content.content_text || "")}
                     </p>
 
-                    ${createMedia(item)}
+                    ${createMedia(content)}
 
-                    <small>
-                        ${formatDate(item.created_at)}
-                    </small>
-
-                </article>
-            `;
-
-        }).join("");
+                </div>
+            </article>
+        `)
+        .join("");
 }
 
 
@@ -575,68 +587,52 @@ function renderLatestContent() {
    ========================================================= */
 
 function renderBlog() {
-
-    const container =
-        $("blogGrid");
+    const container = $("blogGrid");
 
     if (!container) return;
 
-    const blogItems =
-        state.contents.filter((item) => {
+    const blogs = state.contents.filter(item =>
+        ["blog", "news", "tip"].includes(
+            String(item.category || "").toLowerCase()
+        )
+    );
 
-            const category =
-                String(
-                    item.category || ""
-                ).toLowerCase();
-
-            return (
-                category === "news" ||
-                category === "tip" ||
-                category === "blog"
-            );
-        });
-
-    if (!blogItems.length) {
-
+    if (!blogs.length) {
         container.innerHTML = `
             <div class="empty-content">
-                No blog or news content available yet.
+                No blog content has been published yet.
             </div>
         `;
-
         return;
     }
 
-    container.innerHTML =
-        blogItems.map((item) => {
+    container.innerHTML = blogs
+        .map(content => `
+            <article class="blog-card">
 
-            return `
-                <article class="blog-card">
+                <div class="blog-card-content">
 
-                    <span class="content-category">
-                        ${escapeHTML(item.category)}
-                    </span>
+                    <small>
+                        ${escapeHTML(content.category || "Blog")}
+                        •
+                        ${formatDate(content.created_at)}
+                    </small>
 
                     <h3>
-                        ${escapeHTML(item.title)}
+                        ${escapeHTML(content.title)}
                     </h3>
 
                     <p>
-                        ${escapeHTML(
-                            item.content_text || ""
-                        )}
+                        ${escapeHTML(content.content_text || "")}
                     </p>
 
-                    ${createMedia(item)}
+                    ${createMedia(content)}
 
-                    <small>
-                        ${formatDate(item.created_at)}
-                    </small>
+                </div>
 
-                </article>
-            `;
-
-        }).join("");
+            </article>
+        `)
+        .join("");
 }
 
 
@@ -645,134 +641,82 @@ function renderBlog() {
    ========================================================= */
 
 function updateNewsBar() {
-
-    const news =
-        $("newsContent");
+    const news = $("newsContent");
 
     if (!news) return;
 
-    const latest =
-        state.contents[0];
+    const latest = state.contents[0];
 
     if (!latest) {
-
-        news.textContent =
-            "Welcome to Daniel Tech.";
-
+        news.textContent = "Welcome to Daniel Tech.";
         return;
     }
 
     news.textContent =
-        `${latest.category}: ${latest.title}`;
+        `${latest.title} — ${latest.content_text || "New content available on Daniel Tech."}`;
 }
 
 
 /* =========================================================
-   COMMENTS
+   LOCAL COMMENTS
    ========================================================= */
 
 function loadComments() {
+    const list = $("commentsList");
 
-    let comments = [];
+    if (!list) return;
 
-    try {
-
-        comments =
-            JSON.parse(
-                localStorage.getItem(
-                    "danielTechComments"
-                ) || "[]"
-            );
-
-        if (!Array.isArray(comments)) {
-            comments = [];
-        }
-
-    } catch {
-
-        comments = [];
-    }
-
-    const container =
-        $("commentsList");
-
-    if (!container) return;
+    const comments =
+        JSON.parse(localStorage.getItem("danielTechComments") || "[]");
 
     if (!comments.length) {
-
-        container.innerHTML = `
+        list.innerHTML = `
             <p class="empty-content">
                 No comments yet.
             </p>
         `;
-
         return;
     }
 
-    container.innerHTML =
-        comments.map((comment) => {
+    list.innerHTML = comments
+        .map(comment => `
+            <div class="comment-item">
 
-            return `
-                <div class="comment-item">
+                <strong>
+                    ${escapeHTML(comment.name)}
+                </strong>
 
-                    <strong>
-                        ${escapeHTML(comment.name)}
-                    </strong>
+                <p>
+                    ${escapeHTML(comment.text)}
+                </p>
 
-                    <p>
-                        ${escapeHTML(comment.text)}
-                    </p>
+                <small>
+                    ${escapeHTML(comment.date)}
+                </small>
 
-                    <small>
-                        ${escapeHTML(comment.date)}
-                    </small>
-
-                </div>
-            `;
-
-        }).join("");
+            </div>
+        `)
+        .join("");
 }
 
-$("commentForm")?.addEventListener(
-    "submit",
-    (event) => {
+const commentForm = $("commentForm");
 
+if (commentForm) {
+    commentForm.addEventListener("submit", function (event) {
         event.preventDefault();
 
-        const name =
-            $("commentName")?.value.trim();
+        const name = $("commentName").value.trim();
+        const text = $("commentText").value.trim();
 
-        const text =
-            $("commentText")?.value.trim();
+        if (!name || !text) return;
 
-        if (!name || !text) {
-            return;
-        }
-
-        let comments = [];
-
-        try {
-
-            comments =
-                JSON.parse(
-                    localStorage.getItem(
-                        "danielTechComments"
-                    ) || "[]"
-                );
-
-            if (!Array.isArray(comments)) {
-                comments = [];
-            }
-
-        } catch {
-
-            comments = [];
-        }
+        const comments =
+            JSON.parse(localStorage.getItem("danielTechComments") || "[]");
 
         comments.unshift({
             name,
             text,
-            date: new Date().toLocaleString()
+            date: new Date().toLocaleDateString("en-GB")
         });
 
         localStorage.setItem(
@@ -780,99 +724,67 @@ $("commentForm")?.addEventListener(
             JSON.stringify(comments)
         );
 
-        event.target.reset();
+        this.reset();
 
         loadComments();
-    }
-);
-
-loadComments();
+    });
+}
 
 
 /* =========================================================
    CONTACT FORM
    ========================================================= */
 
-$("contactForm")?.addEventListener(
-    "submit",
-    async (event) => {
+const contactForm = $("contactForm");
 
+if (contactForm) {
+    contactForm.addEventListener("submit", async function (event) {
         event.preventDefault();
 
-        const status =
-            $("contactStatus");
+        const status = $("contactStatus");
 
-        const name =
-            $("contactName")?.value.trim();
+        const name = $("contactName").value.trim();
+        const email = $("contactEmail").value.trim();
+        const subject = $("contactSubject").value.trim();
+        const message = $("contactMessage").value.trim();
 
-        const email =
-            $("contactEmail")?.value.trim();
-
-        const subject =
-            $("contactSubject")?.value.trim();
-
-        const message =
-            $("contactMessage")?.value.trim();
-
-        if (
-            !name ||
-            !email ||
-            !subject ||
-            !message
-        ) {
-
+        if (!name || !email || !subject || !message) {
             if (status) {
                 status.textContent =
-                    "Please fill in all fields.";
+                    "Please complete all fields.";
             }
 
             return;
         }
 
         if (status) {
-            status.textContent =
-                "Sending message...";
+            status.textContent = "Sending message...";
         }
 
         try {
-
-            const response =
-                await fetch(
-                    `${SUPABASE_URL}/rest/v1/message`,
-                    {
-                        method: "POST",
-
-                        headers: {
-                            apikey: SUPABASE_KEY,
-                            Authorization:
-                                `Bearer ${SUPABASE_KEY}`,
-                            "Content-Type":
-                                "application/json",
-                            Prefer:
-                                "return=minimal"
-                        },
-
-                        body: JSON.stringify({
-                            name,
-                            email,
-                            subject,
-                            message
-                        })
-                    }
-                );
+            const response = await fetch(
+                `${SUPABASE_URL}/rest/v1/message`,
+                {
+                    method: "POST",
+                    headers: {
+                        ...getHeaders(),
+                        Prefer: "return=minimal"
+                    },
+                    body: JSON.stringify({
+                        name,
+                        email,
+                        subject,
+                        message
+                    })
+                }
+            );
 
             if (!response.ok) {
-
-                const errorText =
-                    await response.text();
-
-                throw new Error(
-                    errorText ||
-                    "Message could not be sent"
-                );
+                const errorText = await response.text();
+                throw new Error(errorText);
             }
 
-            event.target.reset();
+            this.reset();
 
             if (status) {
                 status.textContent =
@@ -880,149 +792,124 @@ $("contactForm")?.addEventListener(
             }
 
         } catch (error) {
-
-            console.error(
-                "contactForm:",
-                error
-            );
+            console.error("Contact error:", error);
 
             if (status) {
                 status.textContent =
-                    "There was a problem sending your message.";
+                    "Unable to send message. Please try again.";
             }
         }
-    }
-);
+    });
+}
 
 
 /* =========================================================
-   ADMIN LOGIN OPEN
+   ADMIN AUTH
    ========================================================= */
 
-$("adminButton")?.addEventListener(
-    "click",
-    () => {
-
-        hide($("settingsPanel"));
-
-        show($("adminLoginModal"));
-        show($("overlay"));
+function isAdmin() {
+    if (!state.session || !state.session.user) {
+        return false;
     }
-);
+
+    const userId =
+        String(state.session.user.id || "")
+            .trim()
+            .toLowerCase();
+
+    return userId === ADMIN_UID.toLowerCase();
+}
 
 
 /* =========================================================
    ADMIN LOGIN
    ========================================================= */
 
-$("adminLoginForm")?.addEventListener(
-    "submit",
-    async (event) => {
+const adminButton = $("adminButton");
 
+if (adminButton) {
+    adminButton.addEventListener("click", function () {
+        closeSettings();
+
+        if (isAdmin()) {
+            openDashboard();
+            return;
+        }
+
+        show($("adminLoginModal"));
+        openOverlay();
+    });
+}
+
+
+const adminLoginForm = $("adminLoginForm");
+
+if (adminLoginForm) {
+    adminLoginForm.addEventListener("submit", async function (event) {
         event.preventDefault();
 
+        const message = $("loginMessage");
+
         const username =
-            $("adminUsername")?.value.trim();
+            $("adminUsername").value.trim();
 
         const password =
-            $("adminPassword")?.value;
-
-        const message =
-            $("loginMessage");
+            $("adminPassword").value;
 
         if (!username || !password) {
-
             if (message) {
                 message.textContent =
-                    "Please enter your admin email and password.";
+                    "Please enter your email and password.";
             }
 
             return;
         }
 
         if (message) {
-            message.textContent =
-                "Signing in...";
+            message.textContent = "Signing in...";
         }
 
         try {
+            const response = await fetch(
+                `${SUPABASE_URL}/auth/v1/token?grant_type=password`,
+                {
+                    method: "POST",
+                    headers: {
+                        apikey: SUPABASE_KEY,
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        email: username,
+                        password: password
+                    })
+                }
+            );
 
-            /*
-               Authenticate directly with Supabase Auth.
-            */
-
-            const response =
-                await fetch(
-                    `${SUPABASE_URL}/auth/v1/token?grant_type=password`,
-                    {
-                        method: "POST",
-
-                        headers: {
-                            apikey: SUPABASE_KEY,
-                            "Content-Type":
-                                "application/json"
-                        },
-
-                        body: JSON.stringify({
-                            email: username,
-                            password
-                        })
-                    }
-                );
-
-            const data =
-                await response.json();
+            const data = await response.json();
 
             if (!response.ok) {
-
                 throw new Error(
                     data.error_description ||
                     data.msg ||
-                    "Invalid email or password."
+                    "Login failed."
                 );
             }
 
-            if (!data.user) {
-
-                throw new Error(
-                    "Supabase did not return a user."
-                );
+            if (!data.user || !data.access_token) {
+                throw new Error("Invalid login response.");
             }
 
-            /*
-               IMPORTANT:
-               We no longer reject the login because
-               of a hardcoded UID comparison.
+            const returnedUid =
+                String(data.user.id || "")
+                    .trim()
+                    .toLowerCase();
 
-               Supabase Auth verifies the credentials.
-               We then verify that the authenticated
-               user's email is the configured Admin email.
-            */
+            const allowedUid =
+                ADMIN_UID.trim().toLowerCase();
 
-            const authenticatedEmail =
-                String(
-                    data.user.email || ""
-                ).trim()
-                .toLowerCase();
-
-            if (
-                authenticatedEmail !==
-                ADMIN_EMAIL.toLowerCase()
-            ) {
-
-                /*
-                   Immediately remove the unauthorized
-                   session from the browser.
-                */
-
-                state.session = null;
-
-                localStorage.removeItem(
-                    SESSION_KEY
-                );
+            if (returnedUid !== allowedUid) {
 
                 if (message) {
-
                     message.textContent =
                         "This account is not authorized as Daniel Tech Admin.";
                 }
@@ -1030,43 +917,41 @@ $("adminLoginForm")?.addEventListener(
                 return;
             }
 
-            /*
-               Keep the complete Supabase Auth session.
-            */
-
-            state.session = data;
+            state.session = {
+                access_token: data.access_token,
+                refresh_token: data.refresh_token,
+                user: data.user
+            };
 
             localStorage.setItem(
-                SESSION_KEY,
-                JSON.stringify(data)
+                "danielTechSession",
+                JSON.stringify(state.session)
             );
 
             if (message) {
-                message.textContent = "";
+                message.textContent =
+                    "Login successful.";
             }
+
+            adminLoginForm.reset();
 
             hide($("adminLoginModal"));
-            show($("dashboardModal"));
-            hide($("overlay"));
+            closeOverlay();
 
-            setupAdminDashboard();
+            openDashboard();
+
+            await loadAdminMessages();
 
         } catch (error) {
-
-            console.error(
-                "adminLogin:",
-                error
-            );
+            console.error("Admin login error:", error);
 
             if (message) {
-
                 message.textContent =
-                    error.message ||
-                    "Login failed.";
+                    error.message || "Login failed.";
             }
         }
-    }
-);
+    });
+}
 
 
 /* =========================================================
@@ -1074,52 +959,33 @@ $("adminLoginForm")?.addEventListener(
    ========================================================= */
 
 function restoreAdminSession() {
-
     const saved =
-        localStorage.getItem(
-            SESSION_KEY
-        );
+        localStorage.getItem("danielTechSession");
 
     if (!saved) {
+        state.session = null;
         return;
     }
 
     try {
-
-        const session =
-            JSON.parse(saved);
-
-        const email =
-            String(
-                session?.user?.email || ""
-            ).trim()
-            .toLowerCase();
+        const session = JSON.parse(saved);
 
         if (
-            session?.access_token &&
-            email === ADMIN_EMAIL.toLowerCase()
+            session &&
+            session.access_token &&
+            session.user &&
+            String(session.user.id).toLowerCase() ===
+            ADMIN_UID.toLowerCase()
         ) {
-
-            state.session =
-                session;
-
+            state.session = session;
         } else {
-
-            localStorage.removeItem(
-                SESSION_KEY
-            );
+            state.session = null;
+            localStorage.removeItem("danielTechSession");
         }
 
-    } catch (error) {
-
-        console.error(
-            "restoreAdminSession:",
-            error
-        );
-
-        localStorage.removeItem(
-            SESSION_KEY
-        );
+    } catch {
+        state.session = null;
+        localStorage.removeItem("danielTechSession");
     }
 }
 
@@ -1128,14 +994,27 @@ function restoreAdminSession() {
    ADMIN DASHBOARD
    ========================================================= */
 
-function setupAdminDashboard() {
+function openDashboard() {
 
-    if (!state.session) {
+    if (!isAdmin()) {
+        show($("adminLoginModal"));
+        openOverlay();
         return;
     }
 
+    hide($("adminLoginModal"));
+
+    show($("dashboardModal"));
+    openOverlay();
+
+    renderAdminContent();
     loadAdminMessages();
-    renderAdminContents();
+}
+
+
+function closeDashboard() {
+    hide($("dashboardModal"));
+    closeOverlay();
 }
 
 
@@ -1143,308 +1022,250 @@ function setupAdminDashboard() {
    ADMIN CONTENT BUTTONS
    ========================================================= */
 
-$("addNewsButton")?.addEventListener(
-    "click",
-    () => {
-        openEditor("news");
-    }
-);
-
-$("addTipButton")?.addEventListener(
-    "click",
-    () => {
-        openEditor("tip");
-    }
-);
-
-$("addVideoButton")?.addEventListener(
-    "click",
-    () => {
-        openEditor("video");
-    }
-);
-
-$("addPdfButton")?.addEventListener(
-    "click",
-    () => {
-        openEditor("pdf");
-    }
-);
-
-
-function openEditor(category) {
+function prepareEditor(category) {
+    if (!isAdmin()) return;
 
     state.editingId = null;
 
-    if ($("contentTitle")) {
-        $("contentTitle").value = "";
-    }
+    $("contentTitle").value = "";
+    $("contentText").value = "";
+    $("contentCategory").value = category;
+    $("contentFile").value = "";
 
-    if ($("contentText")) {
-        $("contentText").value = "";
-    }
+    $("contentStatus").textContent =
+        `Ready to add ${category}.`;
 
-    if ($("contentCategory")) {
-        $("contentCategory").value =
-            category;
-    }
-
-    if ($("contentFile")) {
-        $("contentFile").value = "";
-    }
-
-    if ($("contentStatus")) {
-
-        $("contentStatus").textContent =
-            `Ready to add ${category}.`;
-    }
-
-    show($("adminEditor"));
+    $("contentTitle").focus();
 }
 
-$("saveContentButton")?.addEventListener(
-    "click",
-    saveContent
-);
+
+const addNewsButton = $("addNewsButton");
+
+if (addNewsButton) {
+    addNewsButton.addEventListener("click", function () {
+        prepareEditor("news");
+    });
+}
+
+
+const addTipButton = $("addTipButton");
+
+if (addTipButton) {
+    addTipButton.addEventListener("click", function () {
+        prepareEditor("tip");
+    });
+}
+
+
+const addVideoButton = $("addVideoButton");
+
+if (addVideoButton) {
+    addVideoButton.addEventListener("click", function () {
+        prepareEditor("video");
+    });
+}
+
+
+const addPdfButton = $("addPdfButton");
+
+if (addPdfButton) {
+    addPdfButton.addEventListener("click", function () {
+        prepareEditor("pdf");
+    });
+}
+
+
+/* =========================================================
+   FILE UPLOAD
+   ========================================================= */
+
+async function uploadFile(file) {
+
+    if (!file) {
+        return null;
+    }
+
+    if (!isAdmin()) {
+        throw new Error("You are not authorized.");
+    }
+
+    const extension =
+        file.name.includes(".")
+            ? file.name.split(".").pop()
+            : "file";
+
+    const safeName =
+        file.name
+            .replace(/[^a-zA-Z0-9._-]/g, "_");
+
+    const path =
+        `${Date.now()}-${Math.random()
+            .toString(36)
+            .substring(2, 8)}-${safeName}`;
+
+    const response = await fetch(
+        `${SUPABASE_URL}/storage/v1/object/${STORAGE_BUCKET}/${path}`,
+        {
+            method: "POST",
+            headers: {
+                Authorization:
+                    `Bearer ${state.session.access_token}`,
+                apikey: SUPABASE_KEY,
+                "Content-Type":
+                    file.type || "application/octet-stream"
+            },
+            body: file
+        }
+    );
+
+    if (!response.ok) {
+        const error = await response.text();
+        throw new Error(error || "File upload failed.");
+    }
+
+    const publicUrl =
+        `${SUPABASE_URL}/storage/v1/object/public/${STORAGE_BUCKET}/${path}`;
+
+    return {
+        url: publicUrl,
+        name: file.name,
+        type: file.type || "application/octet-stream",
+        path
+    };
+}
 
 
 /* =========================================================
    SAVE CONTENT
    ========================================================= */
 
-async function saveContent() {
+const saveContentButton = $("saveContentButton");
 
-    if (!getAccessToken()) {
+if (saveContentButton) {
 
-        if ($("contentStatus")) {
+    saveContentButton.addEventListener("click", async function () {
+
+        if (!isAdmin()) {
             $("contentStatus").textContent =
-                "Your admin session has expired. Please login again.";
+                "Admin authorization required.";
+            return;
         }
 
-        return;
-    }
+        const title =
+            $("contentTitle").value.trim();
 
-    const title =
-        $("contentTitle")?.value.trim();
+        const category =
+            $("contentCategory").value;
 
-    const category =
-        $("contentCategory")?.value.trim();
+        const text =
+            $("contentText").value.trim();
 
-    const contentText =
-        $("contentText")?.value.trim();
+        const file =
+            $("contentFile").files[0];
 
-    const file =
-        $("contentFile")?.files?.[0];
+        const status =
+            $("contentStatus");
 
-    const status =
-        $("contentStatus");
-
-    if (!title || !category) {
-
-        if (status) {
+        if (!title) {
             status.textContent =
-                "Please enter a title and category.";
+                "Please enter a title.";
+            return;
         }
 
-        return;
-    }
-
-    if (status) {
         status.textContent =
-            "Saving content...";
-    }
+            "Publishing content...";
 
-    let fileUrl = null;
-    let fileName = null;
-    let fileType = null;
-    let uploadedFilePath = null;
+        this.disabled = true;
 
-    try {
+        try {
 
-        /* -------------------------
-           FILE UPLOAD
-        ------------------------- */
+            let fileInfo = null;
 
-        if (file) {
+            if (file) {
+                status.textContent =
+                    "Uploading file...";
 
-            const safeName =
-                file.name.replace(
-                    /[^a-zA-Z0-9._-]/g,
-                    "_"
+                fileInfo = await uploadFile(file);
+            }
+
+            const payload = {
+                title,
+                category,
+                content_text: text || null,
+                file_url: fileInfo ? fileInfo.url : null,
+                file_name: fileInfo ? fileInfo.name : null,
+                file_type: fileInfo ? fileInfo.type : null
+            };
+
+            let response;
+
+            if (state.editingId) {
+
+                response = await fetch(
+                    `${SUPABASE_URL}/rest/v1/contents?id=eq.${state.editingId}`,
+                    {
+                        method: "PATCH",
+                        headers: {
+                            ...getHeaders(
+                                state.session.access_token
+                            ),
+                            Prefer: "return=representation"
+                        },
+                        body: JSON.stringify(payload)
+                    }
                 );
 
-            uploadedFilePath =
-                `${Date.now()}-${safeName}`;
+            } else {
 
-            const uploadResponse =
-                await fetch(
-                    `${SUPABASE_URL}/storage/v1/object/${STORAGE_BUCKET}/${encodeURIComponent(uploadedFilePath)}`,
+                response = await fetch(
+                    `${SUPABASE_URL}/rest/v1/contents`,
                     {
                         method: "POST",
-
                         headers: {
-                            apikey:
-                                SUPABASE_KEY,
-
-                            Authorization:
-                                `Bearer ${getAccessToken()}`,
-
-                            "Content-Type":
-                                file.type ||
-                                "application/octet-stream"
+                            ...getHeaders(
+                                state.session.access_token
+                            ),
+                            Prefer: "return=representation"
                         },
-
-                        body: file
+                        body: JSON.stringify(payload)
                     }
                 );
+            }
 
-            if (!uploadResponse.ok) {
-
-                const uploadError =
-                    await uploadResponse.text();
+            if (!response.ok) {
+                const errorText =
+                    await response.text();
 
                 throw new Error(
-                    uploadError ||
-                    "File upload failed."
+                    errorText || "Unable to publish content."
                 );
             }
 
-            fileUrl =
-                `${SUPABASE_URL}/storage/v1/object/public/${STORAGE_BUCKET}/${encodeURIComponent(uploadedFilePath)}`;
-
-            fileName =
-                file.name;
-
-            fileType =
-                file.type;
-        }
-
-
-        /* -------------------------
-           INSERT CONTENT
-        ------------------------- */
-
-        const response =
-            await fetch(
-                `${SUPABASE_URL}/rest/v1/contents`,
-                {
-                    method: "POST",
-
-                    headers: {
-                        apikey:
-                            SUPABASE_KEY,
-
-                        Authorization:
-                            `Bearer ${getAccessToken()}`,
-
-                        "Content-Type":
-                            "application/json",
-
-                        Prefer:
-                            "return=representation"
-                    },
-
-                    body: JSON.stringify({
-                        title,
-                        category,
-                        content_text:
-                            contentText || null,
-                        file_url:
-                            fileUrl,
-                        file_name:
-                            fileName,
-                        file_type:
-                            fileType
-                    })
-                }
-            );
-
-        if (!response.ok) {
-
-            const errorText =
-                await response.text();
-
-            throw new Error(
-                errorText ||
-                "Content could not be published."
-            );
-        }
-
-        if (status) {
             status.textContent =
                 "Content published successfully.";
-        }
 
-        if ($("contentTitle")) {
+            state.editingId = null;
+
             $("contentTitle").value = "";
-        }
-
-        if ($("contentText")) {
             $("contentText").value = "";
-        }
-
-        if ($("contentFile")) {
             $("contentFile").value = "";
-        }
 
-        await loadContents();
+            await loadContents();
 
-    } catch (error) {
+            renderAdminContent();
 
-        console.error(
-            "saveContent:",
-            error
-        );
+        } catch (error) {
 
-        /*
-           If database insert failed after file upload,
-           try to remove the uploaded file.
-        */
-
-        if (uploadedFilePath) {
-
-            try {
-
-                await fetch(
-                    `${SUPABASE_URL}/storage/v1/object/${STORAGE_BUCKET}`,
-                    {
-                        method: "DELETE",
-
-                        headers: {
-                            apikey:
-                                SUPABASE_KEY,
-
-                            Authorization:
-                                `Bearer ${getAccessToken()}`,
-
-                            "Content-Type":
-                                "application/json"
-                        },
-
-                        body: JSON.stringify({
-                            prefixes: [
-                                uploadedFilePath
-                            ]
-                        })
-                    }
-                );
-
-            } catch (cleanupError) {
-
-                console.error(
-                    "File cleanup:",
-                    cleanupError
-                );
-            }
-        }
-
-        if (status) {
+            console.error("Save content error:", error);
 
             status.textContent =
-                error.message ||
-                "There was a problem saving the content.";
+                error.message || "Unable to publish content.";
+
+        } finally {
+
+            this.disabled = false;
         }
-    }
+    });
 }
 
 
@@ -1452,221 +1273,137 @@ async function saveContent() {
    ADMIN CONTENT LIST
    ========================================================= */
 
-function renderAdminContents() {
+function renderAdminContent() {
 
     const container =
         $("adminContentList");
 
     if (!container) return;
 
-    if (!state.session) {
+    if (!isAdmin()) {
+        container.innerHTML = "";
+        return;
+    }
+
+    if (!state.contents.length) {
 
         container.innerHTML = `
             <p class="empty-content">
-                Login as administrator to manage content.
+                No content available.
             </p>
         `;
 
         return;
     }
 
-    if (!state.contents.length) {
-
-        container.innerHTML =
-            "<p>No published content.</p>";
-
-        return;
-    }
-
     container.innerHTML =
-        state.contents.map((item) => {
-
-            return `
+        state.contents
+            .map(content => `
                 <div class="admin-content-item">
 
                     <div>
-
                         <strong>
-                            ${escapeHTML(item.title)}
+                            ${escapeHTML(content.title)}
                         </strong>
 
-                        <span>
-                            ${escapeHTML(item.category)}
-                        </span>
-
                         <small>
-                            ${formatDate(item.created_at)}
+                            ${escapeHTML(content.category)}
+                            •
+                            ${formatDate(content.created_at)}
                         </small>
-
                     </div>
 
                     <button
                         type="button"
                         class="delete-content-button"
-                        data-id="${escapeHTML(item.id)}">
+                        data-content-id="${content.id}">
                         Delete
                     </button>
 
                 </div>
-            `;
-
-        }).join("");
-
-    container
-        .querySelectorAll(
-            ".delete-content-button"
-        )
-        .forEach((button) => {
-
-            button.addEventListener(
-                "click",
-                () => {
-
-                    deleteContent(
-                        button.dataset.id
-                    );
-                }
-            );
-
-        });
+            `)
+            .join("");
 }
 
 
-/* =========================================================
-   DELETE CONTENT
-   ========================================================= */
+document.addEventListener("click", async function (event) {
 
-async function deleteContent(id) {
+    const deleteButton =
+        event.target.closest(".delete-content-button");
 
-    if (!getAccessToken()) {
-        return;
-    }
+    if (!deleteButton) return;
 
-    const item =
-        state.contents.find(
-            (content) =>
-                String(content.id) ===
-                String(id)
-        );
+    if (!isAdmin()) return;
+
+    const id =
+        deleteButton.dataset.contentId;
+
+    if (!id) return;
 
     const confirmed =
         window.confirm(
             "Delete this content?"
         );
 
-    if (!confirmed) {
-        return;
-    }
+    if (!confirmed) return;
+
+    deleteButton.disabled = true;
 
     try {
 
         const response =
             await fetch(
-                `${SUPABASE_URL}/rest/v1/contents?id=eq.${encodeURIComponent(id)}`,
+                `${SUPABASE_URL}/rest/v1/contents?id=eq.${id}`,
                 {
                     method: "DELETE",
-
-                    headers: authHeaders()
+                    headers: {
+                        ...getHeaders(
+                            state.session.access_token
+                        ),
+                        Prefer: "return=minimal"
+                    }
                 }
             );
 
         if (!response.ok) {
-
-            const errorText =
-                await response.text();
-
             throw new Error(
-                errorText ||
-                "Could not delete content."
+                await response.text()
             );
         }
 
-
-        /* -------------------------
-           DELETE STORAGE FILE
-        ------------------------- */
-
-        if (item?.file_url) {
-
-            try {
-
-                const publicPart =
-                    `/storage/v1/object/public/${STORAGE_BUCKET}/`;
-
-                const index =
-                    item.file_url.indexOf(
-                        publicPart
-                    );
-
-                if (index !== -1) {
-
-                    const filePath =
-                        decodeURIComponent(
-                            item.file_url.substring(
-                                index +
-                                publicPart.length
-                            )
-                        );
-
-                    await fetch(
-                        `${SUPABASE_URL}/storage/v1/object/${STORAGE_BUCKET}`,
-                        {
-                            method: "DELETE",
-
-                            headers: {
-                                apikey:
-                                    SUPABASE_KEY,
-
-                                Authorization:
-                                    `Bearer ${getAccessToken()}`,
-
-                                "Content-Type":
-                                    "application/json"
-                            },
-
-                            body: JSON.stringify({
-                                prefixes: [
-                                    filePath
-                                ]
-                            })
-                        }
-                    );
-                }
-
-            } catch (fileError) {
-
-                console.error(
-                    "File deletion:",
-                    fileError
-                );
-            }
-        }
-
         await loadContents();
+        renderAdminContent();
 
     } catch (error) {
 
         console.error(
-            "deleteContent:",
+            "Delete content error:",
             error
         );
 
         alert(
-            "There was a problem deleting the content."
+            "Unable to delete content."
         );
+
+    } finally {
+
+        deleteButton.disabled = false;
     }
-}
+});
 
 
 /* =========================================================
-   VISITOR MESSAGES
+   ADMIN MESSAGES
    ========================================================= */
 
 async function loadAdminMessages() {
 
-    if (!getAccessToken()) {
-        return;
-    }
+    if (!isAdmin()) return;
+
+    const dashboard =
+        $("dashboardModal");
+
+    if (!dashboard) return;
 
     let section =
         $("adminMessagesSection");
@@ -1674,9 +1411,7 @@ async function loadAdminMessages() {
     if (!section) {
 
         section =
-            document.createElement(
-                "section"
-            );
+            document.createElement("section");
 
         section.id =
             "adminMessagesSection";
@@ -1685,29 +1420,45 @@ async function loadAdminMessages() {
             "admin-messages-section";
 
         section.innerHTML = `
-            <h3>Visitor Messages</h3>
+            <div class="section-heading small-heading">
+                <p>CONTACT</p>
+                <h3>Visitor Messages</h3>
+                <span>
+                    Messages sent through the Daniel Tech contact form.
+                </span>
+            </div>
 
             <div
                 id="adminMessagesList"
                 class="admin-messages-list">
-                Loading messages...
             </div>
         `;
 
-        $("logoutButton")
-            ?.parentElement
-            ?.insertBefore(
+        const logout =
+            $("logoutButton");
+
+        if (logout) {
+            logout.parentNode.insertBefore(
                 section,
-                $("logoutButton")
+                logout
             );
+        } else {
+            dashboard
+                .querySelector(".modal-box")
+                .appendChild(section);
+        }
     }
 
     const list =
         $("adminMessagesList");
 
-    if (!list) {
-        return;
-    }
+    if (!list) return;
+
+    list.innerHTML = `
+        <p class="empty-content">
+            Loading messages...
+        </p>
+    `;
 
     try {
 
@@ -1716,20 +1467,15 @@ async function loadAdminMessages() {
                 `${SUPABASE_URL}/rest/v1/message?select=*&order=created_at.desc`,
                 {
                     method: "GET",
-
-                    headers:
-                        authHeaders()
+                    headers: getHeaders(
+                        state.session.access_token
+                    )
                 }
             );
 
         if (!response.ok) {
-
-            const errorText =
-                await response.text();
-
             throw new Error(
-                errorText ||
-                "Could not load messages."
+                await response.text()
             );
         }
 
@@ -1738,83 +1484,65 @@ async function loadAdminMessages() {
 
         if (!messages.length) {
 
-            list.innerHTML =
-                "<p>No visitor messages yet.</p>";
+            list.innerHTML = `
+                <p class="empty-content">
+                    No visitor messages yet.
+                </p>
+            `;
 
             return;
         }
 
         list.innerHTML =
-            messages.map((item) => {
-
-                return `
-                    <div
-                        class="admin-message-item"
-                        data-message-id="${escapeHTML(item.id)}">
-
-                        <strong>
-                            ${escapeHTML(item.name)}
-                        </strong>
+            messages
+                .map(message => `
+                    <div class="admin-message-item">
 
                         <div>
+                            <strong>
+                                ${escapeHTML(message.name)}
+                            </strong>
+
                             <small>
-                                ${escapeHTML(item.email)}
+                                ${escapeHTML(message.email)}
+                            </small>
+
+                            <small>
+                                ${formatDate(message.created_at)}
                             </small>
                         </div>
 
                         <h4>
-                            ${escapeHTML(item.subject)}
+                            ${escapeHTML(message.subject)}
                         </h4>
 
                         <p>
-                            ${escapeHTML(item.message)}
+                            ${escapeHTML(message.message)}
                         </p>
-
-                        <small>
-                            ${formatDate(item.created_at)}
-                        </small>
-
-                        <br>
 
                         <button
                             type="button"
                             class="delete-message-button"
-                            data-id="${escapeHTML(item.id)}">
-                            Delete
+                            data-message-id="${message.id}">
+                            Delete Message
                         </button>
 
                     </div>
-                `;
-
-            }).join("");
-
-        list
-            .querySelectorAll(
-                ".delete-message-button"
-            )
-            .forEach((button) => {
-
-                button.addEventListener(
-                    "click",
-                    () => {
-
-                        deleteMessage(
-                            button.dataset.id
-                        );
-                    }
-                );
-
-            });
+                `)
+                .join("");
 
     } catch (error) {
 
         console.error(
-            "loadAdminMessages:",
+            "Load messages error:",
             error
         );
 
-        list.innerHTML =
-            "<p>Unable to load visitor messages.</p>";
+        list.innerHTML = `
+            <p class="empty-content">
+                Unable to load messages.
+            </p>
+        `;
     }
 }
 
@@ -1823,42 +1551,48 @@ async function loadAdminMessages() {
    DELETE MESSAGE
    ========================================================= */
 
-async function deleteMessage(id) {
+document.addEventListener("click", async function (event) {
 
-    if (!getAccessToken()) {
-        return;
-    }
+    const button =
+        event.target.closest(".delete-message-button");
+
+    if (!button) return;
+
+    if (!isAdmin()) return;
+
+    const id =
+        button.dataset.messageId;
+
+    if (!id) return;
 
     const confirmed =
         window.confirm(
             "Delete this visitor message?"
         );
 
-    if (!confirmed) {
-        return;
-    }
+    if (!confirmed) return;
+
+    button.disabled = true;
 
     try {
 
         const response =
             await fetch(
-                `${SUPABASE_URL}/rest/v1/message?id=eq.${encodeURIComponent(id)}`,
+                `${SUPABASE_URL}/rest/v1/message?id=eq.${id}`,
                 {
                     method: "DELETE",
-
-                    headers:
-                        authHeaders()
+                    headers: {
+                        ...getHeaders(
+                            state.session.access_token
+                        ),
+                        Prefer: "return=minimal"
+                    }
                 }
             );
 
         if (!response.ok) {
-
-            const errorText =
-                await response.text();
-
             throw new Error(
-                errorText ||
-                "Could not delete message."
+                await response.text()
             );
         }
 
@@ -1867,162 +1601,123 @@ async function deleteMessage(id) {
     } catch (error) {
 
         console.error(
-            "deleteMessage:",
+            "Delete message error:",
             error
         );
 
         alert(
-            "There was a problem deleting the message."
+            "Unable to delete message."
         );
+
+    } finally {
+
+        button.disabled = false;
     }
-}
+});
 
 
 /* =========================================================
    LOGOUT
    ========================================================= */
 
-$("logoutButton")?.addEventListener(
-    "click",
-    () => {
+const logoutButton = $("logoutButton");
 
-        state.session = null;
+if (logoutButton) {
 
-        localStorage.removeItem(
-            SESSION_KEY
-        );
+    logoutButton.addEventListener(
+        "click",
+        async function () {
 
-        hide($("dashboardModal"));
-        hide($("overlay"));
+            state.session = null;
 
-        if ($("adminLoginForm")) {
-            $("adminLoginForm").reset();
+            localStorage.removeItem(
+                "danielTechSession"
+            );
+
+            closeDashboard();
+
+            $("loginMessage").textContent = "";
+
+            alert(
+                "You have been logged out."
+            );
         }
-
-        if ($("loginMessage")) {
-            $("loginMessage").textContent =
-                "";
-        }
-
-        if ($("adminMessagesSection")) {
-            $("adminMessagesSection").remove();
-        }
-
-        renderAdminContents();
-    }
-);
-
-
-/* =========================================================
-   CLOSE MODALS
-   ========================================================= */
-
-document
-    .querySelectorAll(".modal-close")
-    .forEach((button) => {
-
-        button.addEventListener(
-            "click",
-            () => {
-
-                const modal =
-                    button.closest(".modal");
-
-                if (modal) {
-                    hide(modal);
-                }
-
-                hide($("overlay"));
-            }
-        );
-
-    });
-
-
-/* =========================================================
-   ESCAPE KEY
-   ========================================================= */
-
-document.addEventListener(
-    "keydown",
-    (event) => {
-
-        if (event.key !== "Escape") {
-            return;
-        }
-
-        document
-            .querySelectorAll(
-                ".modal.show, .settings-panel.show"
-            )
-            .forEach((element) => {
-
-                hide(element);
-            });
-
-        hide($("overlay"));
-    }
-);
+    );
+}
 
 
 /* =========================================================
    BACK TO TOP
    ========================================================= */
 
-window.addEventListener(
-    "scroll",
-    () => {
+const backTop = $("backTop");
 
-        const button =
-            $("backTop");
+if (backTop) {
 
-        if (!button) return;
+    window.addEventListener("scroll", function () {
 
         if (window.scrollY > 400) {
-
-            button.classList.add("show");
-
+            backTop.classList.add("active");
         } else {
-
-            button.classList.remove("show");
+            backTop.classList.remove("active");
         }
-    }
-);
 
-$("backTop")?.addEventListener(
-    "click",
-    () => {
+    });
 
-        window.scrollTo({
-            top: 0,
-            behavior: "smooth"
-        });
-    }
-);
+    backTop.addEventListener(
+        "click",
+        function () {
 
+            window.scrollTo({
+                top: 0,
+                behavior: "smooth"
+            });
 
-/* =========================================================
-   ADMIN EMAIL FIELD
-   ========================================================= */
-
-if ($("adminUsername")) {
-
-    $("adminUsername").type =
-        "email";
-
-    $("adminUsername").placeholder =
-        "Admin email";
+        }
+    );
 }
 
 
 /* =========================================================
-   START WEBSITE
+   PREVENT CLIENT ACCESS TO DASHBOARD
    ========================================================= */
 
-restoreAdminSession();
+function protectDashboard() {
 
-loadContents();
+    const dashboard =
+        $("dashboardModal");
 
-if (state.session) {
-    setupAdminDashboard();
+    if (!dashboard) return;
+
+    if (!isAdmin()) {
+        hide(dashboard);
+    }
 }
+
+
+/* =========================================================
+   INITIALIZATION
+   ========================================================= */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    async function () {
+
+        restoreDarkMode();
+
+        restoreAdminSession();
+
+        loadComments();
+
+        protectDashboard();
+
+        navigateTo("home");
+
+        await loadContents();
+
+        if (isAdmin()) {
+            renderAdminContent();
+        }
+
+    }
+);
