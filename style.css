@@ -242,9 +242,25 @@ body.dark-mode .admin-message-item {
 #newsContent {
     color: var(--gray);
 
+    display: inline-block;
     white-space: nowrap;
+
+    padding-left: 100%;
+
+    animation: newsScroll 16s linear infinite;
+}
+
+.news-container {
     overflow: hidden;
-    text-overflow: ellipsis;
+}
+
+@keyframes newsScroll {
+    0% {
+        transform: translateX(0);
+    }
+    100% {
+        transform: translateX(-100%);
+    }
 }
 
 
@@ -611,13 +627,39 @@ body.dark-mode .hero-stat {
 
 .card-number,
 .feature-number {
-    color: var(--cyan);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
 
-    font-size: 12px;
+    width: 40px;
+    height: 40px;
+
+    border-radius: 12px;
+
+    background: var(--cyan);
+    color: #ffffff;
+
+    font-size: 13px;
     font-weight: 900;
 
     margin-bottom: 18px;
 }
+
+/* Give each card its own accent color instead of repeating one color
+   six times — keeps the grid lively without using emoji. */
+.service-card:nth-child(1) .card-number { background: #00cfe8; }
+.service-card:nth-child(2) .card-number { background: #ff4fa3; }
+.service-card:nth-child(3) .card-number { background: #8b5cf6; }
+.service-card:nth-child(4) .card-number { background: #f59e0b; }
+.service-card:nth-child(5) .card-number { background: #10b981; }
+.service-card:nth-child(6) .card-number { background: #3b82f6; }
+
+.feature-card:nth-child(1) .feature-number { background: #3b82f6; }
+.feature-card:nth-child(2) .feature-number { background: #f59e0b; }
+.feature-card:nth-child(3) .feature-number { background: #ff4fa3; }
+.feature-card:nth-child(4) .feature-number { background: #10b981; }
+.feature-card:nth-child(5) .feature-number { background: #8b5cf6; }
+.feature-card:nth-child(6) .feature-number { background: #00cfe8; }
 
 .service-card h3,
 .feature-card h3 {
@@ -1877,21 +1919,26 @@ body.dark-mode .settings-action {
 }
 
 .dashboard-header {
-    background: var(--gradient) !important;
+    background: linear-gradient(135deg, #0f172a, #1e3a4c) !important;
     border-radius: 16px !important;
     border-bottom: none !important;
     padding: 24px 26px !important;
     margin-bottom: 25px !important;
-    box-shadow: 0 10px 25px rgba(255, 79, 163, 0.2);
+    box-shadow: 0 10px 25px rgba(15, 23, 42, 0.3);
+    border-left: 4px solid var(--cyan);
 }
 
 .dashboard-header .modal-label {
-    color: rgba(255, 255, 255, 0.85) !important;
+    color: var(--light-cyan) !important;
 }
 
 .dashboard-header h2 {
     color: #ffffff !important;
     margin-bottom: 0 !important;
+}
+
+.admin-login-box {
+    border-top: 4px solid #0f172a;
 }
 
 .dashboard-button {
