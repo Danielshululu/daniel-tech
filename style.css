@@ -247,7 +247,11 @@ body.dark-mode .admin-message-item {
 
     padding-left: 100%;
 
-    animation: newsScroll 16s linear infinite;
+    animation: newsScroll 38s linear infinite;
+}
+
+.news-container:hover #newsContent {
+    animation-play-state: paused;
 }
 
 .news-container {
