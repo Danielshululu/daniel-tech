@@ -4,65 +4,42 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <meta name="description"
-          content="Daniel Tech - Technology, computer services, web development, AI tools, programming, gaming and software solutions.">
-
-    <meta name="author" content="Daniel Tech">
-
     <title>Daniel Tech</title>
 
-    <link rel="stylesheet" href="style.css?v=20260902-5">
+    <link rel="stylesheet" href="style.css?v=20260902-7">
 </head>
 
 <body>
 
-<!-- ================= HEADER ================= -->
-
 <header class="site-header">
 
-    <div class="header-container">
+    <div class="container header-inner">
 
         <a href="#" class="logo" data-page="home">
-            <span>Daniel</span> Tech
+            <span class="logo-main">Daniel</span>
+            <span class="logo-tech">Tech</span>
         </a>
 
         <nav class="main-nav" id="mainNav">
-
-            <a href="#" data-page="home">Home</a>
-
+            <a href="#" data-page="home" class="active">Home</a>
             <a href="#" data-page="services">Services</a>
-
             <a href="#" data-page="features">Features</a>
-
-            <a href="#" data-page="blog">Blog / News</a>
-
+            <a href="#" data-page="blog">News</a>
             <a href="#" data-page="contact">Contact</a>
-
         </nav>
 
         <div class="header-actions">
-
-            <button
-                type="button"
-                id="darkModeButton"
-                class="header-button">
-                Dark Mode
+            <button type="button" id="darkModeButton" class="header-button">
+                Dark
             </button>
 
-            <button
-                type="button"
-                id="settingsButton"
-                class="header-button">
+            <button type="button" id="settingsButton" class="header-button">
                 Settings
             </button>
 
-            <button
-                type="button"
-                id="menuButton"
-                class="menu-button">
+            <button type="button" id="menuButton" class="menu-button">
                 Menu
             </button>
-
         </div>
 
     </div>
@@ -70,651 +47,504 @@
 </header>
 
 
-<!-- ================= NEWS BAR ================= -->
-
 <div class="news-bar">
-
-    <div class="news-container">
-
-        <strong>Latest News</strong>
-
-        <div class="news-ticker">
-            <div id="newsContent">
-                Welcome to Daniel Tech.
-            </div>
-        </div>
-
+    <div class="container">
+        <strong>Latest:</strong>
+        <span id="newsContent">
+            Welcome to Daniel Tech. Technology, ICT, programming and digital solutions.
+        </span>
     </div>
-
 </div>
 
 
-<!-- ================= MAIN ================= -->
-
 <main>
 
+    <!-- HOME -->
+    <section id="home" class="page active-page">
 
-<!-- ================= HOME ================= -->
+        <div class="hero">
 
-<section id="home" class="page active-page">
+            <div class="container hero-content">
 
-    <div class="hero">
+                <div class="hero-text">
 
-        <div class="hero-content">
+                    <span class="hero-label">
+                        TECHNOLOGY & ICT
+                    </span>
 
-            <p class="hero-label">
-                TECHNOLOGY • DIGITAL SOLUTIONS • INNOVATION
+                    <h1>
+                        Welcome to
+                        <span>Daniel Tech</span>
+                    </h1>
+
+                    <p>
+                        Your technology platform for ICT services, programming,
+                        computer solutions, AI tools and digital knowledge.
+                    </p>
+
+                    <div class="hero-buttons">
+
+                        <button
+                            type="button"
+                            class="primary-button"
+                            data-page="services">
+                            Explore Services
+                        </button>
+
+                        <button
+                            type="button"
+                            class="secondary-button"
+                            data-page="contact">
+                            Contact Us
+                        </button>
+
+                    </div>
+
+                </div>
+
+                <div class="hero-card">
+
+                    <div class="hero-card-number">01</div>
+
+                    <h3>Daniel Tech</h3>
+
+                    <p>
+                        Technology made simple, useful and accessible.
+                    </p>
+
+                    <div class="hero-card-line"></div>
+
+                    <span>ICT • AI • Programming • Digital Solutions</span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="container section">
+
+            <div class="section-heading">
+                <span>WHAT WE DO</span>
+                <h2>Technology Solutions</h2>
+                <p>
+                    Explore our services and useful technology features.
+                </p>
+            </div>
+
+
+            <div id="latestContent" class="content-grid">
+                <div class="empty-content">
+                    No content has been published yet.
+                </div>
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- SERVICES -->
+    <section id="services" class="page">
+
+        <div class="container page-header">
+
+            <span>SERVICES</span>
+
+            <h1>Our Services</h1>
+
+            <p>
+                Professional technology and ICT services.
             </p>
 
-            <h1>
-                Welcome to
-                <span>Daniel Tech</span>
-            </h1>
+        </div>
 
-            <p class="hero-description">
-                Your technology platform for computer services,
-                web development, programming, AI tools, software
-                solutions, gaming and useful technology tips.
+
+        <div class="container section">
+
+            <div class="service-grid">
+
+                <article class="service-card">
+
+                    <div class="card-number">01</div>
+
+                    <h3>Web Development</h3>
+
+                    <p>
+                        Modern, responsive and professional websites.
+                    </p>
+
+                    <button
+                        type="button"
+                        class="view-button service-view-button"
+                        data-service="web">
+                        View Service
+                    </button>
+
+                </article>
+
+
+                <article class="service-card">
+
+                    <div class="card-number">02</div>
+
+                    <h3>Graphics Design</h3>
+
+                    <p>
+                        Creative designs for digital and business projects.
+                    </p>
+
+                    <button
+                        type="button"
+                        class="view-button service-view-button"
+                        data-service="graphics">
+                        View Service
+                    </button>
+
+                </article>
+
+
+                <article class="service-card">
+
+                    <div class="card-number">03</div>
+
+                    <h3>Cyber Security</h3>
+
+                    <p>
+                        Digital safety and cybersecurity awareness.
+                    </p>
+
+                    <button
+                        type="button"
+                        class="view-button service-view-button"
+                        data-service="security">
+                        View Service
+                    </button>
+
+                </article>
+
+
+                <article class="service-card">
+
+                    <div class="card-number">04</div>
+
+                    <h3>Computer Services</h3>
+
+                    <p>
+                        Computer setup, troubleshooting and maintenance.
+                    </p>
+
+                    <button
+                        type="button"
+                        class="view-button service-view-button"
+                        data-service="computer">
+                        View Service
+                    </button>
+
+                </article>
+
+
+                <article class="service-card">
+
+                    <div class="card-number">05</div>
+
+                    <h3>Software Solutions</h3>
+
+                    <p>
+                        Useful software and digital solutions.
+                    </p>
+
+                    <button
+                        type="button"
+                        class="view-button service-view-button"
+                        data-service="software">
+                        View Service
+                    </button>
+
+                </article>
+
+
+                <article class="service-card">
+
+                    <div class="card-number">06</div>
+
+                    <h3>AI Solutions</h3>
+
+                    <p>
+                        Practical AI tools for learning and productivity.
+                    </p>
+
+                    <button
+                        type="button"
+                        class="view-button service-view-button"
+                        data-service="ai">
+                        View Service
+                    </button>
+
+                </article>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- FEATURES -->
+    <section id="features" class="page">
+
+        <div class="container page-header">
+
+            <span>FEATURES</span>
+
+            <h1>Technology Features</h1>
+
+            <p>
+                Useful technology knowledge and resources.
             </p>
 
-            <div class="hero-buttons">
+        </div>
 
-                <button
-                    type="button"
-                    class="primary-button"
-                    data-page="services">
-                    Explore Services
-                </button>
 
-                <button
-                    type="button"
-                    class="secondary-button"
-                    data-page="contact">
-                    Contact Daniel Tech
-                </button>
+        <div class="container section">
+
+            <div class="feature-grid">
+
+                <article class="feature-card">
+
+                    <div class="feature-number">01</div>
+
+                    <h3>Computer Tips</h3>
+
+                    <p>
+                        Useful computer tricks and productivity tips.
+                    </p>
+
+                    <button
+                        type="button"
+                        class="view-button feature-view-button"
+                        data-feature="computer-tips">
+                        Explore
+                    </button>
+
+                </article>
+
+
+                <article class="feature-card">
+
+                    <div class="feature-number">02</div>
+
+                    <h3>Phone Tips</h3>
+
+                    <p>
+                        Useful smartphone settings and troubleshooting.
+                    </p>
+
+                    <button
+                        type="button"
+                        class="view-button feature-view-button"
+                        data-feature="phone-tips">
+                        Explore
+                    </button>
+
+                </article>
+
+
+                <article class="feature-card">
+
+                    <div class="feature-number">03</div>
+
+                    <h3>AI Tools</h3>
+
+                    <p>
+                        Discover useful artificial intelligence tools.
+                    </p>
+
+                    <button
+                        type="button"
+                        class="view-button feature-view-button"
+                        data-feature="ai-tools">
+                        Explore
+                    </button>
+
+                </article>
+
+
+                <article class="feature-card">
+
+                    <div class="feature-number">04</div>
+
+                    <h3>Gaming</h3>
+
+                    <p>
+                        Gaming tips and useful gaming information.
+                    </p>
+
+                    <button
+                        type="button"
+                        class="view-button feature-view-button"
+                        data-feature="gaming">
+                        Explore
+                    </button>
+
+                </article>
+
+
+                <article class="feature-card">
+
+                    <div class="feature-number">05</div>
+
+                    <h3>Programming</h3>
+
+                    <p>
+                        Coding tutorials and programming knowledge.
+                    </p>
+
+                    <button
+                        type="button"
+                        class="view-button feature-view-button"
+                        data-feature="programming">
+                        Explore
+                    </button>
+
+                </article>
+
+
+                <article class="feature-card">
+
+                    <div class="feature-number">06</div>
+
+                    <h3>Software Tips</h3>
+
+                    <p>
+                        Guides for useful computer software.
+                    </p>
+
+                    <button
+                        type="button"
+                        class="view-button feature-view-button"
+                        data-feature="software-tips">
+                        Explore
+                    </button>
+
+                </article>
 
             </div>
 
         </div>
 
+    </section>
 
-        <div class="hero-card">
 
-            <div class="hero-card-top">
-                Daniel Tech
-            </div>
+    <!-- BLOG / NEWS -->
+    <section id="blog" class="page">
 
-            <div class="hero-card-content">
+        <div class="container page-header">
 
-                <div class="hero-stat">
-                    <strong>Web</strong>
-                    <span>Development</span>
+            <span>NEWS</span>
+
+            <h1>Latest News</h1>
+
+            <p>
+                Technology news, tips and updates from Daniel Tech.
+            </p>
+
+        </div>
+
+
+        <div class="container section">
+
+            <div id="blogGrid" class="content-grid">
+
+                <div class="empty-content">
+                    No news or articles have been published yet.
                 </div>
 
-                <div class="hero-stat">
-                    <strong>AI</strong>
-                    <span>Solutions</span>
-                </div>
-
-                <div class="hero-stat">
-                    <strong>ICT</strong>
-                    <span>Services</span>
-                </div>
-
-                <div class="hero-stat">
-                    <strong>Tech</strong>
-                    <span>Tips</span>
-                </div>
-
             </div>
 
-        </div>
 
-    </div>
-
-
-    <!-- Latest Content -->
-
-    <div class="section-container">
-
-        <div class="section-heading">
-
-            <p>WHAT'S NEW</p>
-
-            <h2>Latest Content</h2>
-
-            <span>
-                Discover the latest technology content published
-                on Daniel Tech.
-            </span>
-
-        </div>
-
-        <div id="latestContent" class="content-grid">
-
-            <div class="empty-content">
-                No content has been published yet.
-            </div>
-
-        </div>
-
-    </div>
-
-</section>
-
-
-<!-- ================= SERVICES ================= -->
-
-<section id="services" class="page">
-
-    <div class="section-container">
-
-        <div class="section-heading">
-
-            <p>DANIEL TECH SERVICES</p>
-
-            <h2>Our Services</h2>
-
-            <span>
-                Professional technology services and digital solutions.
-            </span>
-
-        </div>
-
-
-        <div class="service-grid">
-
-
-            <article class="service-card">
-
-                <div class="card-number">01</div>
-
-                <h3>Web Development</h3>
-
-                <p>
-                    Modern, responsive and professional websites
-                    for businesses, organizations and personal projects.
-                </p>
-
-                <button
-                    type="button"
-                    class="view-button service-view-button"
-                    data-service="web">
-                    View Service
-                </button>
-
-            </article>
-
-
-            <article class="service-card">
-
-                <div class="card-number">02</div>
-
-                <h3>Graphics Design</h3>
-
-                <p>
-                    Professional digital designs for logos,
-                    posters, social media and other creative projects.
-                </p>
-
-                <button
-                    type="button"
-                    class="view-button service-view-button"
-                    data-service="graphics">
-                    View Service
-                </button>
-
-            </article>
-
-
-            <article class="service-card">
-
-                <div class="card-number">03</div>
-
-                <h3>Cyber Security</h3>
-
-                <p>
-                    Technology security guidance, digital safety
-                    awareness and basic cybersecurity solutions.
-                </p>
-
-                <button
-                    type="button"
-                    class="view-button service-view-button"
-                    data-service="security">
-                    View Service
-                </button>
-
-            </article>
-
-
-            <article class="service-card">
-
-                <div class="card-number">04</div>
-
-                <h3>Computer Services</h3>
-
-                <p>
-                    Computer setup, software installation,
-                    troubleshooting and general ICT support.
-                </p>
-
-                <button
-                    type="button"
-                    class="view-button service-view-button"
-                    data-service="computer">
-                    View Service
-                </button>
-
-            </article>
-
-
-            <article class="service-card">
-
-                <div class="card-number">05</div>
-
-                <h3>Software Solutions</h3>
-
-                <p>
-                    Software solutions and digital tools designed
-                    to make everyday work easier.
-                </p>
-
-                <button
-                    type="button"
-                    class="view-button service-view-button"
-                    data-service="software">
-                    View Service
-                </button>
-
-            </article>
-
-
-            <article class="service-card">
-
-                <div class="card-number">06</div>
-
-                <h3>AI Solutions</h3>
-
-                <p>
-                    Practical use of artificial intelligence tools
-                    for learning, productivity and digital projects.
-                </p>
-
-                <button
-                    type="button"
-                    class="view-button service-view-button"
-                    data-service="ai">
-                    View Service
-                </button>
-
-            </article>
-
-        </div>
-
-    </div>
-
-</section>
-
-
-<!-- ================= FEATURES ================= -->
-
-<section id="features" class="page">
-
-    <div class="section-container">
-
-        <div class="section-heading">
-
-            <p>TECHNOLOGY KNOWLEDGE</p>
-
-            <h2>Features</h2>
-
-            <span>
-                Useful technology information and practical guides.
-            </span>
-
-        </div>
-
-
-        <div class="feature-grid">
-
-
-            <article class="feature-card">
-
-                <div class="feature-number">01</div>
-
-                <h3>Computer Tips</h3>
-
-                <p>
-                    Learn useful computer tricks, maintenance tips
-                    and productivity techniques.
-                </p>
-
-                <button
-                    type="button"
-                    class="view-button feature-view-button"
-                    data-feature="computer-tips">
-                    Explore
-                </button>
-
-            </article>
-
-
-            <article class="feature-card">
-
-                <div class="feature-number">02</div>
-
-                <h3>Phone Tips</h3>
-
-                <p>
-                    Discover useful smartphone settings,
-                    troubleshooting methods and practical tips.
-                </p>
-
-                <button
-                    type="button"
-                    class="view-button feature-view-button"
-                    data-feature="phone-tips">
-                    Explore
-                </button>
-
-            </article>
-
-
-            <article class="feature-card">
-
-                <div class="feature-number">03</div>
-
-                <h3>AI Tools</h3>
-
-                <p>
-                    Learn about useful artificial intelligence
-                    tools and how they can improve productivity.
-                </p>
-
-                <button
-                    type="button"
-                    class="view-button feature-view-button"
-                    data-feature="ai-tools">
-                    Explore
-                </button>
-
-            </article>
-
-
-            <article class="feature-card">
-
-                <div class="feature-number">04</div>
-
-                <h3>Gaming</h3>
-
-                <p>
-                    Gaming tips, software information,
-                    performance improvements and guides.
-                </p>
-
-                <button
-                    type="button"
-                    class="view-button feature-view-button"
-                    data-feature="gaming">
-                    Explore
-                </button>
-
-            </article>
-
-
-            <article class="feature-card">
-
-                <div class="feature-number">05</div>
-
-                <h3>Programming</h3>
-
-                <p>
-                    Programming concepts, coding tutorials
-                    and useful development resources.
-                </p>
-
-                <button
-                    type="button"
-                    class="view-button feature-view-button"
-                    data-feature="programming">
-                    Explore
-                </button>
-
-            </article>
-
-
-            <article class="feature-card">
-
-                <div class="feature-number">06</div>
-
-                <h3>Software Tips</h3>
-
-                <p>
-                    Guides for installing, configuring and
-                    using useful computer software.
-                </p>
-
-                <button
-                    type="button"
-                    class="view-button feature-view-button"
-                    data-feature="software-tips">
-                    Explore
-                </button>
-
-            </article>
-
-        </div>
-
-    </div>
-
-</section>
-
-
-<!-- ================= BLOG ================= -->
-
-<section id="blog" class="page">
-
-    <div class="section-container">
-
-        <div class="section-heading">
-
-            <p>DANIEL TECH BLOG</p>
-
-            <h2>Blog / News</h2>
-
-            <span>
-                Technology news, tutorials, tips and published content.
-            </span>
-
-        </div>
-
-
-        <div id="blogGrid" class="blog-grid">
-
-            <div class="empty-content">
-                No blog content has been published yet.
-            </div>
-
-        </div>
-
-
-        <!-- Local Comments -->
-
-        <div class="comments-section">
-
-            <div class="section-heading small-heading">
-
-                <p>COMMUNITY</p>
+            <div class="comments-section">
 
                 <h2>Comments</h2>
 
-                <span>
-                    Leave a comment about Daniel Tech.
-                </span>
-
-            </div>
-
-
-            <form id="commentForm" class="comment-form">
-
-                <div class="form-group">
-
-                    <label for="commentName">
-                        Your Name
-                    </label>
+                <form id="commentForm">
 
                     <input
-                        type="text"
                         id="commentName"
-                        placeholder="Enter your name"
+                        type="text"
+                        placeholder="Your name"
                         required>
-
-                </div>
-
-
-                <div class="form-group">
-
-                    <label for="commentText">
-                        Your Comment
-                    </label>
 
                     <textarea
                         id="commentText"
-                        placeholder="Write your comment"
+                        placeholder="Write your comment..."
                         required></textarea>
 
-                </div>
+                    <button
+                        type="submit"
+                        class="primary-button">
+                        Post Comment
+                    </button>
+
+                </form>
 
 
-                <button
-                    type="submit"
-                    class="primary-button">
-                    Post Comment
-                </button>
-
-            </form>
-
-
-            <div id="commentsList" class="comments-list">
-
-                <p class="empty-content">
-                    No comments yet.
-                </p>
+                <div id="commentsList"></div>
 
             </div>
 
         </div>
 
-    </div>
-
-</section>
+    </section>
 
 
-<!-- ================= CONTACT ================= -->
+    <!-- CONTACT -->
+    <section id="contact" class="page">
 
-<section id="contact" class="page">
+        <div class="container page-header">
 
-    <div class="section-container">
+            <span>CONTACT</span>
 
-        <div class="section-heading">
+            <h1>Contact Daniel Tech</h1>
 
-            <p>GET IN TOUCH</p>
-
-            <h2>Contact Daniel Tech</h2>
-
-            <span>
+            <p>
                 Send us a message and we will get back to you.
-            </span>
+            </p>
 
         </div>
 
 
-        <div class="contact-layout">
+        <div class="container section">
 
-
-            <div class="contact-information">
-
-                <div class="contact-card">
-
-                    <span>Phone</span>
-
-                    <strong>
-                        0742287977
-                    </strong>
-
-                </div>
-
-
-                <div class="contact-card">
-
-                    <span>WhatsApp</span>
-
-                    <strong>
-                        0742287977
-                    </strong>
-
-                </div>
-
-
-                <div class="contact-card">
-
-                    <span>Email</span>
-
-                    <strong>
-                        danielshululu770@gmail.com
-                    </strong>
-
-                </div>
-
-
-                <div class="contact-card">
-
-                    <span>Response</span>
-
-                    <strong>
-                        We will respond as soon as possible.
-                    </strong>
-
-                </div>
-
-            </div>
-
-
-            <div class="contact-form-container">
+            <div class="contact-box">
 
                 <form id="contactForm">
 
-                    <div class="form-row">
+                    <div class="form-group">
 
-                        <div class="form-group">
+                        <label for="contactName">
+                            Name
+                        </label>
 
-                            <label for="contactName">
-                                Name
-                            </label>
+                        <input
+                            id="contactName"
+                            type="text"
+                            required>
 
-                            <input
-                                type="text"
-                                id="contactName"
-                                placeholder="Your name"
-                                required>
-
-                        </div>
+                    </div>
 
 
-                        <div class="form-group">
+                    <div class="form-group">
 
-                            <label for="contactEmail">
-                                Email
-                            </label>
+                        <label for="contactEmail">
+                            Email
+                        </label>
 
-                            <input
-                                type="email"
-                                id="contactEmail"
-                                placeholder="Your email"
-                                required>
-
-                        </div>
+                        <input
+                            id="contactEmail"
+                            type="email"
+                            required>
 
                     </div>
 
@@ -726,10 +556,8 @@
                         </label>
 
                         <input
-                            type="text"
                             id="contactSubject"
-                            placeholder="Message subject"
-                            required>
+                            type="text">
 
                     </div>
 
@@ -742,7 +570,6 @@
 
                         <textarea
                             id="contactMessage"
-                            placeholder="Write your message"
                             required></textarea>
 
                     </div>
@@ -754,8 +581,10 @@
                         Send Message
                     </button>
 
-
-                    <p id="contactStatus" class="form-status"></p>
+                    <div
+                        id="contactStatus"
+                        class="form-status">
+                    </div>
 
                 </form>
 
@@ -763,72 +592,66 @@
 
         </div>
 
-    </div>
-
-</section>
+    </section>
 
 </main>
 
 
-<!-- ================= SETTINGS ================= -->
+<!-- SETTINGS -->
+
+<div id="overlay" class="overlay"></div>
 
 <aside id="settingsPanel" class="settings-panel">
 
     <div class="settings-header">
 
-        <h3>Settings</h3>
+        <h2>Settings</h2>
 
         <button
             type="button"
-            id="closeSettings"
-            class="close-button">
+            id="closeSettings">
             Close
         </button>
 
     </div>
 
 
-    <div class="settings-content">
+    <div class="settings-item">
 
-        <label class="setting-option">
+        <span>Dark Mode</span>
 
-            <span>
-                Dark Mode
-            </span>
+        <label class="switch">
 
             <input
                 type="checkbox"
                 id="settingsDarkMode">
 
+            <span class="slider"></span>
+
         </label>
 
-
-        <button
-            type="button"
-            id="aboutButton"
-            class="settings-action">
-            About Daniel Tech
-        </button>
-
-
-        <button
-            type="button"
-            id="adminButton"
-            class="settings-action">
-            Admin Login
-        </button>
-
     </div>
+
+
+    <button
+        type="button"
+        id="aboutButton"
+        class="settings-link">
+        About Daniel Tech
+    </button>
+
+
+    <button
+        type="button"
+        id="adminButton"
+        class="settings-link">
+        Admin
+    </button>
 
 </aside>
 
 
-<!-- ================= OVERLAY ================= -->
-
-<div id="overlay" class="overlay"></div>
-
-
-<!-- ================= ABOUT MODAL ================= -->
+<!-- ABOUT MODAL -->
 
 <div id="aboutModal" class="modal">
 
@@ -837,37 +660,24 @@
         <button
             type="button"
             class="modal-close"
-            data-close-modal="aboutModal">
+            data-close-modal>
             Close
         </button>
 
-        <div class="modal-content">
+        <h2>About Daniel Tech</h2>
 
-            <p class="modal-label">
-                ABOUT
-            </p>
-
-            <h2>Daniel Tech</h2>
-
-            <p>
-                Daniel Tech is a technology platform focused on
-                digital solutions, computer services, programming,
-                AI tools, software and technology education.
-            </p>
-
-            <p>
-                Our goal is to make technology easier to understand
-                and more useful for everyday users.
-            </p>
-
-        </div>
+        <p>
+            Daniel Tech is a technology and ICT platform focused on
+            digital solutions, programming, computer services,
+            artificial intelligence and technology education.
+        </p>
 
     </div>
 
 </div>
 
 
-<!-- ================= SERVICE MODAL ================= -->
+<!-- SERVICE MODAL -->
 
 <div id="serviceModal" class="modal">
 
@@ -876,32 +686,22 @@
         <button
             type="button"
             class="modal-close"
-            data-close-modal="serviceModal">
+            data-close-modal>
             Close
         </button>
 
-        <div class="modal-content">
+        <h2 id="serviceModalTitle">
+            Service
+        </h2>
 
-            <p class="modal-label">
-                SERVICE
-            </p>
-
-            <h2 id="serviceModalTitle">
-                Service
-            </h2>
-
-            <p id="serviceModalText">
-                Service information.
-            </p>
-
-        </div>
+        <p id="serviceModalText"></p>
 
     </div>
 
 </div>
 
 
-<!-- ================= FEATURE MODAL ================= -->
+<!-- FEATURE MODAL -->
 
 <div id="featureModal" class="modal">
 
@@ -910,145 +710,121 @@
         <button
             type="button"
             class="modal-close"
-            data-close-modal="featureModal">
+            data-close-modal>
             Close
         </button>
 
-        <div class="modal-content">
+        <h2 id="featureModalTitle">
+            Feature
+        </h2>
 
-            <p class="modal-label">
-                FEATURE
-            </p>
-
-            <h2 id="featureModalTitle">
-                Feature
-            </h2>
-
-            <p id="featureModalText">
-                Feature information.
-            </p>
-
-        </div>
+        <p id="featureModalText"></p>
 
     </div>
 
 </div>
 
 
-<!-- ================= ADMIN LOGIN ================= -->
+<!-- ADMIN LOGIN -->
 
 <div id="adminLoginModal" class="modal">
 
-    <div class="modal-box admin-login-box">
+    <div class="modal-box">
 
         <button
             type="button"
             class="modal-close"
-            data-close-modal="adminLoginModal">
+            data-close-modal>
             Close
         </button>
 
+        <h2>Admin Login</h2>
 
-        <div class="modal-content">
+        <form id="adminLoginForm">
 
-            <p class="modal-label">
-                DANIEL TECH ADMIN
-            </p>
+            <div class="form-group">
 
-            <h2>Admin Login</h2>
+                <label for="adminName">
+                    Name
+                </label>
 
-            <p>
-                Login to manage Daniel Tech content and visitor messages.
-            </p>
+                <input
+                    id="adminName"
+                    type="text"
+                    placeholder="Admin name">
 
-
-            <form id="adminLoginForm">
-
-                <div class="form-group">
-
-                    <label for="adminName">
-                        Name
-                    </label>
-
-                    <input
-                        type="text"
-                        id="adminName"
-                        placeholder="Admin name"
-                        required>
-
-                </div>
+            </div>
 
 
-                <div class="form-group">
+            <div class="form-group">
 
-                    <label for="adminUsername">
-                        Username / Email
-                    </label>
+                <label for="adminUsername">
+                    Email
+                </label>
 
-                    <input
-                        type="text"
-                        id="adminUsername"
-                        placeholder="Admin username or email"
-                        required>
+                <input
+                    id="adminUsername"
+                    type="email"
+                    placeholder="Admin email"
+                    required>
 
-                </div>
-
-
-                <div class="form-group">
-
-                    <label for="adminPassword">
-                        Password
-                    </label>
-
-                    <input
-                        type="password"
-                        id="adminPassword"
-                        placeholder="Admin password"
-                        required>
-
-                </div>
+            </div>
 
 
-                <button
-                    type="submit"
-                    class="primary-button">
-                    Login
-                </button>
+            <div class="form-group">
+
+                <label for="adminPassword">
+                    Password
+                </label>
+
+                <input
+                    id="adminPassword"
+                    type="password"
+                    required>
+
+            </div>
 
 
-                <p id="loginMessage" class="form-status"></p>
+            <button
+                type="submit"
+                class="primary-button">
+                Login
+            </button>
 
-            </form>
+            <div
+                id="loginMessage"
+                class="form-status">
+            </div>
 
-        </div>
+        </form>
 
     </div>
 
 </div>
 
 
-<!-- ================= ADMIN DASHBOARD ================= -->
+<!-- ADMIN DASHBOARD -->
 
 <div id="dashboardModal" class="modal">
 
-    <div class="modal-box dashboard-box">
+    <div class="dashboard-box">
 
         <div class="dashboard-header">
 
             <div>
-
-                <p class="modal-label">
-                    ADMIN AREA
-                </p>
-
+                <span>ADMIN</span>
                 <h2>Daniel Tech Dashboard</h2>
-
             </div>
+
+            <button
+                type="button"
+                class="modal-close"
+                data-close-modal>
+                Close
+            </button>
 
         </div>
 
-
-        <!-- Content buttons -->
 
         <div class="dashboard-actions">
 
@@ -1083,12 +859,9 @@
         </div>
 
 
-        <!-- Admin editor -->
-
         <div id="adminEditor" class="admin-editor">
 
-            <h3>Add / Edit Content</h3>
-
+            <h3>Content Editor</h3>
 
             <div class="form-group">
 
@@ -1097,9 +870,8 @@
                 </label>
 
                 <input
-                    type="text"
                     id="contentTitle"
-                    placeholder="Content title">
+                    type="text">
 
             </div>
 
@@ -1110,29 +882,10 @@
                     Category
                 </label>
 
-                <select id="contentCategory">
-
-                    <option value="news">
-                        News
-                    </option>
-
-                    <option value="tip">
-                        Tip
-                    </option>
-
-                    <option value="video">
-                        Video
-                    </option>
-
-                    <option value="pdf">
-                        PDF
-                    </option>
-
-                    <option value="blog">
-                        Blog
-                    </option>
-
-                </select>
+                <input
+                    id="contentCategory"
+                    type="text"
+                    value="news">
 
             </div>
 
@@ -1140,12 +893,11 @@
             <div class="form-group">
 
                 <label for="contentText">
-                    Description / Content
+                    Content
                 </label>
 
                 <textarea
-                    id="contentText"
-                    placeholder="Write your content here"></textarea>
+                    id="contentText"></textarea>
 
             </div>
 
@@ -1157,8 +909,8 @@
                 </label>
 
                 <input
-                    type="file"
-                    id="contentFile">
+                    id="contentFile"
+                    type="file">
 
             </div>
 
@@ -1171,29 +923,199 @@
             </button>
 
 
-            <p id="contentStatus" class="form-status"></p>
-
-        </div>
-
-
-        <!-- Published content -->
-
-        <div class="admin-content-area">
-
-            <h3>Published Content</h3>
-
-            <div id="adminContentList">
-
-                <p class="empty-content">
-                    No content available.
-                </p>
-
+            <div
+                id="contentStatus"
+                class="form-status">
             </div>
 
         </div>
 
 
-        <!-- Messages section is created by script.js -->
+        <div class="admin-section">
+
+            <h3>Published Content</h3>
+
+            <div id="adminContentList"></div>
+
+        </div>
+
+
+        <div class="admin-section">
+
+            <h3>Services Management</h3>
+
+            <div class="form-row">
+
+                <div class="form-group">
+
+                    <label for="serviceTitle">
+                        Service Title
+                    </label>
+
+                    <input
+                        id="serviceTitle"
+                        type="text">
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="serviceIcon">
+                        Service Key
+                    </label>
+
+                    <input
+                        id="serviceIcon"
+                        type="text"
+                        placeholder="web">
+
+                </div>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="serviceDescription">
+                    Description
+                </label>
+
+                <textarea
+                    id="serviceDescription"></textarea>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="serviceOrder">
+                    Display Order
+                </label>
+
+                <input
+                    id="serviceOrder"
+                    type="number"
+                    value="0">
+
+            </div>
+
+
+            <button
+                type="button"
+                id="saveServiceButton"
+                class="primary-button">
+                Save Service
+            </button>
+
+
+            <div
+                id="serviceStatus"
+                class="form-status">
+            </div>
+
+
+            <div id="serviceAdminList"></div>
+
+        </div>
+
+
+        <div class="admin-section">
+
+            <h3>Features Management</h3>
+
+            <div class="form-row">
+
+                <div class="form-group">
+
+                    <label for="featureTitle">
+                        Feature Title
+                    </label>
+
+                    <input
+                        id="featureTitle"
+                        type="text">
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="featureIcon">
+                        Feature Key
+                    </label>
+
+                    <input
+                        id="featureIcon"
+                        type="text"
+                        placeholder="computer-tips">
+
+                </div>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="featureDescription">
+                    Description
+                </label>
+
+                <textarea
+                    id="featureDescription"></textarea>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="featureOrder">
+                    Display Order
+                </label>
+
+                <input
+                    id="featureOrder"
+                    type="number"
+                    value="0">
+
+            </div>
+
+
+            <button
+                type="button"
+                id="saveFeatureButton"
+                class="primary-button">
+                Save Feature
+            </button>
+
+
+            <div
+                id="featureStatus"
+                class="form-status">
+            </div>
+
+
+            <div id="featureAdminList"></div>
+
+        </div>
+
+
+        <div
+            id="adminMessagesSection"
+            class="admin-section">
+
+            <h3>Visitor Messages</h3>
+
+            <button
+                type="button"
+                id="refreshMessagesButton"
+                class="dashboard-button">
+                Refresh Messages
+            </button>
+
+            <div id="adminMessagesList"></div>
+
+        </div>
 
 
         <button
@@ -1208,8 +1130,6 @@
 </div>
 
 
-<!-- ================= BACK TO TOP ================= -->
-
 <button
     type="button"
     id="backTop"
@@ -1218,20 +1138,26 @@
 </button>
 
 
-<!-- ================= WHATSAPP ================= -->
+<footer class="site-footer">
 
-<a
-    href="https://wa.me/255742287977"
-    target="_blank"
-    rel="noopener noreferrer"
-    class="whatsapp-button">
-    WhatsApp
-</a>
+    <div class="container">
+
+        <h3>Daniel Tech</h3>
+
+        <p>
+            Technology, ICT and digital solutions.
+        </p>
+
+        <p>
+            © 2026 Daniel Tech. All rights reserved.
+        </p>
+
+    </div>
+
+</footer>
 
 
-<!-- ================= JAVASCRIPT ================= -->
-
-<script src="script.js?v=20260902-5"></script>
+<script src="script.js?v=20260902-7"></script>
 
 </body>
 </html>
