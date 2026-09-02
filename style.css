@@ -1023,10 +1023,6 @@ body.dark-mode .hero-stat {
     box-shadow: -10px 0 30px rgba(0, 0, 0, 0.08);
 }
 
-.settings-panel.open {
-    right: 0;
-}
-
 .settings-header {
     display: flex;
 
@@ -1131,12 +1127,6 @@ body.dark-mode .hero-stat {
     transition: 0.25s ease;
 }
 
-.overlay.active {
-    opacity: 1;
-
-    visibility: visible;
-}
-
 
 /* =====================================================
    MODALS
@@ -1164,7 +1154,12 @@ body.dark-mode .hero-stat {
     transition: 0.25s ease;
 }
 
-.modal.open {
+/* FIX: script.js toggles the "active" class (not "open") on modals
+   and on the mobile nav. These two rules were previously written for
+   ".modal.open" / ".main-nav.open", which never matched anything the
+   JS actually applied — so buttons that open a modal, or the mobile
+   menu icon, appeared to "do nothing". Renamed to match the JS. */
+.modal.active {
     opacity: 1;
 
     visibility: visible;
@@ -1293,7 +1288,8 @@ body.dark-mode .hero-stat {
     width: 100%;
 }
 
-.admin-content-list {
+.admin-content-list,
+#adminContentList {
     display: flex;
 
     flex-direction: column;
@@ -1329,7 +1325,12 @@ body.dark-mode .hero-stat {
     font-size: 12px;
 }
 
-.delete-content {
+/* FIX: script.js creates buttons with class "delete-content-button"
+   and "delete-message-button" — the CSS below previously only
+   targeted "delete-content" / "delete-message", so the real buttons
+   rendered unstyled. Both class names are now covered. */
+.delete-content,
+.delete-content-button {
     border: none;
 
     background: var(--pink);
@@ -1344,7 +1345,8 @@ body.dark-mode .hero-stat {
     font-weight: 800;
 }
 
-.delete-content:hover {
+.delete-content:hover,
+.delete-content-button:hover {
     background: var(--pink-dark);
 }
 
@@ -1425,8 +1427,25 @@ body.dark-mode .hero-stat {
     margin-top: 12px;
 }
 
-.admin-message-item .delete-message {
-    margin-top: 5px;
+.delete-message-button {
+    margin-top: 10px;
+
+    border: none;
+
+    background: var(--pink);
+
+    color: #ffffff;
+
+    padding: 8px 12px;
+
+    border-radius: 7px;
+
+    font-size: 11px;
+    font-weight: 800;
+}
+
+.delete-message-button:hover {
+    background: var(--pink-dark);
 }
 
 #refreshMessagesButton {
@@ -1468,7 +1487,7 @@ body.dark-mode .hero-stat {
     z-index: 1500;
 }
 
-.back-top.show {
+.back-top.active {
     opacity: 1;
 
     visibility: visible;
@@ -1544,7 +1563,8 @@ body.dark-mode .hero-stat {
         display: none;
     }
 
-    .main-nav.open {
+    /* FIX: was ".main-nav.open" — script.js toggles "active" */
+    .main-nav.active {
         display: flex;
     }
 
@@ -1835,4 +1855,74 @@ body.dark-mode .settings-action {
 body.dark-mode .settings-action {
     background: #1f2937 !important;
     border-color: #374151 !important;
+}
+
+/* =========================================================
+   DANIEL TECH - ADMIN PANEL POLISH
+   A slightly richer look for the admin login + dashboard,
+   using the same cyan/pink brand colors as the rest of the site.
+   ========================================================= */
+
+.admin-login-box .modal-content {
+    text-align: center;
+}
+
+.admin-login-box .modal-label {
+    letter-spacing: 3px;
+}
+
+.admin-login-box form {
+    text-align: left;
+    margin-top: 18px;
+}
+
+.dashboard-header {
+    background: var(--gradient) !important;
+    border-radius: 16px !important;
+    border-bottom: none !important;
+    padding: 24px 26px !important;
+    margin-bottom: 25px !important;
+    box-shadow: 0 10px 25px rgba(255, 79, 163, 0.2);
+}
+
+.dashboard-header .modal-label {
+    color: rgba(255, 255, 255, 0.85) !important;
+}
+
+.dashboard-header h2 {
+    color: #ffffff !important;
+    margin-bottom: 0 !important;
+}
+
+.dashboard-button {
+    font-size: 13px;
+    padding: 14px 16px;
+    border-radius: 12px;
+    font-weight: 900;
+}
+
+.dashboard-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 22px rgba(0, 207, 232, 0.28);
+}
+
+.admin-editor,
+.admin-content-area {
+    border-radius: 18px;
+    border-top: 3px solid var(--cyan);
+}
+
+.admin-messages-section {
+    border-top: 3px solid var(--pink);
+    border-radius: 0 0 18px 18px;
+    padding: 25px;
+    background: var(--soft-pink);
+}
+
+body.dark-mode .admin-messages-section {
+    background: #2a1522;
+}
+
+#saveContentButton {
+    margin-top: 5px;
 }
