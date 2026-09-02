@@ -1716,3 +1716,123 @@ body.dark-mode .hero-stat {
         bottom: 20px;
     }
 }
+/* =========================================================
+   DANIEL TECH - SETTINGS FIX
+   ========================================================= */
+
+.settings-panel {
+    position: fixed !important;
+    top: 0 !important;
+    right: 0 !important;
+
+    width: 340px !important;
+    max-width: 90vw !important;
+    height: 100vh !important;
+
+    background: #ffffff !important;
+
+    z-index: 9999 !important;
+
+    padding: 25px !important;
+
+    box-sizing: border-box !important;
+
+    transform: translateX(100%) !important;
+
+    transition: transform 0.3s ease !important;
+
+    overflow-y: auto !important;
+
+    display: block !important;
+}
+
+.settings-panel.active {
+    transform: translateX(0) !important;
+}
+
+.overlay {
+    position: fixed !important;
+    inset: 0 !important;
+
+    background: rgba(0, 0, 0, 0.45) !important;
+
+    z-index: 9998 !important;
+
+    display: none !important;
+}
+
+.overlay.active {
+    display: block !important;
+}
+
+.settings-header {
+    position: relative !important;
+    z-index: 10000 !important;
+
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+
+    margin-bottom: 25px !important;
+}
+
+.settings-header h3 {
+    margin: 0 !important;
+    color: #111111 !important;
+}
+
+.settings-content {
+    position: relative !important;
+    z-index: 10000 !important;
+}
+
+.settings-content button,
+.settings-content label {
+    position: relative !important;
+    z-index: 10001 !important;
+}
+
+.settings-action {
+    display: block !important;
+    width: 100% !important;
+
+    margin-top: 15px !important;
+    padding: 14px 16px !important;
+
+    cursor: pointer !important;
+
+    background: #ffffff !important;
+    color: #111111 !important;
+
+    border: 1px solid #dddddd !important;
+    border-radius: 10px !important;
+}
+
+.close-button {
+    cursor: pointer !important;
+    position: relative !important;
+    z-index: 10002 !important;
+}
+
+@media (max-width: 600px) {
+    .settings-panel {
+        width: 300px !important;
+        max-width: 85vw !important;
+    }
+}
+
+/* Dark mode */
+body.dark-mode .settings-panel {
+    background: #111827 !important;
+    color: #ffffff !important;
+}
+
+body.dark-mode .settings-header h3,
+body.dark-mode .settings-action {
+    color: #ffffff !important;
+}
+
+body.dark-mode .settings-action {
+    background: #1f2937 !important;
+    border-color: #374151 !important;
+}
