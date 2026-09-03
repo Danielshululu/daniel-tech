@@ -7,7 +7,7 @@
    0. SUPABASE CONFIG
 --------------------------------------------------------- */
 
-const SUPABASE_URL = "https://bodprzntcloioncwhpvr.supabase.co";
+const SUPABASE_URL = "https://bodprzntcloioncwhpvr.sb.co";
 const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_x4riqGTgHI3btFxG5RXLpA_7RNBneJA";
 const ADMIN_UID = "05fef3eb-16a3-4554-9d9b-de7d2b29144b";
 const STORAGE_BUCKET = "daniel-files";
@@ -225,7 +225,7 @@ let servicesData = [];
 
 async function loadServices() {
     try {
-        const { data, error } = await supabase
+        const { data, error } = await sb
             .from("services")
             .select("*")
             .eq("status", "published")
@@ -297,7 +297,7 @@ let featuresData = [];
 
 async function loadFeatures() {
     try {
-        const { data, error } = await supabase
+        const { data, error } = await sb
             .from("features")
             .select("*")
             .eq("status", "published")
@@ -362,7 +362,7 @@ async function loadPublicContents() {
     const latestContent = qs("latestContent");
 
     try {
-        const { data, error } = await supabase
+        const { data, error } = await sb
             .from("contents")
             .select("*")
             .eq("status", "published")
@@ -589,7 +589,7 @@ async function loadSiteSettingsPublic() {
 
 async function loadAboutPublic() {
     try {
-        const { data, error } = await supabase
+        const { data, error } = await sb
             .from("about_sections")
             .select("*")
             .eq("status", "published");
@@ -616,7 +616,7 @@ async function loadSocialLinksPublic() {
     if (!container) return;
 
     try {
-        const { data, error } = await supabase
+        const { data, error } = await sb
             .from("social_links")
             .select("*")
             .eq("status", "published")
@@ -937,7 +937,7 @@ async function renderAdminContents() {
     if (!list) return;
 
     try {
-        const { data, error } = await supabase
+        const { data, error } = await sb
             .from("contents")
             .select("*")
             .order("created_at", { ascending: false });
@@ -1347,7 +1347,7 @@ async function renderAdminMessages() {
                 if (!(await requireAdmin())) return;
                 const newStatus = btn.dataset.status === "unread" ? "read" : "unread";
                 try {
-                    const { error } = await supabase
+                    const { error } = await sb
                         .from("messages")
                         .update({ status: newStatus })
                         .eq("id", Number(btn.dataset.id));
