@@ -1338,8 +1338,17 @@ async function renderAdminMessages() {
     const list = qs("adminMessagesList");
     if (!list) return;
 
+    if (!(await ensureAdminSession())) {
+        list.innerHTML = `<p class="empty-content">Please log in as admin to view messages.</p>`;
+        return;
+    }
+
     try {
-        const { data, error } = await sb.from("messages").select("*").order("created_at", { ascending: false });
+        const { data, error } = await sb
+            .from("message")
+            .select("id, created_at, email, subject, name")
+            .order("created_at", { ascending: false });
+
         if (error) throw error;
 
         if (!data || data.length === 0) {
@@ -1352,62 +1361,70 @@ async function renderAdminMessages() {
                 (msg) => `
             <div class="admin-message-item">
                 <h4>${escapeHtml(msg.subject || "No subject")}</h4>
-                <p><strong>From:</strong> ${escapeHtml(msg.name)} (${escapeHtml(msg.email)})</p>
-                <p>${escapeHtml(msg.message)}</p>
-                <small>${formatDate(msg.created_at)} — ${escapeHtml(msg.status)}</small>
+
+                <p>
+                    <strong>From:</strong>
+                    ${escapeHtml(msg.name || "Unknown")}
+                    (${escapeHtml(msg.email || "No email")})
+                </p>
+
+                <small>${formatDate(msg.created_at)}</small>
+
                 <div>
-                    <button class="view-button toggle-message-status-button" data-id="${msg.id}" data-status="${msg.status}">
-                        Mark as ${msg.status === "unread" ? "read" : "unread"}
+                    <button
+                        type="button"
+                        class="delete-message-button"
+                        data-id="${msg.id}">
+                        Delete
                     </button>
-                    <button class="delete-message-button" data-id="${msg.id}">Delete</button>
                 </div>
             </div>
         `
             )
             .join("");
 
-        list.querySelectorAll(".toggle-message-status-button").forEach((btn) => {
-            btn.addEventListener("click", async () => {
-                if (!(await requireAdmin())) return;
-                const newStatus = btn.dataset.status === "unread" ? "read" : "unread";
-                try {
-                    const { error } = await sb
-                        .from("messages")
-                        .update({ status: newStatus })
-                        .eq("id", Number(btn.dataset.id));
-                    if (error) throw error;
-                    await renderAdminMessages();
-                } catch (err) {
-                    console.error("toggle message status failed:", err);
-                }
-            });
-        });
-
         list.querySelectorAll(".delete-message-button").forEach((btn) => {
             btn.addEventListener("click", async () => {
                 if (!confirm("Are you sure you want to delete this message?")) return;
+
                 if (!(await requireAdmin())) return;
 
                 try {
-                    const { error } = await sb.from("messages").delete().eq("id", Number(btn.dataset.id));
+                    const { error } = await sb
+                        .from("message")
+                        .delete()
+                        .eq("id", Number(btn.dataset.id));
+
                     if (error) throw error;
-                    await Promise.all([renderAdminMessages(), loadDashboardStats()]);
+
+                    await Promise.all([
+                        renderAdminMessages(),
+                        loadDashboardStats()
+                    ]);
                 } catch (err) {
                     console.error("delete message failed:", err);
+                    alert(err?.message || "Could not delete this message.");
                 }
             });
         });
     } catch (err) {
         console.error("renderAdminMessages failed:", err);
-        list.innerHTML = `<p class="empty-content">Could not load messages.</p>`;
+
+        list.innerHTML = `
+            <p class="empty-content">
+                ${escapeHtml(err?.message || "Could not load messages.")}
+            </p>
+        `;
     }
 }
 
 const refreshMessagesButton = qs("refreshMessagesButton");
-if (refreshMessagesButton) {
-    refreshMessagesButton.addEventListener("click", renderAdminMessages);
-}
 
+if (refreshMessagesButton) {
+    refreshMessagesButton.addEventListener("click", async () => {
+        await renderAdminMessages();
+    });
+}
 /* ---------------------------------------------------------
    19. DASHBOARD — HOME PAGE EDITOR (site_settings)
 --------------------------------------------------------- */
