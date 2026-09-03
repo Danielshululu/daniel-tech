@@ -819,7 +819,7 @@ async function loadDashboardStats() {
             sb.from("features").select("id", { count: "exact", head: true }),
             sb.from("contents").select("id", { count: "exact", head: true }),
             sb.from("contents").select("id", { count: "exact", head: true }).eq("status", "published"),
-            sb.from("messages").select("id", { count: "exact", head: true }),
+            sb.from("message").select("id", { count: "exact", head: true }),
         ]);
 
         setText("statServices", servicesCount.count ?? 0);
