@@ -12,7 +12,7 @@ const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_x4riqGTgHI3btFxG5RXLpA_7RNBneJA
 const ADMIN_UID = "05fef3eb-16a3-4554-9d9b-de7d2b29144b";
 const STORAGE_BUCKET = "daniel-files";
 
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
+const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
 
 let currentSession = null;
 let isAdmin = false;
@@ -533,7 +533,7 @@ if (contactForm) {
         setStatus(contactStatus, "Sending your message...", false);
 
         try {
-            const { error } = await supabase.from("messages").insert([
+            const { error } = await sb.from("messages").insert([
                 { name, email, subject, message, status: "unread" },
             ]);
 
@@ -554,7 +554,7 @@ if (contactForm) {
 
 async function loadSiteSettingsPublic() {
     try {
-        const { data, error } = await supabase.from("site_settings").select("*");
+        const { data, error } = await sb.from("site_settings").select("*");
         if (error) throw error;
 
         const settings = {};
@@ -664,12 +664,12 @@ if (adminLoginForm) {
         setStatus(loginMessage, "Signing in...", false);
 
         try {
-            const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+            const { data, error } = await sb.auth.signInWithPassword({ email, password });
             if (error) throw error;
 
             const user = data.user;
             if (!user || user.id !== ADMIN_UID) {
-                await supabase.auth.signOut();
+                await sb.auth.signOut();
                 setStatus(loginMessage, "This account is not authorized as admin.", true);
                 return;
             }
@@ -691,7 +691,7 @@ if (adminLoginForm) {
 }
 
 async function ensureAdminSession() {
-    const { data, error } = await supabase.auth.getSession();
+    const { data, error } = await sb.auth.getSession();
 
     if (error || !data.session) {
         isAdmin = false;
@@ -725,7 +725,7 @@ const logoutButton = qs("logoutButton");
 if (logoutButton) {
     logoutButton.addEventListener("click", async () => {
         try {
-            await supabase.auth.signOut();
+            await sb.auth.signOut();
         } catch (err) {
             console.error("logout failed:", err);
         }
@@ -791,11 +791,11 @@ async function refreshDashboard() {
 async function loadDashboardStats() {
     try {
         const [servicesCount, featuresCount, contentsCount, publishedCount, messagesCount] = await Promise.all([
-            supabase.from("services").select("id", { count: "exact", head: true }),
-            supabase.from("features").select("id", { count: "exact", head: true }),
-            supabase.from("contents").select("id", { count: "exact", head: true }),
-            supabase.from("contents").select("id", { count: "exact", head: true }).eq("status", "published"),
-            supabase.from("messages").select("id", { count: "exact", head: true }),
+            sb.from("services").select("id", { count: "exact", head: true }),
+            sb.from("features").select("id", { count: "exact", head: true }),
+            sb.from("contents").select("id", { count: "exact", head: true }),
+            sb.from("contents").select("id", { count: "exact", head: true }).eq("status", "published"),
+            sb.from("messages").select("id", { count: "exact", head: true }),
         ]);
 
         setText("statServices", servicesCount.count ?? 0);
@@ -832,14 +832,14 @@ async function uploadFile(file, folder) {
     const fileExt = file.name.split(".").pop();
     const fileName = `${folder}/${Date.now()}-${Math.random().toString(36).slice(2)}.${fileExt}`;
 
-    const { error } = await supabase.storage.from(STORAGE_BUCKET).upload(fileName, file, {
+    const { error } = await sb.storage.from(STORAGE_BUCKET).upload(fileName, file, {
         cacheControl: "3600",
         upsert: false,
     });
 
     if (error) throw error;
 
-    const { data } = supabase.storage.from(STORAGE_BUCKET).getPublicUrl(fileName);
+    const { data } = sb.storage.from(STORAGE_BUCKET).getPublicUrl(fileName);
     return data.publicUrl;
 }
 
@@ -891,11 +891,11 @@ if (saveContentButton) {
             }
 
             if (editingContentId) {
-                const { error } = await supabase.from("contents").update(payload).eq("id", editingContentId);
+                const { error } = await sb.from("contents").update(payload).eq("id", editingContentId);
                 if (error) throw error;
             } else {
                 payload.slug = slugify(title);
-                const { error } = await supabase.from("contents").insert([payload]);
+                const { error } = await sb.from("contents").insert([payload]);
                 if (error) throw error;
             }
 
@@ -1009,7 +1009,7 @@ async function toggleContentStatus(id, currentStatus) {
     if (newStatus === "published") payload.published_at = new Date().toISOString();
 
     try {
-        const { error } = await supabase.from("contents").update(payload).eq("id", id);
+        const { error } = await sb.from("contents").update(payload).eq("id", id);
         if (error) throw error;
         await Promise.all([renderAdminContents(), loadPublicContents(), loadDashboardStats()]);
     } catch (err) {
@@ -1023,7 +1023,7 @@ async function deleteContent(id) {
     if (!(await requireAdmin())) return;
 
     try {
-        const { error } = await supabase.from("contents").delete().eq("id", id);
+        const { error } = await sb.from("contents").delete().eq("id", id);
         if (error) throw error;
         await Promise.all([renderAdminContents(), loadPublicContents(), loadDashboardStats()]);
     } catch (err) {
@@ -1072,10 +1072,10 @@ if (saveServiceButton) {
 
         try {
             if (editingServiceId) {
-                const { error } = await supabase.from("services").update(payload).eq("id", editingServiceId);
+                const { error } = await sb.from("services").update(payload).eq("id", editingServiceId);
                 if (error) throw error;
             } else {
-                const { error } = await supabase.from("services").insert([payload]);
+                const { error } = await sb.from("services").insert([payload]);
                 if (error) throw error;
             }
 
@@ -1108,7 +1108,7 @@ async function renderAdminServices() {
     if (!list) return;
 
     try {
-        const { data, error } = await supabase.from("services").select("*").order("display_order", { ascending: true });
+        const { data, error } = await sb.from("services").select("*").order("display_order", { ascending: true });
         if (error) throw error;
 
         if (!data || data.length === 0) {
@@ -1154,7 +1154,7 @@ async function renderAdminServices() {
                 if (!(await requireAdmin())) return;
 
                 try {
-                    const { error } = await supabase.from("services").delete().eq("id", Number(btn.dataset.id));
+                    const { error } = await sb.from("services").delete().eq("id", Number(btn.dataset.id));
                     if (error) throw error;
                     await Promise.all([renderAdminServices(), loadServices(), loadDashboardStats()]);
                 } catch (err) {
@@ -1209,10 +1209,10 @@ if (saveFeatureButton) {
 
         try {
             if (editingFeatureId) {
-                const { error } = await supabase.from("features").update(payload).eq("id", editingFeatureId);
+                const { error } = await sb.from("features").update(payload).eq("id", editingFeatureId);
                 if (error) throw error;
             } else {
-                const { error } = await supabase.from("features").insert([payload]);
+                const { error } = await sb.from("features").insert([payload]);
                 if (error) throw error;
             }
 
@@ -1245,7 +1245,7 @@ async function renderAdminFeatures() {
     if (!list) return;
 
     try {
-        const { data, error } = await supabase.from("features").select("*").order("display_order", { ascending: true });
+        const { data, error } = await sb.from("features").select("*").order("display_order", { ascending: true });
         if (error) throw error;
 
         if (!data || data.length === 0) {
@@ -1291,7 +1291,7 @@ async function renderAdminFeatures() {
                 if (!(await requireAdmin())) return;
 
                 try {
-                    const { error } = await supabase.from("features").delete().eq("id", Number(btn.dataset.id));
+                    const { error } = await sb.from("features").delete().eq("id", Number(btn.dataset.id));
                     if (error) throw error;
                     await Promise.all([renderAdminFeatures(), loadFeatures(), loadDashboardStats()]);
                 } catch (err) {
@@ -1315,7 +1315,7 @@ async function renderAdminMessages() {
     if (!list) return;
 
     try {
-        const { data, error } = await supabase.from("messages").select("*").order("created_at", { ascending: false });
+        const { data, error } = await sb.from("messages").select("*").order("created_at", { ascending: false });
         if (error) throw error;
 
         if (!data || data.length === 0) {
@@ -1365,7 +1365,7 @@ async function renderAdminMessages() {
                 if (!(await requireAdmin())) return;
 
                 try {
-                    const { error } = await supabase.from("messages").delete().eq("id", Number(btn.dataset.id));
+                    const { error } = await sb.from("messages").delete().eq("id", Number(btn.dataset.id));
                     if (error) throw error;
                     await Promise.all([renderAdminMessages(), loadDashboardStats()]);
                 } catch (err) {
@@ -1402,7 +1402,7 @@ const homeEditorFields = {
 
 async function loadHomeEditorValues() {
     try {
-        const { data, error } = await supabase.from("site_settings").select("*");
+        const { data, error } = await sb.from("site_settings").select("*");
         if (error) throw error;
 
         (data || []).forEach((row) => {
@@ -1431,7 +1431,7 @@ if (saveHomeButton) {
                 updated_at: new Date().toISOString(),
             }));
 
-            const { error } = await supabase.from("site_settings").upsert(rows, { onConflict: "setting_key" });
+            const { error } = await sb.from("site_settings").upsert(rows, { onConflict: "setting_key" });
             if (error) throw error;
 
             setStatus(homeEditorStatus, "Home page updated.", false);
@@ -1449,7 +1449,7 @@ if (saveHomeButton) {
 
 async function loadAboutEditorValues() {
     try {
-        const { data, error } = await supabase.from("about_sections").select("*");
+        const { data, error } = await sb.from("about_sections").select("*");
         if (error) throw error;
 
         const main = (data || []).find((s) => s.section_key === "main");
@@ -1496,7 +1496,7 @@ if (saveAboutButton) {
                 },
             ];
 
-            const { error } = await supabase.from("about_sections").upsert(rows, { onConflict: "section_key" });
+            const { error } = await sb.from("about_sections").upsert(rows, { onConflict: "section_key" });
             if (error) throw error;
 
             setStatus(aboutEditorStatus, "About section updated.", false);
@@ -1514,7 +1514,7 @@ if (saveAboutButton) {
 
 async function loadFooterEditorValues() {
     try {
-        const { data, error } = await supabase.from("site_settings").select("*");
+        const { data, error } = await sb.from("site_settings").select("*");
         if (error) throw error;
 
         const settings = {};
@@ -1546,7 +1546,7 @@ if (saveFooterButton) {
                 { setting_key: "footer_address", setting_value: qs("footerAddressInput").value.trim() },
             ].map((row) => ({ ...row, updated_at: new Date().toISOString() }));
 
-            const { error } = await supabase.from("site_settings").upsert(rows, { onConflict: "setting_key" });
+            const { error } = await sb.from("site_settings").upsert(rows, { onConflict: "setting_key" });
             if (error) throw error;
 
             setStatus(footerEditorStatus, "Footer updated.", false);
