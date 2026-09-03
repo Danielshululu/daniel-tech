@@ -515,7 +515,7 @@ if (commentForm) {
 renderComments();
 
 /* ---------------------------------------------------------
-   10. CONTACT FORM -> messages table
+   10. CONTACT FORM -> message table
 --------------------------------------------------------- */
 
 const contactForm = qs("contactForm");
@@ -530,24 +530,48 @@ if (contactForm) {
         const subject = qs("contactSubject").value.trim();
         const message = qs("contactMessage").value.trim();
 
+        if (!name || !email || !message) {
+            setStatus(contactStatus, "Please fill in all required fields.", true);
+            return;
+        }
+
         setStatus(contactStatus, "Sending your message...", false);
 
         try {
-            const { error } = await sb.from("messages").insert([
-                { name, email, subject, message, status: "unread" },
+            const { error } = await sb.from("message").insert([
+                {
+                    name,
+                    email,
+                    subject,
+                    message
+                }
             ]);
 
             if (error) throw error;
 
-            setStatus(contactStatus, "Your message has been received. We will respond as soon as possible.", false);
+            setStatus(
+                contactStatus,
+                "Your message has been received. We will respond as soon as possible.",
+                false
+            );
+
             contactForm.reset();
+
+            if (isAdmin) {
+                await loadDashboardStats();
+                await renderAdminMessages();
+            }
         } catch (err) {
             console.error("contact submit failed:", err);
-            setStatus(contactStatus, "Sorry, your message could not be sent. Please try again.", true);
+
+            setStatus(
+                contactStatus,
+                err?.message || "Sorry, your message could not be sent. Please try again.",
+                true
+            );
         }
     });
 }
-
 /* ---------------------------------------------------------
    11. HOME / ABOUT / FOOTER — public content from site_settings & about_sections
 --------------------------------------------------------- */
