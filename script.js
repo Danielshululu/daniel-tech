@@ -715,26 +715,58 @@ if (adminLoginForm) {
 }
 
 async function ensureAdminSession() {
-    const { data, error } = await sb.auth.getSession();
+    try {
+        let { data, error } = await sb.auth.getSession();
 
-    if (error || !data.session) {
+        if (error) {
+            console.error("getSession failed:", error);
+            isAdmin = false;
+            currentSession = null;
+            return false;
+        }
+
+        if (!data.session) {
+            isAdmin = false;
+            currentSession = null;
+            return false;
+        }
+
+        let session = data.session;
+
+        const expiresAt = session.expires_at
+            ? session.expires_at * 1000
+            : 0;
+
+        if (expiresAt && expiresAt <= Date.now() + 60_000) {
+            const refreshed = await sb.auth.refreshSession();
+
+            if (refreshed.error || !refreshed.data.session) {
+                console.error("refreshSession failed:", refreshed.error);
+                isAdmin = false;
+                currentSession = null;
+                return false;
+            }
+
+            session = refreshed.data.session;
+        }
+
+        if (!session.user || session.user.id !== ADMIN_UID) {
+            isAdmin = false;
+            currentSession = null;
+            return false;
+        }
+
+        currentSession = session;
+        isAdmin = true;
+
+        return true;
+    } catch (err) {
+        console.error("ensureAdminSession failed:", err);
         isAdmin = false;
         currentSession = null;
         return false;
     }
-
-    if (data.session.user.id !== ADMIN_UID) {
-        isAdmin = false;
-        currentSession = null;
-        return false;
-    }
-
-    currentSession = data.session;
-    isAdmin = true;
-    return true;
 }
-
-async function requireAdmin() {
     const ok = await ensureAdminSession();
     if (!ok) {
         closeModal("dashboardModal");
