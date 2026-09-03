@@ -1,4 +1,4 @@
-/* =========================================================
+ /* =========================================================
    DANIEL TECH — MAIN JAVASCRIPT
    Supabase-backed. Matches index.html element IDs/classes exactly.
 ========================================================= */
@@ -515,7 +515,7 @@ if (commentForm) {
 renderComments();
 
 /* ---------------------------------------------------------
-   10. CONTACT FORM -> message table
+   10. CONTACT FORM -> messages table
 --------------------------------------------------------- */
 
 const contactForm = qs("contactForm");
@@ -530,48 +530,24 @@ if (contactForm) {
         const subject = qs("contactSubject").value.trim();
         const message = qs("contactMessage").value.trim();
 
-        if (!name || !email || !message) {
-            setStatus(contactStatus, "Please fill in all required fields.", true);
-            return;
-        }
-
         setStatus(contactStatus, "Sending your message...", false);
 
         try {
-            const { error } = await sb.from("message").insert([
-                {
-                    name,
-                    email,
-                    subject,
-                    message
-                }
+            const { error } = await sb.from("messages").insert([
+                { name, email, subject, message, status: "unread" },
             ]);
 
             if (error) throw error;
 
-            setStatus(
-                contactStatus,
-                "Your message has been received. We will respond as soon as possible.",
-                false
-            );
-
+            setStatus(contactStatus, "Your message has been received. We will respond as soon as possible.", false);
             contactForm.reset();
-
-            if (isAdmin) {
-                await loadDashboardStats();
-                await renderAdminMessages();
-            }
         } catch (err) {
             console.error("contact submit failed:", err);
-
-            setStatus(
-                contactStatus,
-                err?.message || "Sorry, your message could not be sent. Please try again.",
-                true
-            );
+            setStatus(contactStatus, "Sorry, your message could not be sent. Please try again.", true);
         }
     });
 }
+
 /* ---------------------------------------------------------
    11. HOME / ABOUT / FOOTER — public content from site_settings & about_sections
 --------------------------------------------------------- */
@@ -715,58 +691,26 @@ if (adminLoginForm) {
 }
 
 async function ensureAdminSession() {
-    try {
-        let { data, error } = await sb.auth.getSession();
+    const { data, error } = await sb.auth.getSession();
 
-        if (error) {
-            console.error("getSession failed:", error);
-            isAdmin = false;
-            currentSession = null;
-            return false;
-        }
-
-        if (!data.session) {
-            isAdmin = false;
-            currentSession = null;
-            return false;
-        }
-
-        let session = data.session;
-
-        const expiresAt = session.expires_at
-            ? session.expires_at * 1000
-            : 0;
-
-        if (expiresAt && expiresAt <= Date.now() + 60_000) {
-            const refreshed = await sb.auth.refreshSession();
-
-            if (refreshed.error || !refreshed.data.session) {
-                console.error("refreshSession failed:", refreshed.error);
-                isAdmin = false;
-                currentSession = null;
-                return false;
-            }
-
-            session = refreshed.data.session;
-        }
-
-        if (!session.user || session.user.id !== ADMIN_UID) {
-            isAdmin = false;
-            currentSession = null;
-            return false;
-        }
-
-        currentSession = session;
-        isAdmin = true;
-
-        return true;
-    } catch (err) {
-        console.error("ensureAdminSession failed:", err);
+    if (error || !data.session) {
         isAdmin = false;
         currentSession = null;
         return false;
     }
+
+    if (data.session.user.id !== ADMIN_UID) {
+        isAdmin = false;
+        currentSession = null;
+        return false;
+    }
+
+    currentSession = data.session;
+    isAdmin = true;
+    return true;
 }
+
+async function requireAdmin() {
     const ok = await ensureAdminSession();
     if (!ok) {
         closeModal("dashboardModal");
@@ -851,7 +795,7 @@ async function loadDashboardStats() {
             sb.from("features").select("id", { count: "exact", head: true }),
             sb.from("contents").select("id", { count: "exact", head: true }),
             sb.from("contents").select("id", { count: "exact", head: true }).eq("status", "published"),
-            sb.from("message").select("id", { count: "exact", head: true }),
+            sb.from("messages").select("id", { count: "exact", head: true }),
         ]);
 
         setText("statServices", servicesCount.count ?? 0);
@@ -1370,17 +1314,8 @@ async function renderAdminMessages() {
     const list = qs("adminMessagesList");
     if (!list) return;
 
-    if (!(await ensureAdminSession())) {
-        list.innerHTML = `<p class="empty-content">Please log in as admin to view messages.</p>`;
-        return;
-    }
-
     try {
-        const { data, error } = await sb
-            .from("message")
-            .select("id, created_at, email, subject, name")
-            .order("created_at", { ascending: false });
-
+        const { data, error } = await sb.from("messages").select("*").order("created_at", { ascending: false });
         if (error) throw error;
 
         if (!data || data.length === 0) {
@@ -1393,70 +1328,62 @@ async function renderAdminMessages() {
                 (msg) => `
             <div class="admin-message-item">
                 <h4>${escapeHtml(msg.subject || "No subject")}</h4>
-
-                <p>
-                    <strong>From:</strong>
-                    ${escapeHtml(msg.name || "Unknown")}
-                    (${escapeHtml(msg.email || "No email")})
-                </p>
-
-                <small>${formatDate(msg.created_at)}</small>
-
+                <p><strong>From:</strong> ${escapeHtml(msg.name)} (${escapeHtml(msg.email)})</p>
+                <p>${escapeHtml(msg.message)}</p>
+                <small>${formatDate(msg.created_at)} — ${escapeHtml(msg.status)}</small>
                 <div>
-                    <button
-                        type="button"
-                        class="delete-message-button"
-                        data-id="${msg.id}">
-                        Delete
+                    <button class="view-button toggle-message-status-button" data-id="${msg.id}" data-status="${msg.status}">
+                        Mark as ${msg.status === "unread" ? "read" : "unread"}
                     </button>
+                    <button class="delete-message-button" data-id="${msg.id}">Delete</button>
                 </div>
             </div>
         `
             )
             .join("");
 
+        list.querySelectorAll(".toggle-message-status-button").forEach((btn) => {
+            btn.addEventListener("click", async () => {
+                if (!(await requireAdmin())) return;
+                const newStatus = btn.dataset.status === "unread" ? "read" : "unread";
+                try {
+                    const { error } = await sb
+                        .from("messages")
+                        .update({ status: newStatus })
+                        .eq("id", Number(btn.dataset.id));
+                    if (error) throw error;
+                    await renderAdminMessages();
+                } catch (err) {
+                    console.error("toggle message status failed:", err);
+                }
+            });
+        });
+
         list.querySelectorAll(".delete-message-button").forEach((btn) => {
             btn.addEventListener("click", async () => {
                 if (!confirm("Are you sure you want to delete this message?")) return;
-
                 if (!(await requireAdmin())) return;
 
                 try {
-                    const { error } = await sb
-                        .from("message")
-                        .delete()
-                        .eq("id", Number(btn.dataset.id));
-
+                    const { error } = await sb.from("messages").delete().eq("id", Number(btn.dataset.id));
                     if (error) throw error;
-
-                    await Promise.all([
-                        renderAdminMessages(),
-                        loadDashboardStats()
-                    ]);
+                    await Promise.all([renderAdminMessages(), loadDashboardStats()]);
                 } catch (err) {
                     console.error("delete message failed:", err);
-                    alert(err?.message || "Could not delete this message.");
                 }
             });
         });
     } catch (err) {
         console.error("renderAdminMessages failed:", err);
-
-        list.innerHTML = `
-            <p class="empty-content">
-                ${escapeHtml(err?.message || "Could not load messages.")}
-            </p>
-        `;
+        list.innerHTML = `<p class="empty-content">Could not load messages.</p>`;
     }
 }
 
 const refreshMessagesButton = qs("refreshMessagesButton");
-
 if (refreshMessagesButton) {
-    refreshMessagesButton.addEventListener("click", async () => {
-        await renderAdminMessages();
-    });
+    refreshMessagesButton.addEventListener("click", renderAdminMessages);
 }
+
 /* ---------------------------------------------------------
    19. DASHBOARD — HOME PAGE EDITOR (site_settings)
 --------------------------------------------------------- */
