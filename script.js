@@ -7,7 +7,7 @@
    0. SUPABASE CONFIG
 --------------------------------------------------------- */
 
-const SUPABASE_URL = "https://bodprzntcloioncwhpvr.sb.co";
+const SUPABASE_URL = "https://bodprzntcloioncwhpvr.supabase.co";
 const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_x4riqGTgHI3btFxG5RXLpA_7RNBneJA";
 const ADMIN_UID = "05fef3eb-16a3-4554-9d9b-de7d2b29144b";
 const STORAGE_BUCKET = "daniel-files";
