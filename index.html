@@ -11,7 +11,7 @@
 
     <title>Daniel Tech</title>
 
-    <link rel="stylesheet" href="style.css?v=20260902-5">
+    <link rel="stylesheet" href="style.css?v=20260903-1">
 </head>
 
 <body>
@@ -770,6 +770,49 @@
 </main>
 
 
+<!-- ================= FOOTER ================= -->
+
+<footer class="site-footer">
+
+    <div class="section-container footer-container">
+
+        <div class="footer-about">
+
+            <div class="logo">
+                <span>Daniel</span> Tech
+            </div>
+
+            <p id="footerText">
+                Daniel Tech is a technology platform focused on
+                digital solutions, computer services and technology
+                education.
+            </p>
+
+        </div>
+
+
+        <div class="footer-contact">
+
+            <span>Email: <strong id="footerEmail">danielshululu770@gmail.com</strong></span>
+            <span>Phone: <strong id="footerPhone">0742287977</strong></span>
+            <span id="footerAddress"></span>
+
+        </div>
+
+
+        <div id="footerSocialLinks" class="footer-social">
+        </div>
+
+    </div>
+
+
+    <div class="footer-bottom">
+        <span>&copy; <span id="footerYear"></span> Daniel Tech. All rights reserved.</span>
+    </div>
+
+</footer>
+
+
 <!-- ================= SETTINGS ================= -->
 
 <aside id="settingsPanel" class="settings-panel">
@@ -966,29 +1009,14 @@
 
                 <div class="form-group">
 
-                    <label for="adminName">
-                        Name
-                    </label>
-
-                    <input
-                        type="text"
-                        id="adminName"
-                        placeholder="Admin name"
-                        required>
-
-                </div>
-
-
-                <div class="form-group">
-
                     <label for="adminUsername">
-                        Username / Email
+                        Admin Email
                     </label>
 
                     <input
-                        type="text"
+                        type="email"
                         id="adminUsername"
-                        placeholder="Admin username or email"
+                        placeholder="Admin email"
                         required>
 
                 </div>
@@ -1045,155 +1073,422 @@
 
             </div>
 
-        </div>
-
-
-        <!-- Content buttons -->
-
-        <div class="dashboard-actions">
-
             <button
                 type="button"
-                id="addNewsButton"
-                class="dashboard-button">
-                Add News
-            </button>
-
-            <button
-                type="button"
-                id="addTipButton"
-                class="dashboard-button">
-                Add Tip
-            </button>
-
-            <button
-                type="button"
-                id="addVideoButton"
-                class="dashboard-button">
-                Add Video
-            </button>
-
-            <button
-                type="button"
-                id="addPdfButton"
-                class="dashboard-button">
-                Add PDF
+                class="modal-close"
+                data-close-modal="dashboardModal">
+                Close
             </button>
 
         </div>
 
 
-        <!-- Admin editor -->
+        <!-- Dashboard section tabs -->
 
-        <div id="adminEditor" class="admin-editor">
+        <div class="dashboard-tabs dashboard-actions">
 
-            <h3>Add / Edit Content</h3>
-
-
-            <div class="form-group">
-
-                <label for="contentTitle">
-                    Title
-                </label>
-
-                <input
-                    type="text"
-                    id="contentTitle"
-                    placeholder="Content title">
-
-            </div>
-
-
-            <div class="form-group">
-
-                <label for="contentCategory">
-                    Category
-                </label>
-
-                <select id="contentCategory">
-
-                    <option value="news">
-                        News
-                    </option>
-
-                    <option value="tip">
-                        Tip
-                    </option>
-
-                    <option value="video">
-                        Video
-                    </option>
-
-                    <option value="pdf">
-                        PDF
-                    </option>
-
-                    <option value="blog">
-                        Blog
-                    </option>
-
-                </select>
-
-            </div>
-
-
-            <div class="form-group">
-
-                <label for="contentText">
-                    Description / Content
-                </label>
-
-                <textarea
-                    id="contentText"
-                    placeholder="Write your content here"></textarea>
-
-            </div>
-
-
-            <div class="form-group">
-
-                <label for="contentFile">
-                    File
-                </label>
-
-                <input
-                    type="file"
-                    id="contentFile">
-
-            </div>
-
-
-            <button
-                type="button"
-                id="saveContentButton"
-                class="primary-button">
-                Publish Content
-            </button>
-
-
-            <p id="contentStatus" class="form-status"></p>
+            <button type="button" class="dashboard-button dashboard-tab active" data-panel="overview">Overview</button>
+            <button type="button" class="dashboard-button dashboard-tab" data-panel="home">Home Page</button>
+            <button type="button" class="dashboard-button dashboard-tab" data-panel="services">Services</button>
+            <button type="button" class="dashboard-button dashboard-tab" data-panel="features">Features</button>
+            <button type="button" class="dashboard-button dashboard-tab" data-panel="news">News / Blog</button>
+            <button type="button" class="dashboard-button dashboard-tab" data-panel="about">About</button>
+            <button type="button" class="dashboard-button dashboard-tab" data-panel="footer">Footer / Contact</button>
+            <button type="button" class="dashboard-button dashboard-tab" data-panel="messages">Messages</button>
 
         </div>
 
 
-        <!-- Published content -->
+        <!-- OVERVIEW PANEL -->
 
-        <div class="admin-content-area">
+        <div class="admin-panel active-panel" data-panel="overview">
 
-            <h3>Published Content</h3>
+            <div class="admin-content-area">
 
-            <div id="adminContentList">
+                <h3>Dashboard Overview</h3>
 
-                <p class="empty-content">
-                    No content available.
-                </p>
+                <div class="stats-grid">
+
+                    <div class="stat-box">
+                        <strong id="statServices">0</strong>
+                        <span>Total Services</span>
+                    </div>
+
+                    <div class="stat-box">
+                        <strong id="statFeatures">0</strong>
+                        <span>Total Features</span>
+                    </div>
+
+                    <div class="stat-box">
+                        <strong id="statContents">0</strong>
+                        <span>Total News</span>
+                    </div>
+
+                    <div class="stat-box">
+                        <strong id="statPublished">0</strong>
+                        <span>Published Content</span>
+                    </div>
+
+                    <div class="stat-box">
+                        <strong id="statMessages">0</strong>
+                        <span>Messages</span>
+                    </div>
+
+                </div>
 
             </div>
 
         </div>
 
 
-        <!-- Messages section is created by script.js -->
+        <!-- HOME PANEL -->
+
+        <div class="admin-panel" data-panel="home">
+
+            <div class="admin-editor">
+
+                <h3>Home Page</h3>
+
+                <div class="form-group">
+                    <label for="homeHeroTitle">Hero Title</label>
+                    <input type="text" id="homeHeroTitle" placeholder="Daniel Tech">
+                </div>
+
+                <div class="form-group">
+                    <label for="homeHeroSubtitle">Hero Subtitle</label>
+                    <input type="text" id="homeHeroSubtitle" placeholder="TECHNOLOGY • DIGITAL SOLUTIONS • INNOVATION">
+                </div>
+
+                <div class="form-group">
+                    <label for="homeHeroDescription">Hero Description</label>
+                    <textarea id="homeHeroDescription" placeholder="Hero description text"></textarea>
+                </div>
+
+                <div class="form-row">
+
+                    <div class="form-group">
+                        <label for="homeHeroButtonText">Hero Button Text</label>
+                        <input type="text" id="homeHeroButtonText" placeholder="Explore Services">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="homeHeroButtonLink">Hero Button Link</label>
+                        <input type="text" id="homeHeroButtonLink" placeholder="services">
+                    </div>
+
+                </div>
+
+                <div class="form-group">
+                    <label for="homeWelcomeTitle">Welcome Section Title</label>
+                    <input type="text" id="homeWelcomeTitle" placeholder="What's New">
+                </div>
+
+                <div class="form-group">
+                    <label for="homeWelcomeText">Welcome Section Text</label>
+                    <textarea id="homeWelcomeText" placeholder="Welcome section text"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="homeCtaTitle">Call To Action Title</label>
+                    <input type="text" id="homeCtaTitle" placeholder="Optional">
+                </div>
+
+                <div class="form-group">
+                    <label for="homeCtaText">Call To Action Text</label>
+                    <textarea id="homeCtaText" placeholder="Optional"></textarea>
+                </div>
+
+                <button type="button" id="saveHomeButton" class="primary-button">Save Home Page</button>
+
+                <p id="homeEditorStatus" class="form-status"></p>
+
+            </div>
+
+        </div>
+
+
+        <!-- SERVICES PANEL -->
+
+        <div class="admin-panel" data-panel="services">
+
+            <div class="admin-content-area">
+                <h3>Services</h3>
+                <div id="adminServiceList"></div>
+            </div>
+
+            <div class="admin-editor">
+
+                <h3>Add / Edit Service</h3>
+
+                <div class="form-group">
+                    <label for="serviceEditorTitle">Title</label>
+                    <input type="text" id="serviceEditorTitle" placeholder="Service title">
+                </div>
+
+                <div class="form-group">
+                    <label for="serviceEditorDescription">Short Description</label>
+                    <textarea id="serviceEditorDescription" placeholder="Short description"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="serviceEditorFullDescription">Full Description</label>
+                    <textarea id="serviceEditorFullDescription" placeholder="Full description shown in the modal"></textarea>
+                </div>
+
+                <div class="form-row">
+
+                    <div class="form-group">
+                        <label for="serviceEditorOrder">Display Order</label>
+                        <input type="number" id="serviceEditorOrder" value="0">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="serviceEditorStatus">Status</label>
+                        <select id="serviceEditorStatus">
+                            <option value="published">Published</option>
+                            <option value="draft">Draft</option>
+                        </select>
+                    </div>
+
+                </div>
+
+                <button type="button" id="saveServiceButton" class="primary-button">Add Service</button>
+                <button type="button" id="cancelServiceEditButton" class="secondary-button">Cancel</button>
+
+                <p id="serviceEditorStatusMsg" class="form-status"></p>
+
+            </div>
+
+        </div>
+
+
+        <!-- FEATURES PANEL -->
+
+        <div class="admin-panel" data-panel="features">
+
+            <div class="admin-content-area">
+                <h3>Features</h3>
+                <div id="adminFeatureList"></div>
+            </div>
+
+            <div class="admin-editor">
+
+                <h3>Add / Edit Feature</h3>
+
+                <div class="form-group">
+                    <label for="featureEditorTitle">Title</label>
+                    <input type="text" id="featureEditorTitle" placeholder="Feature title">
+                </div>
+
+                <div class="form-group">
+                    <label for="featureEditorDescription">Short Description</label>
+                    <textarea id="featureEditorDescription" placeholder="Short description"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="featureEditorFullDescription">Full Description</label>
+                    <textarea id="featureEditorFullDescription" placeholder="Full description shown in the modal"></textarea>
+                </div>
+
+                <div class="form-row">
+
+                    <div class="form-group">
+                        <label for="featureEditorOrder">Display Order</label>
+                        <input type="number" id="featureEditorOrder" value="0">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="featureEditorStatus">Status</label>
+                        <select id="featureEditorStatus">
+                            <option value="published">Published</option>
+                            <option value="draft">Draft</option>
+                        </select>
+                    </div>
+
+                </div>
+
+                <button type="button" id="saveFeatureButton" class="primary-button">Add Feature</button>
+                <button type="button" id="cancelFeatureEditButton" class="secondary-button">Cancel</button>
+
+                <p id="featureEditorStatusMsg" class="form-status"></p>
+
+            </div>
+
+        </div>
+
+
+        <!-- NEWS PANEL -->
+
+        <div class="admin-panel" data-panel="news">
+
+            <div class="dashboard-actions">
+
+                <button type="button" id="addNewsButton" class="dashboard-button">Add News</button>
+                <button type="button" id="addTipButton" class="dashboard-button">Add Tip</button>
+                <button type="button" id="addVideoButton" class="dashboard-button">Add Video</button>
+                <button type="button" id="addPdfButton" class="dashboard-button">Add PDF</button>
+
+            </div>
+
+            <div id="adminEditor" class="admin-editor">
+
+                <h3>Add / Edit Content</h3>
+
+                <div class="form-group">
+                    <label for="contentTitle">Title</label>
+                    <input type="text" id="contentTitle" placeholder="Content title">
+                </div>
+
+                <div class="form-row">
+
+                    <div class="form-group">
+                        <label for="contentCategory">Category</label>
+                        <select id="contentCategory">
+                            <option value="news">News</option>
+                            <option value="tip">Tip</option>
+                            <option value="video">Video</option>
+                            <option value="pdf">PDF</option>
+                            <option value="article">Article</option>
+                            <option value="announcement">Announcement</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="contentStatusSelect">Status</label>
+                        <select id="contentStatusSelect">
+                            <option value="published">Published</option>
+                            <option value="draft">Draft</option>
+                        </select>
+                    </div>
+
+                </div>
+
+                <div class="form-group">
+                    <label for="contentText">Description / Content</label>
+                    <textarea id="contentText" placeholder="Write your content here"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="contentFile">File (image, video, audio or PDF)</label>
+                    <input type="file" id="contentFile">
+                </div>
+
+                <label class="setting-option">
+                    <span>Featured</span>
+                    <input type="checkbox" id="contentFeatured">
+                </label>
+
+                <button type="button" id="saveContentButton" class="primary-button">Publish Content</button>
+
+                <p id="contentStatus" class="form-status"></p>
+
+            </div>
+
+
+            <div class="admin-content-area">
+
+                <h3>Published Content</h3>
+
+                <div id="adminContentList">
+                    <p class="empty-content">No content available.</p>
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ABOUT PANEL -->
+
+        <div class="admin-panel" data-panel="about">
+
+            <div class="admin-editor">
+
+                <h3>About Section</h3>
+
+                <div class="form-group">
+                    <label for="aboutTitle">Title</label>
+                    <input type="text" id="aboutTitle" placeholder="Daniel Tech">
+                </div>
+
+                <div class="form-group">
+                    <label for="aboutDescription">Description</label>
+                    <textarea id="aboutDescription" placeholder="About description"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="aboutMission">Mission</label>
+                    <textarea id="aboutMission" placeholder="Mission statement"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="aboutVision">Vision</label>
+                    <textarea id="aboutVision" placeholder="Vision statement"></textarea>
+                </div>
+
+                <button type="button" id="saveAboutButton" class="primary-button">Save About</button>
+
+                <p id="aboutEditorStatus" class="form-status"></p>
+
+            </div>
+
+        </div>
+
+
+        <!-- FOOTER PANEL -->
+
+        <div class="admin-panel" data-panel="footer">
+
+            <div class="admin-editor">
+
+                <h3>Footer / Contact</h3>
+
+                <div class="form-group">
+                    <label for="footerTextInput">Footer Description</label>
+                    <textarea id="footerTextInput" placeholder="Footer description"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="footerEmailInput">Email</label>
+                    <input type="email" id="footerEmailInput" placeholder="Contact email">
+                </div>
+
+                <div class="form-group">
+                    <label for="footerPhoneInput">Phone</label>
+                    <input type="text" id="footerPhoneInput" placeholder="Contact phone">
+                </div>
+
+                <div class="form-group">
+                    <label for="footerAddressInput">Address</label>
+                    <input type="text" id="footerAddressInput" placeholder="Address (optional)">
+                </div>
+
+                <button type="button" id="saveFooterButton" class="primary-button">Save Footer</button>
+
+                <p id="footerEditorStatus" class="form-status"></p>
+
+            </div>
+
+        </div>
+
+
+        <!-- MESSAGES PANEL -->
+
+        <div class="admin-panel" data-panel="messages">
+
+            <div class="admin-messages-section">
+
+                <h3>Visitor Messages</h3>
+
+                <button type="button" id="refreshMessagesButton" class="dashboard-button">Refresh Messages</button>
+
+                <div id="adminMessagesList" class="admin-messages-list">
+                    <p class="empty-content">No messages yet.</p>
+                </div>
+
+            </div>
+
+        </div>
 
 
         <button
@@ -1231,8 +1526,12 @@
 
 <!-- ================= JAVASCRIPT ================= -->
 
-<script src="script.js?v=20260902-5"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="script.js?v=20260903-1"></script>
+<script>
+    var yearEl = document.getElementById("footerYear");
+    if (yearEl) { yearEl.textContent = new Date().getFullYear(); }
+</script>
 
 </body>
 </html>
-
