@@ -4,475 +4,594 @@
 <meta name="google-site-verification" content="YT29c5mfboXHqdivqlpQ9F-KVEr8fo8bwh9Q--r5Vl8" />
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="Daniel Tech - Technology, computer services, web development, AI tools, programming, gaming and software solutions.">
+<meta name="description" content="Daniel Tech - Technology, computer services, web development, AI tools, programming, gaming and digital solutions.">
 <meta name="author" content="Daniel Tech">
 <title>Daniel Tech</title>
 <link rel="icon" href="data:,">
-<link rel="stylesheet" href="style.css?v=20261002-3">
-<!-- Automatic time-based theme: Light 06:00-17:59, Dark 18:00-05:59 (visitor's device time) -->
 <script>
 (function () {
-  function updateTheme() {
-    var h = new Date().getHours();
-    document.documentElement.classList.toggle('dark-mode', h >= 18 || h < 6);
-  }
-  updateTheme();
-  setInterval(updateTheme, 30000);
+    function updateTheme() {
+        const hour = new Date().getHours();
+        document.documentElement.classList.toggle("dark-mode", hour >= 18 || hour < 6);
+    }
+    updateTheme();
+    setInterval(updateTheme, 30000);
 })();
 </script>
+  <meta property="og:image" content="https://bolt.new/static/og_default.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://bolt.new/static/og_default.png">
+  <script type="module" crossorigin src="/assets/index-BnGPdHj6.js"></script>
+  <link rel="stylesheet" crossorigin href="/assets/index-D2Hk975l.css">
 </head>
 <body>
-
+<!-- =========================================================
+     HEADER
+     ========================================================= -->
 <header class="site-header">
-<div class="header-container">
-<a href="#" class="logo" data-page="home"><span>Daniel</span> Tech</a>
-<nav class="main-nav" id="mainNav">
-<a href="#" data-page="home">Home</a>
-<a href="#" data-page="services">Services</a>
-<a href="#" data-page="features">Features</a>
-<a href="#" data-page="blog">Blog / News</a>
-<a href="#" data-page="contact">Contact</a>
-</nav>
-<div class="header-actions">
-<button type="button" id="settingsButton" class="header-button">Settings</button>
-<button type="button" id="menuButton" class="menu-button">Menu</button>
-</div>
-</div>
+    <div class="header-top-row">
+        <div class="logo" data-page="home">
+            <span>Daniel</span> Tech
+        </div>
+        <div class="header-actions">
+            <div class="language-switch">
+                <button type="button" id="languageEN" class="language-button active">ENG</button>
+                <button type="button" id="languageSW" class="language-button">KISW</button>
+            </div>
+            <div class="auth-buttons">
+                <button type="button" id="signInButton" class="header-button">Sign In</button>
+                <button type="button" id="signUpButton" class="header-button primary-header-button">Sign Up</button>
+            </div>
+            <button type="button" id="menuButton" class="menu-button" aria-label="Open menu" aria-expanded="false">
+                <span class="hamburger-icon" aria-hidden="true"></span>
+            </button>
+        </div>
+    </div>
+    <nav class="main-nav" id="mainNav">
+        <a href="#" data-page="home">Home</a>
+        <a href="#" data-page="services">Services</a>
+        <a href="#" data-page="blog">News</a>
+        <a href="#" data-page="contact">Contact</a>
+    </nav>
 </header>
 
-<div class="news-bar">
-<div class="news-container">
-<strong>Latest News</strong>
-<div class="news-ticker"><div id="newsContent">Welcome to Daniel Tech.</div></div>
-</div>
-</div>
-
-<main>
-
-<section id="home" class="page active-page">
-<div class="hero">
-<div class="hero-content">
-<p class="hero-label">TECHNOLOGY • DIGITAL SOLUTIONS • INNOVATION</p>
-<h1>Welcome to <span>Daniel Tech</span></h1>
-<p class="hero-description">Your technology platform for computer services, web development, programming, AI tools, software solutions, gaming and useful technology tips.</p>
-<div class="hero-buttons">
-<button type="button" class="primary-button" data-page="services">Explore Services</button>
-<button type="button" class="secondary-button" data-page="contact">Contact Daniel Tech</button>
-</div>
-</div>
-<div class="hero-card">
-<div class="hero-card-top">Daniel Tech</div>
-<div class="hero-card-content">
-<div class="hero-stat"><strong>Web</strong><span>Development</span></div>
-<div class="hero-stat"><strong>AI</strong><span>Solutions</span></div>
-<div class="hero-stat"><strong>ICT</strong><span>Services</span></div>
-<div class="hero-stat"><strong>Tech</strong><span>Tips</span></div>
-</div>
-</div>
-</div>
-<div class="section-container">
-<div class="section-heading">
-<p>WHAT'S NEW</p>
-<h2>Latest Content</h2>
-<span>Discover the latest technology content published on Daniel Tech.</span>
-</div>
-<div id="latestContent" class="content-grid"><div class="empty-content">No content has been published yet.</div></div>
-</div>
-</section>
-
-<section id="services" class="page">
-<div class="section-container">
-<div class="section-heading">
-<p>DANIEL TECH SERVICES</p>
-<h2>Our Services</h2>
-<span>Professional technology services and digital solutions.</span>
-</div>
-<div class="service-grid">
-<article class="service-card"><div class="card-number">01</div><h3>Web Development</h3><p>Modern, responsive and professional websites for businesses, organizations and personal projects.</p><button type="button" class="view-button service-view-button" data-service="web">View Service</button></article>
-<article class="service-card"><div class="card-number">02</div><h3>Graphics Design</h3><p>Professional digital designs for logos, posters, social media and other creative projects.</p><button type="button" class="view-button service-view-button" data-service="graphics">View Service</button></article>
-<article class="service-card"><div class="card-number">03</div><h3>Cyber Security</h3><p>Technology security guidance, digital safety awareness and basic cybersecurity solutions.</p><button type="button" class="view-button service-view-button" data-service="security">View Service</button></article>
-<article class="service-card"><div class="card-number">04</div><h3>Computer Services</h3><p>Computer setup, software installation, troubleshooting and general ICT support.</p><button type="button" class="view-button service-view-button" data-service="computer">View Service</button></article>
-<article class="service-card"><div class="card-number">05</div><h3>Software Solutions</h3><p>Software solutions and digital tools designed to make everyday work easier.</p><button type="button" class="view-button service-view-button" data-service="software">View Service</button></article>
-<article class="service-card"><div class="card-number">06</div><h3>AI Solutions</h3><p>Practical use of artificial intelligence tools for learning, productivity and digital projects.</p><button type="button" class="view-button service-view-button" data-service="ai">View Service</button></article>
-</div>
-</div>
-</section>
-
-<section id="features" class="page">
-<div class="section-container">
-<div class="section-heading">
-<p>TECHNOLOGY KNOWLEDGE</p>
-<h2>Features</h2>
-<span>Useful technology information and practical guides.</span>
-</div>
-<div class="feature-grid">
-<article class="feature-card"><div class="feature-number">01</div><h3>Computer Tips</h3><p>Learn useful computer tricks, maintenance tips and productivity techniques.</p><button type="button" class="view-button feature-view-button" data-feature="computer-tips">Explore</button></article>
-<article class="feature-card"><div class="feature-number">02</div><h3>Phone Tips</h3><p>Discover useful smartphone settings, troubleshooting methods and practical tips.</p><button type="button" class="view-button feature-view-button" data-feature="phone-tips">Explore</button></article>
-<article class="feature-card"><div class="feature-number">03</div><h3>AI Tools</h3><p>Learn about useful artificial intelligence tools and how they can improve productivity.</p><button type="button" class="view-button feature-view-button" data-feature="ai-tools">Explore</button></article>
-<article class="feature-card"><div class="feature-number">04</div><h3>Gaming</h3><p>Gaming tips, software information, performance improvements and guides.</p><button type="button" class="view-button feature-view-button" data-feature="gaming">Explore</button></article>
-<article class="feature-card"><div class="feature-number">05</div><h3>Programming</h3><p>Programming concepts, coding tutorials and useful development resources.</p><button type="button" class="view-button feature-view-button" data-feature="programming">Explore</button></article>
-<article class="feature-card"><div class="feature-number">06</div><h3>Software Tips</h3><p>Guides for installing, configuring and using useful computer software.</p><button type="button" class="view-button feature-view-button" data-feature="software-tips">Explore</button></article>
-</div>
-</div>
-</section>
-
-<section id="blog" class="page">
-<div class="section-container">
-<div class="section-heading">
-<p>DANIEL TECH BLOG</p>
-<h2>Blog / News</h2>
-<span>Technology news, tutorials, tips and published content.</span>
-</div>
-<div id="blogGrid" class="blog-grid"><div class="empty-content">No blog content has been published yet.</div></div>
-<div class="comments-section">
-<div class="section-heading small-heading">
-<p>COMMUNITY</p>
-<h2>Comments</h2>
-<span>Leave a comment about Daniel Tech. Comments are reviewed before they appear publicly.</span>
-</div>
-<form id="commentForm" class="comment-form">
-<div class="form-group"><label for="commentName">Your Name</label><input type="text" id="commentName" placeholder="Enter your name" required></div>
-<div class="form-group"><label for="commentText">Your Comment</label><textarea id="commentText" placeholder="Write your comment" required></textarea></div>
-<button type="submit" class="primary-button">Post Comment</button>
-<p id="commentStatus" class="form-status"></p>
-</form>
-<div id="commentsList" class="comments-list"><p class="empty-content">No comments yet.</p></div>
-</div>
-</div>
-</section>
-
-<section id="contact" class="page">
-<div class="section-container">
-<div class="section-heading">
-<p>GET IN TOUCH</p>
-<h2>Contact Daniel Tech</h2>
-<span>Send us a message and we will get back to you.</span>
-</div>
-<div class="contact-layout">
-<div class="contact-information">
-<div class="contact-card"><span>Phone</span><strong>0742287977</strong></div>
-<div class="contact-card"><span>WhatsApp</span><strong>0742287977</strong></div>
-<div class="contact-card"><span>Email</span><strong>danielshululu770@gmail.com</strong></div>
-<div class="contact-card"><span>Response</span><strong>We will respond as soon as possible.</strong></div>
-</div>
-<div class="contact-form-container">
-<form id="contactForm">
-<div class="form-row">
-<div class="form-group"><label for="contactName">Name</label><input type="text" id="contactName" placeholder="Your name" required></div>
-<div class="form-group"><label for="contactEmail">Email</label><input type="email" id="contactEmail" placeholder="Your email" required></div>
-</div>
-<div class="form-group"><label for="contactSubject">Subject</label><input type="text" id="contactSubject" placeholder="Message subject" required></div>
-<div class="form-group"><label for="contactMessage">Message</label><textarea id="contactMessage" placeholder="Write your message" required></textarea></div>
-<button type="submit" class="primary-button">Send Message</button>
-<p id="contactStatus" class="form-status"></p>
-</form>
-</div>
-</div>
-</div>
-</section>
-
-</main>
-
-<footer class="site-footer">
-<div class="section-container footer-container">
-<div class="footer-about">
-<div class="logo"><span>Daniel</span> Tech</div>
-<p id="footerText">Daniel Tech is a technology platform focused on digital solutions, computer services and technology education.</p>
-</div>
-<div class="footer-contact">
-<span>Email: <strong id="footerEmail">danielshululu770@gmail.com</strong></span>
-<span>Phone: <strong id="footerPhone">0742287977</strong></span>
-<span id="footerAddress"></span>
-</div>
-<div id="footerSocialLinks" class="footer-social"></div>
-</div>
-<div class="footer-bottom"><span>&copy; <span id="footerYear"></span> Daniel Tech. All rights reserved.</span></div>
-</footer>
-
-<aside id="settingsPanel" class="settings-panel">
-<div class="settings-header"><h3>Settings</h3><button type="button" id="closeSettings" class="close-button">Close</button></div>
-<div class="settings-content">
-<button type="button" id="aboutButton" class="settings-action">About Daniel Tech</button>
-<button type="button" id="adminButton" class="settings-action">Admin Login</button>
-</div>
+<!-- =========================================================
+     MOBILE / SECONDARY DRAWER
+     ========================================================= -->
+<aside id="menuDrawer" class="menu-drawer">
+    <div class="drawer-header">
+        <div>
+            <p class="drawer-label">DANIEL TECH</p>
+            <h3>Menu</h3>
+        </div>
+        <button type="button" id="closeMenu" class="close-button" aria-label="Close menu">Close</button>
+    </div>
+    <div class="drawer-content">
+        <button type="button" class="drawer-action" data-page="settings">Settings</button>
+        <button type="button" class="drawer-action" data-page="about">About Us</button>
+        <button type="button" class="drawer-action" data-page="contact">Contact Us</button>
+        <button type="button" class="drawer-action" data-page="faq">FAQ</button>
+        <button type="button" class="drawer-action" data-page="developer">Developer</button>
+        <button type="button" class="drawer-action" data-page="version">V2.0.0</button>
+        <button type="button" class="drawer-action" data-page="version-history">Version History</button>
+        <button type="button" class="drawer-action" data-page="website-information">Website Information</button>
+        <button type="button" class="drawer-action" data-page="privacy">Privacy Policy</button>
+        <button type="button" class="drawer-action" data-page="cookies">Cookie Policy</button>
+        <button type="button" class="drawer-action" data-page="terms">Terms & Conditions</button>
+        <button type="button" class="drawer-action" data-page="help">Help & Support</button>
+        <button type="button" id="drawerSignOut" class="drawer-action danger-action" hidden>Sign Out</button>
+    </div>
 </aside>
 <div id="overlay" class="overlay"></div>
 
-<div id="aboutModal" class="modal"><div class="modal-box">
-<button type="button" class="modal-close" data-close-modal="aboutModal">Close</button>
-<div class="modal-content">
-<p class="modal-label">ABOUT</p>
-<h2>Daniel Tech</h2>
-<p>Daniel Tech is a technology platform focused on digital solutions, computer services, programming, AI tools, software and technology education.</p>
-<p>Our goal is to make technology easier to understand and more useful for everyday users.</p>
-</div>
-</div></div>
-
-<div id="serviceModal" class="modal"><div class="modal-box">
-<button type="button" class="modal-close" data-close-modal="serviceModal">Close</button>
-<div class="modal-content"><p class="modal-label">SERVICE</p><h2 id="serviceModalTitle">Service</h2><p id="serviceModalText">Service information.</p></div>
-</div></div>
-
-<div id="featureModal" class="modal"><div class="modal-box">
-<button type="button" class="modal-close" data-close-modal="featureModal">Close</button>
-<div class="modal-content"><p class="modal-label">FEATURE</p><h2 id="featureModalTitle">Feature</h2><p id="featureModalText">Feature information.</p></div>
-</div></div>
-
-<!-- ================= ADMIN LOGIN ================= -->
-
-<div id="adminLoginModal" class="modal">
-  <div class="modal-box admin-login-box">
-    <button type="button" class="modal-close" data-close-modal="adminLoginModal">Close</button>
-    <div class="modal-content">
-      <p class="modal-label">DANIEL TECH ADMIN</p>
-      <h2>Admin Login</h2>
-      <p>Login to manage Daniel Tech content and visitor messages.</p>
-      <form id="adminLoginForm">
-        <div class="form-group">
-          <label for="adminUsername">Admin Email</label>
-          <input type="email" id="adminUsername" placeholder="Admin email" required>
+<!-- =========================================================
+     NEWS BAR
+     ========================================================= -->
+<div class="news-bar">
+    <div class="news-container">
+        <strong>Latest News</strong>
+        <div class="news-ticker">
+            <div id="newsContent">
+                Welcome to Daniel Tech | Bringing Your Idea To Life Through Tech Solutions.
+            </div>
         </div>
-        <div class="form-group">
-          <label for="adminPassword">Password</label>
-          <input type="password" id="adminPassword" placeholder="Admin password" required>
-        </div>
-        <button type="submit" class="primary-button">Login</button>
-        <p id="loginMessage" class="form-status"></p>
-      </form>
     </div>
-  </div>
 </div>
 
-<!-- ================= ADMIN DASHBOARD ================= -->
-
-<div id="dashboardModal" class="modal">
-  <div class="modal-box dashboard-box dashboard-box-sidebar">
-
-    <div class="dashboard-header">
-      <div>
-        <p class="modal-label">ADMIN AREA</p>
-        <h2>Daniel Tech Dashboard</h2>
-      </div>
-      <button type="button" class="modal-close" data-close-modal="dashboardModal">Close</button>
+<!-- =========================================================
+     MAIN
+     ========================================================= -->
+<main>
+<!-- =========================================================
+     HOME
+     ========================================================= -->
+<section id="home" class="page active-page">
+    <div class="hero">
+        <div class="hero-content">
+            <p class="hero-label">TECHNOLOGY   DIGITAL SOLUTIONS   INNOVATION</p>
+            <h1>Welcome to <span>Daniel Tech</span></h1>
+            <p class="hero-description">
+                Your technology platform for computer services, web development, programming, AI tools, software solutions, gaming and useful technology tips.
+            </p>
+            <div class="hero-buttons">
+                <button type="button" class="primary-button" data-page="services">Explore Services</button>
+                <button type="button" class="secondary-button" data-page="contact">Contact Daniel Tech</button>
+            </div>
+        </div>
+        <div class="hero-card">
+            <div class="hero-card-top">Daniel Tech</div>
+            <div class="hero-card-content">
+                <div class="hero-stat"><strong>Web</strong><span>Development</span></div>
+                <div class="hero-stat"><strong>AI</strong><span>Solutions</span></div>
+                <div class="hero-stat"><strong>ICT</strong><span>Services</span></div>
+                <div class="hero-stat"><strong>Tech</strong><span>Tips</span></div>
+            </div>
+        </div>
     </div>
-
-    <div class="dashboard-layout">
-
-      <!-- SIDEBAR -->
-      <nav class="dashboard-sidebar dashboard-tabs">
-
-        <div class="sidebar-group">
-          <span class="sidebar-group-label">Dashboard</span>
-          <button type="button" class="dashboard-button dashboard-tab active" data-panel="overview">Overview</button>
+    <div class="section-container">
+        <div class="section-heading">
+            <p>WHAT'S NEW</p>
+            <h2>Latest Content</h2>
+            <span>Discover the latest technology content published on Daniel Tech.</span>
         </div>
-
-        <div class="sidebar-group">
-          <span class="sidebar-group-label">Content</span>
-          <button type="button" class="dashboard-button dashboard-tab" data-panel="services">Services</button>
-          <button type="button" class="dashboard-button dashboard-tab" data-panel="features">Features</button>
-          <button type="button" class="dashboard-button dashboard-tab" data-panel="news">Blog / News</button>
-          <button type="button" class="dashboard-button dashboard-tab" data-panel="comments">Comments</button>
-          <button type="button" class="dashboard-button dashboard-tab-soon" disabled title="Coming soon">Tech / Phone / AI / Programming / Gaming</button>
-          <button type="button" class="dashboard-button dashboard-tab-soon" disabled title="Coming soon">Media Library</button>
+        <div id="latestContent" class="content-grid">
+            <div class="empty-content">No content has been published yet.</div>
         </div>
-
-        <div class="sidebar-group">
-          <span class="sidebar-group-label">Business</span>
-          <button type="button" class="dashboard-button dashboard-tab-soon" disabled title="Coming soon">Service Requests</button>
-          <button type="button" class="dashboard-button dashboard-tab-soon" disabled title="Coming soon">Customers</button>
-          <button type="button" class="dashboard-button dashboard-tab-soon" disabled title="Coming soon">Projects</button>
-          <button type="button" class="dashboard-button dashboard-tab-soon" disabled title="Coming soon">Payments</button>
-          <button type="button" class="dashboard-button dashboard-tab-soon" disabled title="Coming soon">Receipts</button>
-        </div>
-
-        <div class="sidebar-group">
-          <span class="sidebar-group-label">Communication</span>
-          <button type="button" class="dashboard-button dashboard-tab" data-panel="messages">Contact Messages</button>
-          <button type="button" class="dashboard-button dashboard-tab-soon" disabled title="Coming soon">Newsletter</button>
-          <button type="button" class="dashboard-button dashboard-tab-soon" disabled title="Coming soon">Announcements</button>
-        </div>
-
-        <div class="sidebar-group">
-          <span class="sidebar-group-label">Website</span>
-          <button type="button" class="dashboard-button dashboard-tab" data-panel="home">Home</button>
-          <button type="button" class="dashboard-button dashboard-tab" data-panel="about">About</button>
-          <button type="button" class="dashboard-button dashboard-tab" data-panel="footer">Footer / Contact</button>
-          <button type="button" class="dashboard-button dashboard-tab-soon" disabled title="Coming soon">SEO</button>
-        </div>
-
-        <div class="sidebar-group">
-          <span class="sidebar-group-label">System</span>
-          <button type="button" class="dashboard-button dashboard-tab-soon" disabled title="Open the public Settings page for Version / System Info">Settings &amp; Version</button>
-          <button type="button" class="dashboard-button dashboard-tab-soon" disabled title="Coming soon">Activity Logs</button>
-        </div>
-
-      </nav>
-
-      <!-- PANELS -->
-      <div class="dashboard-panels">
-
-        <div class="admin-panel active-panel" data-panel="overview">
-          <div class="admin-content-area">
-            <h3>Dashboard Overview</h3>
-            <div class="stats-grid">
-              <div class="stat-box"><strong id="statServices">0</strong><span>Total Services</span></div>
-              <div class="stat-box"><strong id="statFeatures">0</strong><span>Total Features</span></div>
-              <div class="stat-box"><strong id="statContents">0</strong><span>Total News</span></div>
-              <div class="stat-box"><strong id="statPublished">0</strong><span>Published Content</span></div>
-              <div class="stat-box"><strong id="statMessages">0</strong><span>Messages</span></div>
-              <div class="stat-box"><strong id="statComments">0</strong><span>Pending Comments</span></div>
-            </div>
-            <p class="dashboard-note">Customers, Service Requests, Payments and Receipts will appear here once those modules are built (see roadmap).</p>
-          </div>
-        </div>
-
-        <div class="admin-panel" data-panel="home">
-          <div class="admin-editor">
-            <h3>Home Page</h3>
-            <div class="form-group"><label for="homeHeroTitle">Hero Title</label><input type="text" id="homeHeroTitle" placeholder="Daniel Tech"></div>
-            <div class="form-group"><label for="homeHeroSubtitle">Hero Subtitle</label><input type="text" id="homeHeroSubtitle" placeholder="TECHNOLOGY • DIGITAL SOLUTIONS • INNOVATION"></div>
-            <div class="form-group"><label for="homeHeroDescription">Hero Description</label><textarea id="homeHeroDescription" placeholder="Hero description text"></textarea></div>
-            <div class="form-row">
-              <div class="form-group"><label for="homeHeroButtonText">Hero Button Text</label><input type="text" id="homeHeroButtonText" placeholder="Explore Services"></div>
-              <div class="form-group"><label for="homeHeroButtonLink">Hero Button Link</label><input type="text" id="homeHeroButtonLink" placeholder="services"></div>
-            </div>
-            <div class="form-group"><label for="homeWelcomeTitle">Welcome Section Title</label><input type="text" id="homeWelcomeTitle" placeholder="What's New"></div>
-            <div class="form-group"><label for="homeWelcomeText">Welcome Section Text</label><textarea id="homeWelcomeText" placeholder="Welcome section text"></textarea></div>
-            <div class="form-group"><label for="homeCtaTitle">Call To Action Title</label><input type="text" id="homeCtaTitle" placeholder="Optional"></div>
-            <div class="form-group"><label for="homeCtaText">Call To Action Text</label><textarea id="homeCtaText" placeholder="Optional"></textarea></div>
-            <button type="button" id="saveHomeButton" class="primary-button">Save Home Page</button>
-            <p id="homeEditorStatus" class="form-status"></p>
-          </div>
-        </div>
-
-        <div class="admin-panel" data-panel="services">
-          <div class="admin-content-area"><h3>Services</h3><div id="adminServiceList"></div></div>
-          <div class="admin-editor">
-            <h3>Add / Edit Service</h3>
-            <div class="form-group"><label for="serviceEditorTitle">Title</label><input type="text" id="serviceEditorTitle" placeholder="Service title"></div>
-            <div class="form-group"><label for="serviceEditorDescription">Short Description</label><textarea id="serviceEditorDescription" placeholder="Short description"></textarea></div>
-            <div class="form-group"><label for="serviceEditorFullDescription">Full Description</label><textarea id="serviceEditorFullDescription" placeholder="Full description shown in the modal"></textarea></div>
-            <div class="form-row">
-              <div class="form-group"><label for="serviceEditorOrder">Display Order</label><input type="number" id="serviceEditorOrder" value="0"></div>
-              <div class="form-group"><label for="serviceEditorStatus">Status</label><select id="serviceEditorStatus"><option value="published">Published</option><option value="draft">Draft</option></select></div>
-            </div>
-            <button type="button" id="saveServiceButton" class="primary-button">Add Service</button>
-            <button type="button" id="cancelServiceEditButton" class="secondary-button">Cancel</button>
-            <p id="serviceEditorStatusMsg" class="form-status"></p>
-          </div>
-        </div>
-
-        <div class="admin-panel" data-panel="features">
-          <div class="admin-content-area"><h3>Features</h3><div id="adminFeatureList"></div></div>
-          <div class="admin-editor">
-            <h3>Add / Edit Feature</h3>
-            <div class="form-group"><label for="featureEditorTitle">Title</label><input type="text" id="featureEditorTitle" placeholder="Feature title"></div>
-            <div class="form-group"><label for="featureEditorDescription">Short Description</label><textarea id="featureEditorDescription" placeholder="Short description"></textarea></div>
-            <div class="form-group"><label for="featureEditorFullDescription">Full Description</label><textarea id="featureEditorFullDescription" placeholder="Full description shown in the modal"></textarea></div>
-            <div class="form-row">
-              <div class="form-group"><label for="featureEditorOrder">Display Order</label><input type="number" id="featureEditorOrder" value="0"></div>
-              <div class="form-group"><label for="featureEditorStatus">Status</label><select id="featureEditorStatus"><option value="published">Published</option><option value="draft">Draft</option></select></div>
-            </div>
-            <button type="button" id="saveFeatureButton" class="primary-button">Add Feature</button>
-            <button type="button" id="cancelFeatureEditButton" class="secondary-button">Cancel</button>
-            <p id="featureEditorStatusMsg" class="form-status"></p>
-          </div>
-        </div>
-
-        <div class="admin-panel" data-panel="news">
-          <div class="dashboard-actions">
-            <button type="button" id="addNewsButton" class="dashboard-button">Add News</button>
-            <button type="button" id="addTipButton" class="dashboard-button">Add Tip</button>
-            <button type="button" id="addVideoButton" class="dashboard-button">Add Video</button>
-            <button type="button" id="addPdfButton" class="dashboard-button">Add PDF</button>
-          </div>
-          <div id="adminEditor" class="admin-editor">
-            <h3>Add / Edit Content</h3>
-            <div class="form-group"><label for="contentTitle">Title</label><input type="text" id="contentTitle" placeholder="Content title"></div>
-            <div class="form-row">
-              <div class="form-group">
-                <label for="contentCategory">Category</label>
-                <select id="contentCategory">
-                  <option value="news">News</option>
-                  <option value="tip">Tip</option>
-                  <option value="video">Video</option>
-                  <option value="pdf">PDF</option>
-                  <option value="article">Article</option>
-                  <option value="announcement">Announcement</option>
-                </select>
-              </div>
-              <div class="form-group"><label for="contentStatusSelect">Status</label><select id="contentStatusSelect"><option value="published">Published</option><option value="draft">Draft</option></select></div>
-            </div>
-            <div class="form-group"><label for="contentText">Description / Content</label><textarea id="contentText" placeholder="Write your content here"></textarea></div>
-            <div class="form-group"><label for="contentFile">File (image, video, audio or PDF)</label><input type="file" id="contentFile"></div>
-            <label class="setting-option"><span>Featured</span><input type="checkbox" id="contentFeatured"></label>
-            <button type="button" id="saveContentButton" class="primary-button">Publish Content</button>
-            <p id="contentStatus" class="form-status"></p>
-          </div>
-          <div class="admin-content-area"><h3>Published Content</h3><div id="adminContentList"><p class="empty-content">No content available.</p></div></div>
-        </div>
-
-        <div class="admin-panel" data-panel="comments">
-          <div class="admin-messages-section">
-            <h3>Comments Moderation</h3>
-            <button type="button" id="refreshCommentsButton" class="dashboard-button">Refresh Comments</button>
-            <div id="adminCommentsList" class="admin-messages-list">
-              <p class="empty-content">No comments yet.</p>
-            </div>
-          </div>
-        </div>
-
-        <div class="admin-panel" data-panel="about">
-          <div class="admin-editor">
-            <h3>About Section</h3>
-            <div class="form-group"><label for="aboutTitle">Title</label><input type="text" id="aboutTitle" placeholder="Daniel Tech"></div>
-            <div class="form-group"><label for="aboutDescription">Description</label><textarea id="aboutDescription" placeholder="About description"></textarea></div>
-            <div class="form-group"><label for="aboutMission">Mission</label><textarea id="aboutMission" placeholder="Mission statement"></textarea></div>
-            <div class="form-group"><label for="aboutVision">Vision</label><textarea id="aboutVision" placeholder="Vision statement"></textarea></div>
-            <button type="button" id="saveAboutButton" class="primary-button">Save About</button>
-            <p id="aboutEditorStatus" class="form-status"></p>
-          </div>
-        </div>
-
-        <div class="admin-panel" data-panel="footer">
-          <div class="admin-editor">
-            <h3>Footer / Contact</h3>
-            <div class="form-group"><label for="footerTextInput">Footer Description</label><textarea id="footerTextInput" placeholder="Footer description"></textarea></div>
-            <div class="form-group"><label for="footerEmailInput">Email</label><input type="email" id="footerEmailInput" placeholder="Contact email"></div>
-            <div class="form-group"><label for="footerPhoneInput">Phone</label><input type="text" id="footerPhoneInput" placeholder="Contact phone"></div>
-            <div class="form-group"><label for="footerAddressInput">Address</label><input type="text" id="footerAddressInput" placeholder="Address (optional)"></div>
-            <button type="button" id="saveFooterButton" class="primary-button">Save Footer</button>
-            <p id="footerEditorStatus" class="form-status"></p>
-          </div>
-        </div>
-
-        <div class="admin-panel" data-panel="messages">
-          <div class="admin-messages-section">
-            <h3>Visitor Messages</h3>
-            <p class="dashboard-note">Visitors' messages also arrive directly in your email inbox via Web3Forms. This list is your record of them, and lets you reply.</p>
-            <button type="button" id="refreshMessagesButton" class="dashboard-button">Refresh Messages</button>
-            <div id="adminMessagesList" class="admin-messages-list">
-              <p class="empty-content">No messages yet.</p>
-            </div>
-          </div>
-        </div>
-
-      </div>
     </div>
+</section>
 
-    <button type="button" id="logoutButton" class="logout-button">Logout</button>
+<!-- =========================================================
+     TECH, PHONE, AI, PROGRAMMING, GAMING
+     ========================================================= -->
+<section id="tech" class="page">
+    <div class="section-container">
+        <div class="section-heading"><p>TECHNOLOGY</p><h2>Tech</h2><span>Computer tips, Windows, hardware, software, troubleshooting.</span></div>
+        <div id="techGrid" class="content-grid"><div class="empty-content">No Tech content published yet.</div></div>
+    </div>
+</section>
 
-  </div>
+<section id="phone" class="page">
+    <div class="section-container">
+        <div class="section-heading"><p>MOBILE TECHNOLOGY</p><h2>Phone</h2><span>Android, smartphones, applications, settings.</span></div>
+        <div id="phoneGrid" class="content-grid"><div class="empty-content">No Phone content published yet.</div></div>
+    </div>
+</section>
+
+<section id="ai-tools" class="page">
+    <div class="section-container">
+        <div class="section-heading"><p>ARTIFICIAL INTELLIGENCE</p><h2>AI Tools</h2><span>AI tools, tutorials, workflows, updates.</span></div>
+        <div id="aiToolsGrid" class="content-grid"><div class="empty-content">No AI Tools content published yet.</div></div>
+    </div>
+</section>
+
+<section id="programming" class="page">
+    <div class="section-container">
+        <div class="section-heading"><p>DEVELOPMENT</p><h2>Programming</h2><span>Python, HTML, CSS, JavaScript, web development.</span></div>
+        <div id="programmingGrid" class="content-grid"><div class="empty-content">No Programming content published yet.</div></div>
+    </div>
+</section>
+
+<section id="gaming" class="page">
+    <div class="section-container">
+        <div class="section-heading"><p>GAMING</p><h2>Gaming</h2><span>Gaming news, guides, tips, updates.</span></div>
+        <div id="gamingGrid" class="content-grid"><div class="empty-content">No Gaming content published yet.</div></div>
+    </div>
+</section>
+
+<!-- =========================================================
+     SERVICES
+     ========================================================= -->
+<section id="services" class="page">
+    <div class="section-container">
+        <div class="section-heading">
+            <p>DANIEL TECH SERVICES</p>
+            <h2>Our Services</h2>
+            <span>Professional technology services and digital solutions.</span>
+        </div>
+        <div id="serviceGrid" class="service-grid">
+            <div class="empty-content">Loading services...</div>
+        </div>
+    </div>
+</section>
+
+<!-- =========================================================
+     BLOG / NEWS & COMMENTS
+     ========================================================= -->
+<section id="blog" class="page">
+    <div class="section-container">
+        <div class="section-heading">
+            <p>DANIEL TECH BLOG</p>
+            <h2>Blog / News</h2>
+            <span>Technology news, tutorials, tips and published content.</span>
+        </div>
+        <div id="blogGrid" class="blog-grid">
+            <div class="empty-content">No blog content has been published yet.</div>
+        </div>
+
+        <div class="comments-section">
+            <div class="section-heading small-heading">
+                <p>COMMUNITY</p>
+                <h2>Comments</h2>
+                <span>Leave a comment about Daniel Tech.</span>
+            </div>
+            <form id="commentForm" class="comment-form">
+                <div class="form-group"><label for="commentName">Your Name</label><input type="text" id="commentName" name="visitor_name" placeholder="Enter your name" required></div>
+                <div class="form-group"><label for="commentEmail">Your Email</label><input type="email" id="commentEmail" name="visitor_email" placeholder="Enter your email"></div>
+                <div class="form-group"><label for="commentText">Your Comment</label><textarea id="commentText" name="comment" placeholder="Write your comment" required></textarea></div>
+                <button type="submit" class="primary-button">Post Comment</button>
+                <p id="commentStatus" class="form-status"></p>
+            </form>
+            <div id="commentsList" class="comments-list">
+                <p class="empty-content">No comments yet.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- =========================================================
+     CONTACT
+     ========================================================= -->
+<section id="contact" class="page">
+    <div class="section-container">
+        <div class="section-heading">
+            <p>GET IN TOUCH</p>
+            <h2>Contact Daniel Tech</h2>
+            <span>Tutumie ujumbe wako hapa, tutajibu haraka iwezekanavyo.</span>
+        </div>
+        <div class="contact-layout">
+            <div class="contact-information">
+                <div class="contact-card"><span>Email</span><strong id="contactEmailDisplay">danielshululu770@gmail.com</strong></div>
+                <div class="contact-card"><span>WhatsApp</span><strong id="contactWhatsAppDisplay">Available through WhatsApp</strong></div>
+                <div class="contact-card"><span>Response</span><strong>We will respond as soon as possible.</strong></div>
+            </div>
+            <div class="contact-form-container">
+                <form id="contactForm">
+                    <input type="hidden" name="access_key" value="81e3fd5d-7a13-47cc-821a-f963ab6bf7c7">
+                    <input type="hidden" name="subject" value="New Contact Message - Daniel Tech">
+                    <input type="hidden" name="from_name" value="Daniel Tech Website">
+                    <div class="form-row">
+                        <div class="form-group"><label for="contactName">Name</label><input type="text" id="contactName" name="name" placeholder="Your name" required></div>
+                        <div class="form-group"><label for="contactEmail">Email</label><input type="email" id="contactEmail" name="email" placeholder="Your email" required></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="contactService">Service</label>
+                        <select id="contactService" name="service">
+                            <option value="">Select a service</option>
+                            <option value="IT & Computer Support">IT & Computer Support</option>
+                            <option value="Graphic Design">Graphic Design</option>
+                            <option value="Video Editing">Video Editing</option>
+                            <option value="AI Video Creation">AI Video Creation</option>
+                            <option value="Website Development">Website Development</option>
+                            <option value="Social Media Content">Social Media Content</option>
+                            <option value="Digital Solutions">Digital Solutions</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                    <div class="form-group"><label for="contactSubject">Subject</label><input type="text" id="contactSubject" name="message_subject" placeholder="Message subject" required></div>
+                    <div class="form-group"><label for="contactMessage">Message</label><textarea id="contactMessage" name="message" placeholder="Write your message" required></textarea></div>
+                    <button type="submit" id="contactSubmitButton" class="primary-button">Send Message</button>
+                    <p id="contactStatus" class="form-status"></p>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- =========================================================
+     SETTINGS (PRO VERSION)
+     ========================================================= -->
+<section id="settings" class="page">
+    <div class="section-container">
+        <div class="section-heading">
+            <p>WEBSITE SETTINGS</p>
+            <h2>Preferences</h2>
+            <span>Manage your Daniel Tech account and system settings.</span>
+        </div>
+        <div class="settings-page-content">
+            <div class="settings-card">
+                <h3>System Appearance & Locale</h3>
+                <p>Theme automatically adjusts based on your local time (Light during day, Dark at night) for eye protection.</p>
+                <div class="settings-buttons" style="margin-top: 15px;">
+                    <button type="button" id="settingsEN" class="settings-action">English</button>
+                    <button type="button" id="settingsSW" class="settings-action">Kiswahili</button>
+                </div>
+                <div class="form-group" style="margin-top: 20px;">
+                    <label>Preferred Currency</label>
+                    <select id="currencySelector">
+                        <option value="TZS">TZS - Tanzanian Shilling</option>
+                        <option value="USD">USD - US Dollar</option>
+                    </select>
+                </div>
+            </div>
+            <div class="settings-card">
+                <h3>Notifications & Privacy</h3>
+                <p>Control how we communicate with you and manage your data.</p>
+                <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 15px;">
+                    <label style="display: flex; align-items: center; gap: 10px; font-size: 14px; cursor: pointer;">
+                        <input type="checkbox" id="emailNotifCheck" checked> Receive Email Updates & Offers
+                    </label>
+                    <hr style="border-color: var(--line); margin: 10px 0;">
+                    <button type="button" class="settings-action danger-action" id="deleteAccountBtn" style="color: var(--color-error); border-color: var(--color-error);">
+                        Delete My Account
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- =========================================================
+     ABOUT, FAQ, DEVELOPER, VERSION, LEGAL
+     ========================================================= -->
+<section id="about" class="page"><div class="section-container"><div class="section-heading"><p>ABOUT</p><h2>About Daniel Tech</h2></div><div id="aboutContent" class="about-content"><p>Daniel Tech is a technology platform focused on digital solutions, computer services, programming, AI tools, software and technology education.</p></div></div></section>
+<section id="faq" class="page"><div class="section-container"><div class="section-heading"><p>HELP</p><h2>Frequently Asked Questions</h2></div><div id="faqContent" class="faq-content"><div class="empty-content">FAQ information will appear here.</div></div></div></section>
+<section id="developer" class="page"><div class="section-container"><div class="section-heading"><p>DEVELOPER</p><h2>Daniel Shululu</h2></div><div class="developer-content"><p>Daniel Tech is developed and maintained by Daniel Shululu.</p></div></div></section>
+<section id="version" class="page"><div class="section-container"><div class="section-heading"><p>SYSTEM</p><h2>Daniel Tech V2.0.0</h2></div><div class="version-content"><p>Version: <strong>2.0.0</strong></p><p>Developer: <strong>Daniel Shululu</strong></p><p>Released: <strong>2026</strong></p></div></div></section>
+<section id="version-history" class="page"><div class="section-container"><div class="section-heading"><p>HISTORY</p><h2>Version History</h2></div><div id="versionHistoryContent" class="version-history-content"><div class="version-item"><strong>V2.0.0</strong><span>Current major website system.</span></div></div></div></section>
+<section id="website-information" class="page"><div class="section-container"><div class="section-heading"><p>INFORMATION</p><h2>Website Information</h2></div><div class="website-information-content"><p>Website: <strong>Daniel Tech</strong></p><p>Version: <strong>V2.0.0</strong></p></div></div></section>
+<section id="privacy" class="page"><div class="section-container"><div class="section-heading"><p>LEGAL</p><h2>Privacy Policy</h2></div><div class="legal-content"><p>Daniel Tech respects user privacy and aims to handle submitted information responsibly.</p></div></div></section>
+<section id="cookies" class="page"><div class="section-container"><div class="section-heading"><p>LEGAL</p><h2>Cookie Policy</h2></div><div class="legal-content"><p>Daniel Tech may use browser storage and similar technologies to remember certain website preferences.</p></div></div></section>
+<section id="terms" class="page"><div class="section-container"><div class="section-heading"><p>LEGAL</p><h2>Terms & Conditions</h2></div><div class="legal-content"><p>By using Daniel Tech, visitors agree to use the website and its services responsibly.</p></div></div></section>
+<section id="help" class="page"><div class="section-container"><div class="section-heading"><p>SUPPORT</p><h2>Help & Support</h2></div><div class="help-content"><p>Use the Contact page to send a message to Daniel Tech.</p><button type="button" class="primary-button" data-page="contact">Contact Support</button></div></div></section>
+</main>
+
+<!-- =========================================================
+     CUSTOMER AUTH MODAL
+     ========================================================= -->
+<div id="authModal" class="modal">
+    <div class="modal-box">
+        <button type="button" class="modal-close" data-close-modal="authModal">Close</button>
+        <div class="modal-content">
+            <p class="modal-label">CUSTOMER ACCOUNT</p>
+            <h2 id="authModalTitle">Sign In</h2>
+            <form id="signInForm">
+                <div class="form-group"><label for="signInEmail">Email</label><input type="email" id="signInEmail" required autocomplete="email"></div>
+                <div class="form-group password-group">
+                    <label for="signInPassword">Password</label>
+                    <div class="password-input-wrapper">
+                        <input type="password" id="signInPassword" required autocomplete="current-password">
+                        <button type="button" class="password-toggle" data-password-target="signInPassword">Show</button>
+                    </div>
+                </div>
+                <button type="submit" class="primary-button">Sign In</button>
+                <p id="signInStatus" class="form-status"></p>
+            </form>
+            <form id="signUpForm" hidden>
+                <div class="form-group"><label for="signUpName">Full Name</label><input type="text" id="signUpName" required autocomplete="name"></div>
+                <div class="form-group"><label for="signUpEmail">Email</label><input type="email" id="signUpEmail" required autocomplete="email"></div>
+                <div class="form-group password-group">
+                    <label for="signUpPassword">Password</label>
+                    <div class="password-input-wrapper">
+                        <input type="password" id="signUpPassword" required minlength="8" autocomplete="new-password">
+                        <button type="button" class="password-toggle" data-password-target="signUpPassword">Show</button>
+                    </div>
+                </div>
+                <button type="submit" class="primary-button">Create Account</button>
+                <p id="signUpStatus" class="form-status"></p>
+            </form>
+            <button type="button" id="switchAuthMode" class="text-button">Create an account</button>
+        </div>
+    </div>
 </div>
 
-<button type="button" id="backTop" class="back-top">Top</button>
+<!-- =========================================================
+     CUSTOMER DASHBOARD
+     ========================================================= -->
+<section id="customerDashboard" class="dashboard-screen" hidden>
+    <div class="dashboard-container">
+        <aside class="dashboard-sidebar">
+            <div class="dashboard-brand"><strong>Daniel</strong> Tech<span>Customer Portal</span></div>
+            <button type="button" class="dashboard-nav active" data-dashboard-panel="overview">Overview</button>
+            <button type="button" class="dashboard-nav" data-dashboard-panel="services">My Services</button>
+            <button type="button" class="dashboard-nav" data-dashboard-panel="requests">My Requests</button>
+            <button type="button" class="dashboard-nav" data-dashboard-panel="messages">Messages</button>
+            <button type="button" class="dashboard-nav" data-dashboard-panel="payments">Payments</button>
+            <button type="button" class="dashboard-nav" data-dashboard-panel="receipts">Receipts</button>
+            <button type="button" class="dashboard-nav" data-dashboard-panel="notifications">Notifications</button>
+            <button type="button" class="dashboard-nav" data-dashboard-panel="profile">Profile</button>
+            <button type="button" class="dashboard-nav" data-dashboard-panel="security">Security</button>
+            <button type="button" id="customerLogout" class="dashboard-nav danger-action">Logout</button>
+        </aside>
+        <div class="dashboard-main">
+            <div class="dashboard-header">
+                <div><p class="dashboard-label">CUSTOMER PORTAL</p><h2 id="customerWelcome">Welcome</h2></div>
+                <div class="dashboard-user"><span id="customerEmail">Customer</span></div>
+            </div>
+            
+            <div id="dashboardOverview" class="dashboard-panel active-dashboard-panel">
+                <div class="dashboard-stats">
+                    <div class="dashboard-stat"><span>Active Services</span><strong id="statActiveServices">0</strong></div>
+                    <div class="dashboard-stat"><span>Pending Requests</span><strong id="statPendingRequests">0</strong></div>
+                    <div class="dashboard-stat"><span>Pending Payments</span><strong id="statPendingPayments">0</strong></div>
+                    <div class="dashboard-stat"><span>Completed Services</span><strong id="statCompletedServices">0</strong></div>
+                </div>
+                <div class="dashboard-grid">
+                    <div class="dashboard-card"><h3>Recent Activity</h3><div id="customerRecentActivity"><p class="empty-content">No recent activity.</p></div></div>
+                    <div class="dashboard-card"><h3>Latest Receipt</h3><div id="latestReceipt"><p class="empty-content">No receipt available.</p></div></div>
+                </div>
+            </div>
+
+            <div id="dashboardServices" class="dashboard-panel"><div class="dashboard-card"><h3>My Services</h3><div id="customerServicesList"><p class="empty-content">No services found.</p></div></div></div>
+            <div id="dashboardRequests" class="dashboard-panel"><div class="dashboard-card"><h3>My Requests</h3><div id="customerRequestsList"><p class="empty-content">No requests found.</p></div></div></div>
+            <div id="dashboardMessages" class="dashboard-panel"><div class="dashboard-card"><h3>Messages</h3><div id="customerMessagesList"><p class="empty-content">No messages found.</p></div></div></div>
+            <div id="dashboardPayments" class="dashboard-panel"><div class="dashboard-card"><h3>Payments</h3><div id="customerPaymentsList"><p class="empty-content">No payment records found.</p></div></div></div>
+            
+            <!-- RECEIPTS SECTION WITH PRINT -->
+            <div id="dashboardReceipts" class="dashboard-panel">
+                <div class="dashboard-card">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                        <h3>My Receipts</h3>
+                        <button type="button" id="printReceiptBtn" class="secondary-button print-hidden" style="padding: 6px 12px; font-size: 12px;">🖨️ Print Latest Receipt</button>
+                    </div>
+                    <div id="customerReceiptsList" class="printable-area">
+                        <p class="empty-content print-hidden">No receipts found.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="dashboardNotifications" class="dashboard-panel"><div class="dashboard-card"><h3>Notifications</h3><div id="customerNotificationsList"><p class="empty-content">No notifications found.</p></div></div></div>
+            <div id="dashboardProfile" class="dashboard-panel">
+                <div class="dashboard-card">
+                    <h3>Profile</h3>
+                    <form id="profileForm">
+                        <div class="form-group"><label>Full Name</label><input type="text" id="profileName"></div>
+                        <div class="form-group"><label>Email</label><input type="email" id="profileEmail" disabled></div>
+                        <button type="submit" class="primary-button">Save Profile</button>
+                        <p id="profileStatus" class="form-status"></p>
+                    </form>
+                </div>
+            </div>
+            <div id="dashboardSecurity" class="dashboard-panel">
+                <div class="dashboard-card">
+                    <h3>Security</h3>
+                    <button type="button" id="resetPasswordButton" class="secondary-button">Reset Password</button>
+                    <p id="securityStatus" class="form-status"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- =========================================================
+     ADMIN DASHBOARD (PRO CMS)
+     ========================================================= -->
+<section id="adminDashboard" class="dashboard-screen" hidden>
+    <div class="dashboard-container">
+        <aside class="dashboard-sidebar">
+            <div class="dashboard-brand">
+                <strong>Admin</strong> Portal
+                <span>Daniel Tech V2.0</span>
+            </div>
+            <button type="button" class="dashboard-nav active" data-admin-panel="content">Publish & Schedule</button>
+            <button type="button" id="adminLogoutBtn" class="dashboard-nav danger-action" style="margin-top: auto;">Logout</button>
+        </aside>
+        
+        <div class="dashboard-main">
+            <div class="dashboard-header">
+                <div>
+                    <p class="dashboard-label">SYSTEM CONTROL</p>
+                    <h2 id="adminWelcome">Admin Dashboard</h2>
+                </div>
+            </div>
+
+            <!-- PUBLISH & SCHEDULE PANEL -->
+            <div id="adminContent" class="dashboard-panel active-dashboard-panel">
+                <div class="dashboard-card">
+                    <h3>Create or Schedule Post</h3>
+                    <form id="adminPostForm">
+                        <div class="form-group">
+                            <label for="postTitle">Post Title</label>
+                            <input type="text" id="postTitle" placeholder="e.g. Jinsi ya kutumia AI..." required>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="postCategory">Category</label>
+                                <select id="postCategory" required>
+                                    <option value="Tech">Tech News</option>
+                                    <option value="AI Tools">AI Tools</option>
+                                    <option value="Programming">Programming</option>
+                                    <option value="Gaming">Gaming</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="postSchedule">Schedule Date & Time</label>
+                                <input type="datetime-local" id="postSchedule">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="postBody">Content</label>
+                            <textarea id="postBody" placeholder="Write your content here..." required></textarea>
+                        </div>
+                        <button type="submit" id="publishBtn" class="primary-button">Publish Post</button>
+                        <p id="adminPostStatus" class="form-status"></p>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- =========================================================
+     SERVICE & PAYMENT MODAL (PRO)
+     ========================================================= -->
+<div id="serviceModal" class="modal">
+    <div class="modal-box">
+        <button type="button" class="modal-close" data-close-modal="serviceModal">Close</button>
+        <div class="modal-content">
+            <p class="modal-label">SERVICE DETAILS</p>
+            <h2 id="serviceModalTitle">Service Name</h2>
+            <div id="serviceModalText" class="content-modal-body" style="margin-bottom: 20px;">
+                Service information will appear here.
+            </div>
+            
+            <div class="payment-section" style="background: var(--tint); padding: 20px; border-radius: 8px; margin-bottom: 20px; border: 1px solid var(--line);">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                    <strong style="font-size: 16px;">Total Price:</strong>
+                    <span id="servicePriceDisplay" style="font-size: 20px; color: var(--color-blue); font-weight: 800;">TZS 0.00</span>
+                </div>
+                <div class="form-group">
+                    <label>Select Payment Method</label>
+                    <select id="paymentMethodSelect" style="margin-bottom: 10px;">
+                        <option value="card">Credit / Debit Card (Visa/Mastercard)</option>
+                        <option value="paypal">PayPal</option>
+                        <option value="mobile">Mobile Money (M-Pesa/Tigo Pesa)</option>
+                    </select>
+                </div>
+            </div>
+            <button type="button" id="proceedToPayBtn" class="primary-button" style="width: 100%;">Proceed to Secure Payment</button>
+        </div>
+    </div>
+</div>
+
+<!-- =========================================================
+     CONTENT MODAL
+     ========================================================= -->
+<div id="contentModal" class="modal">
+    <div class="modal-box content-modal-box">
+        <button type="button" class="modal-close" data-close-modal="contentModal">Close</button>
+        <div class="modal-content">
+            <p id="contentModalCategory" class="modal-label">CONTENT</p>
+            <h2 id="contentModalTitle">Article</h2>
+            <div id="contentModalBody" class="content-modal-body"></div>
+        </div>
+    </div>
+</div>
+
+<!-- =========================================================
+     FOOTER
+     ========================================================= -->
+<footer class="site-footer">
+    <div class="section-container footer-container">
+        <div class="footer-about">
+            <div class="logo"><span>Daniel</span> Tech</div>
+            <p id="footerText">Daniel Tech is a technology platform focused on digital solutions, computer services and technology education.</p>
+        </div>
+        <div class="footer-contact">
+            <span>Email: <strong id="footerEmail">danielshululu770@gmail.com</strong></span>
+            <span id="footerPhoneRow">Phone: <strong id="footerPhone"></strong></span>
+            <span id="footerAddress"></span>
+        </div>
+        <div id="footerSocialLinks" class="footer-social"></div>
+    </div>
+    <div class="footer-bottom">
+        <span>&copy; <span id="footerYear"></span> Daniel Tech. All rights reserved.</span>
+        <div class="footer-legal">
+            <button type="button" data-page="privacy">Privacy</button>
+            <button type="button" data-page="cookies">Cookies</button>
+            <button type="button" data-page="terms">Terms</button>
+            <button type="button" data-page="help">Help</button>
+        </div>
+    </div>
+</footer>
+
 <a href="https://wa.me/255742287977" target="_blank" rel="noopener noreferrer" class="whatsapp-button">WhatsApp</a>
+<button type="button" id="backTop" class="back-top">Top</button>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
-<script src="script.js?v=20261002-3"></script>
 <script>
-var yearEl = document.getElementById("footerYear");
-if (yearEl) { yearEl.textContent = new Date().getFullYear(); }
+(function () {
+    const yearEl = document.getElementById("footerYear");
+    if (yearEl) yearEl.textContent = new Date().getFullYear();
+})();
 </script>
 </body>
 </html>
