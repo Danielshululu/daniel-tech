@@ -1,597 +1,1093 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta name="google-site-verification" content="YT29c5mfboXHqdivqlpQ9F-KVEr8fo8bwh9Q--r5Vl8" />
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="Daniel Tech - Technology, computer services, web development, AI tools, programming, gaming and digital solutions.">
-<meta name="author" content="Daniel Tech">
-<title>Daniel Tech</title>
-<link rel="icon" href="data:,">
-<script>
-(function () {
-    function updateTheme() {
-        const hour = new Date().getHours();
-        document.documentElement.classList.toggle("dark-mode", hour >= 18 || hour < 6);
-    }
-    updateTheme();
-    setInterval(updateTheme, 30000);
-})();
-</script>
-  <meta property="og:image" content="https://bolt.new/static/og_default.png">
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:image" content="https://bolt.new/static/og_default.png">
-  <script type="module" crossorigin src="/assets/index-BnGPdHj6.js"></script>
-  <link rel="stylesheet" crossorigin href="/assets/index-D2Hk975l.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Daniel Tech V2.0.0 - Leading Technology, Web Development, AI Tools, Programming, Gaming, and Phone Solutions.">
+  <meta name="author" content="Daniel Shululu">
+  <title>Daniel Tech V2.0.0 - Technology Solutions</title>
+  <link rel="icon" href="data:,">
+  
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  
+  <!-- Google Fonts: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Supabase JS Client Library -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <!-- Vite Asset Links (Standard Vite entry points) -->
+  <link rel="stylesheet" crossorigin href="/style.css">
+  <script type="module" crossorigin src="/script.js"></script>
 </head>
 <body>
-<!-- =========================================================
-     HEADER
-     ========================================================= -->
-<header class="site-header">
+  <!-- =========================================================
+       PUBLIC HEADER (Brand Centered, Controls on Right)
+       ========================================================= -->
+  <header class="site-header" id="siteHeader">
     <div class="header-top-row">
-        <div class="logo" data-page="home">
-            <span>Daniel</span> Tech
+      <div class="header-spacer"></div>
+
+      <div class="logo" data-page="home">
+        <span>Daniel</span> Tech
+      </div>
+
+      <div class="header-actions">
+        <div class="language-switch">
+          <button type="button" id="languageEN" class="language-button active">ENG</button>
+          <button type="button" id="languageSW" class="language-button">KISW</button>
         </div>
-        <div class="header-actions">
-            <div class="language-switch">
-                <button type="button" id="languageEN" class="language-button active">ENG</button>
-                <button type="button" id="languageSW" class="language-button">KISW</button>
-            </div>
-            <div class="auth-buttons">
-                <button type="button" id="signInButton" class="header-button">Sign In</button>
-                <button type="button" id="signUpButton" class="header-button primary-header-button">Sign Up</button>
-            </div>
-            <button type="button" id="menuButton" class="menu-button" aria-label="Open menu" aria-expanded="false">
-                <span class="hamburger-icon" aria-hidden="true"></span>
-            </button>
+
+        <div class="auth-buttons" id="headerAuthButtons">
+          <button type="button" id="signInButton" class="header-button">Sign In</button>
+          <button type="button" id="signUpButton" class="header-button primary-header-button">Sign Up</button>
         </div>
+
+        <!-- Authenticated quick trigger -->
+        <div class="auth-user-quick hidden" id="headerUserQuick">
+          <button type="button" id="btnHeaderPortal" class="header-button primary-header-button">
+            <i class="fa-solid fa-user-circle"></i> <span id="headerUserName">Portal</span>
+          </button>
+        </div>
+
+        <!-- Real 3-line Hamburger Menu Button (NOT "=") -->
+        <button type="button" id="menuButton" class="menu-button" aria-label="Open menu" aria-expanded="false">
+          <span class="hamburger-icon" aria-hidden="true"></span>
+        </button>
+      </div>
     </div>
+
+    <!-- Main Public Navigation (Organized with Gaming and Phone services integrated into Services) -->
     <nav class="main-nav" id="mainNav">
-        <a href="#" data-page="home">Home</a>
-        <a href="#" data-page="services">Services</a>
-        <a href="#" data-page="blog">News</a>
-        <a href="#" data-page="contact">Contact</a>
+      <a href="#home" data-page="home" class="active">Home</a>
+      <a href="#services" data-page="services">Services</a>
+      <a href="#tech" data-page="tech">Tech</a>
+      <a href="#ai-tools" data-page="ai-tools">AI Tools</a>
+      <a href="#programming" data-page="programming">Programming</a>
+      <a href="#blog" data-page="blog">Blog / News</a>
+      <a href="#contact" data-page="contact">Contact</a>
     </nav>
-</header>
+  </header>
 
-<!-- =========================================================
-     MOBILE / SECONDARY DRAWER
-     ========================================================= -->
-<aside id="menuDrawer" class="menu-drawer">
-    <div class="drawer-header">
-        <div>
-            <p class="drawer-label">DANIEL TECH</p>
-            <h3>Menu</h3>
-        </div>
-        <button type="button" id="closeMenu" class="close-button" aria-label="Close menu">Close</button>
-    </div>
-    <div class="drawer-content">
-        <button type="button" class="drawer-action" data-page="settings">Settings</button>
-        <button type="button" class="drawer-action" data-page="about">About Us</button>
-        <button type="button" class="drawer-action" data-page="contact">Contact Us</button>
-        <button type="button" class="drawer-action" data-page="faq">FAQ</button>
-        <button type="button" class="drawer-action" data-page="developer">Developer</button>
-        <button type="button" class="drawer-action" data-page="version">V2.0.0</button>
-        <button type="button" class="drawer-action" data-page="version-history">Version History</button>
-        <button type="button" class="drawer-action" data-page="website-information">Website Information</button>
-        <button type="button" class="drawer-action" data-page="privacy">Privacy Policy</button>
-        <button type="button" class="drawer-action" data-page="cookies">Cookie Policy</button>
-        <button type="button" class="drawer-action" data-page="terms">Terms & Conditions</button>
-        <button type="button" class="drawer-action" data-page="help">Help & Support</button>
-        <button type="button" id="drawerSignOut" class="drawer-action danger-action" hidden>Sign Out</button>
-    </div>
-</aside>
-<div id="overlay" class="overlay"></div>
-
-<!-- =========================================================
-     NEWS BAR
-     ========================================================= -->
-<div class="news-bar">
+  <!-- =========================================================
+       NEWS TICKER BAR (Database / CMS Driven)
+       ========================================================= -->
+  <div class="news-bar" id="newsBar">
     <div class="news-container">
-        <strong>Latest News</strong>
-        <div class="news-ticker">
-            <div id="newsContent">
-                Welcome to Daniel Tech | Bringing Your Idea To Life Through Tech Solutions.
-            </div>
+      <strong>Latest News</strong>
+      <div class="news-ticker">
+        <div id="newsContent">
+          Welcome to Daniel Tech | Bringing Your Idea To Life Through Tech Solutions.
         </div>
+      </div>
     </div>
-</div>
+  </div>
 
-<!-- =========================================================
-     MAIN
-     ========================================================= -->
-<main>
-<!-- =========================================================
-     HOME
-     ========================================================= -->
-<section id="home" class="page active-page">
-    <div class="hero">
-        <div class="hero-content">
-            <p class="hero-label">TECHNOLOGY   DIGITAL SOLUTIONS   INNOVATION</p>
-            <h1>Welcome to <span>Daniel Tech</span></h1>
-            <p class="hero-description">
-                Your technology platform for computer services, web development, programming, AI tools, software solutions, gaming and useful technology tips.
-            </p>
-            <div class="hero-buttons">
-                <button type="button" class="primary-button" data-page="services">Explore Services</button>
-                <button type="button" class="secondary-button" data-page="contact">Contact Daniel Tech</button>
-            </div>
-        </div>
-        <div class="hero-card">
-            <div class="hero-card-top">Daniel Tech</div>
-            <div class="hero-card-content">
-                <div class="hero-stat"><strong>Web</strong><span>Development</span></div>
-                <div class="hero-stat"><strong>AI</strong><span>Solutions</span></div>
-                <div class="hero-stat"><strong>ICT</strong><span>Services</span></div>
-                <div class="hero-stat"><strong>Tech</strong><span>Tips</span></div>
-            </div>
-        </div>
+  <!-- =========================================================
+       MODERN RIGHT-SIDE DRAWER
+       ========================================================= -->
+  <aside id="menuDrawer" class="menu-drawer" aria-hidden="true">
+    <div class="drawer-header">
+      <div>
+        <p class="drawer-label">DANIEL TECH</p>
+        <h3>Menu</h3>
+      </div>
+      <button type="button" id="closeMenu" class="close-button" aria-label="Close menu">
+        <i class="fa-solid fa-xmark"></i> Close
+      </button>
     </div>
-    <div class="section-container">
+    
+    <div class="drawer-content">
+      <!-- Quick user portal link if logged in -->
+      <div id="drawerUserStatus" class="drawer-user-box hidden">
+        <strong id="drawerUserName">Welcome</strong>
+        <p id="drawerUserEmail" class="drawer-subtext">user@example.com</p>
+        <button type="button" id="drawerMyPortalBtn" class="primary-button" style="margin-top: 8px; width: 100%;">
+          <i class="fa-solid fa-gauge-high"></i> Go to Dashboard
+        </button>
+      </div>
+
+      <button type="button" class="drawer-action" data-page="services"><i class="fa-solid fa-layer-group"></i> All Services</button>
+      <button type="button" class="drawer-action" data-page="settings"><i class="fa-solid fa-gear"></i> Settings</button>
+      <button type="button" class="drawer-action" data-page="about"><i class="fa-solid fa-circle-info"></i> About Us</button>
+      <button type="button" class="drawer-action" data-page="contact"><i class="fa-solid fa-envelope"></i> Contact Us</button>
+      <button type="button" class="drawer-action" data-page="faq"><i class="fa-solid fa-circle-question"></i> FAQ</button>
+      <button type="button" class="drawer-action" data-page="developer"><i class="fa-solid fa-terminal"></i> Developer</button>
+      <button type="button" class="drawer-action" data-page="version"><i class="fa-solid fa-code-branch"></i> V2.0.0</button>
+      <button type="button" class="drawer-action" data-page="version-history"><i class="fa-solid fa-clock-rotate-left"></i> Version History</button>
+      <button type="button" class="drawer-action" data-page="website-information"><i class="fa-solid fa-server"></i> Website Information</button>
+      <button type="button" class="drawer-action" data-page="privacy"><i class="fa-solid fa-shield-halved"></i> Privacy Policy</button>
+      <button type="button" class="drawer-action" data-page="cookies"><i class="fa-solid fa-cookie-bite"></i> Cookie Policy</button>
+      <button type="button" class="drawer-action" data-page="terms"><i class="fa-solid fa-file-contract"></i> Terms & Conditions</button>
+      <button type="button" class="drawer-action" data-page="help"><i class="fa-solid fa-circle-question"></i> Help & Support</button>
+      <button type="button" id="drawerSignOut" class="drawer-action danger-action" hidden>
+        <i class="fa-solid fa-arrow-right-from-bracket"></i> Sign Out
+      </button>
+    </div>
+  </aside>
+  <div id="overlay" class="overlay"></div>
+
+  <!-- =========================================================
+       MAIN PUBLIC PAGES
+       ========================================================= -->
+  <main id="mainContentArea">
+    <!-- PAGE: HOME -->
+    <section id="home" class="page active-page">
+      <div class="hero">
+        <div class="hero-content">
+          <p class="hero-label">TECHNOLOGY &bull; DIGITAL SOLUTIONS &bull; INNOVATION</p>
+          <h1>Welcome to <span>Daniel Tech</span></h1>
+          <p class="hero-description">
+            Your premier technology platform for enterprise computer services, web development, custom programming, autonomous AI tools, software engineering, gaming systems, phone diagnostics, and professional technology consulting.
+          </p>
+          <div class="hero-buttons">
+            <button type="button" class="primary-button" data-page="services">
+              <i class="fa-solid fa-layer-group"></i> Explore Services
+            </button>
+            <button type="button" class="secondary-button" data-page="contact">
+              <i class="fa-solid fa-paper-plane"></i> Contact Daniel Tech
+            </button>
+          </div>
+        </div>
+
+        <div class="hero-card">
+          <div class="hero-card-top">Daniel Tech</div>
+          <div class="hero-card-content">
+            <div class="hero-stat"><strong>Web</strong><span>Development</span></div>
+            <div class="hero-stat"><strong>Phone</strong><span>Diagnostics</span></div>
+            <div class="hero-stat"><strong>Gaming</strong><span>Systems & Rigs</span></div>
+            <div class="hero-stat"><strong>AI</strong><span>Solutions</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-container">
         <div class="section-heading">
-            <p>WHAT'S NEW</p>
-            <h2>Latest Content</h2>
-            <span>Discover the latest technology content published on Daniel Tech.</span>
+          <p>WHAT'S NEW</p>
+          <h2>Latest Content</h2>
+          <span>Discover the latest technology content published on Daniel Tech.</span>
         </div>
         <div id="latestContent" class="content-grid">
-            <div class="empty-content">No content has been published yet.</div>
+          <div class="empty-content">Loading latest content from database...</div>
         </div>
-    </div>
-</section>
+      </div>
+    </section>
 
-<!-- =========================================================
-     TECH, PHONE, AI, PROGRAMMING, GAMING
-     ========================================================= -->
-<section id="tech" class="page">
-    <div class="section-container">
-        <div class="section-heading"><p>TECHNOLOGY</p><h2>Tech</h2><span>Computer tips, Windows, hardware, software, troubleshooting.</span></div>
-        <div id="techGrid" class="content-grid"><div class="empty-content">No Tech content published yet.</div></div>
-    </div>
-</section>
-
-<section id="phone" class="page">
-    <div class="section-container">
-        <div class="section-heading"><p>MOBILE TECHNOLOGY</p><h2>Phone</h2><span>Android, smartphones, applications, settings.</span></div>
-        <div id="phoneGrid" class="content-grid"><div class="empty-content">No Phone content published yet.</div></div>
-    </div>
-</section>
-
-<section id="ai-tools" class="page">
-    <div class="section-container">
-        <div class="section-heading"><p>ARTIFICIAL INTELLIGENCE</p><h2>AI Tools</h2><span>AI tools, tutorials, workflows, updates.</span></div>
-        <div id="aiToolsGrid" class="content-grid"><div class="empty-content">No AI Tools content published yet.</div></div>
-    </div>
-</section>
-
-<section id="programming" class="page">
-    <div class="section-container">
-        <div class="section-heading"><p>DEVELOPMENT</p><h2>Programming</h2><span>Python, HTML, CSS, JavaScript, web development.</span></div>
-        <div id="programmingGrid" class="content-grid"><div class="empty-content">No Programming content published yet.</div></div>
-    </div>
-</section>
-
-<section id="gaming" class="page">
-    <div class="section-container">
-        <div class="section-heading"><p>GAMING</p><h2>Gaming</h2><span>Gaming news, guides, tips, updates.</span></div>
-        <div id="gamingGrid" class="content-grid"><div class="empty-content">No Gaming content published yet.</div></div>
-    </div>
-</section>
-
-<!-- =========================================================
-     SERVICES
-     ========================================================= -->
-<section id="services" class="page">
-    <div class="section-container">
+    <!-- PAGE: SERVICES (BROWSING, 16:9 MEDIA & SERVICE REQUEST) -->
+    <section id="services" class="page">
+      <div class="section-container">
         <div class="section-heading">
-            <p>DANIEL TECH SERVICES</p>
-            <h2>Our Services</h2>
-            <span>Professional technology services and digital solutions.</span>
+          <p>DANIEL TECH SOLUTIONS</p>
+          <h2>Professional Services & Engineering</h2>
+          <span>Enterprise web architecture, phone diagnostics, gaming rigs, and autonomous AI systems. Fully editable by Admin with 16:9 video and images.</span>
         </div>
+
+        <!-- Service Category Filter Bar -->
+        <div class="services-filter-bar">
+          <button type="button" class="filter-btn active" data-service-filter="all">All Services</button>
+          <button type="button" class="filter-btn" data-service-filter="web">Web & Software</button>
+          <button type="button" class="filter-btn" data-service-filter="phone">Phone & Hardware</button>
+          <button type="button" class="filter-btn" data-service-filter="gaming">Gaming Systems</button>
+          <button type="button" class="filter-btn" data-service-filter="ai">AI Tools</button>
+        </div>
+
         <div id="serviceGrid" class="service-grid">
-            <div class="empty-content">Loading services...</div>
+          <div class="empty-content">Loading services...</div>
         </div>
-    </div>
-</section>
+      </div>
+    </section>
 
-<!-- =========================================================
-     BLOG / NEWS & COMMENTS
-     ========================================================= -->
-<section id="blog" class="page">
-    <div class="section-container">
+    <!-- PAGE: TECH -->
+    <section id="tech" class="page">
+      <div class="section-container">
         <div class="section-heading">
-            <p>DANIEL TECH BLOG</p>
-            <h2>Blog / News</h2>
-            <span>Technology news, tutorials, tips and published content.</span>
+          <p>TECHNOLOGY</p>
+          <h2>Tech Insights & Computing</h2>
+          <span>Computer tips, Windows, operating systems, hardware diagnostics, and troubleshooting.</span>
+        </div>
+        <div id="techGrid" class="content-grid">
+          <div class="empty-content">Loading Tech content...</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PAGE: AI TOOLS -->
+    <section id="ai-tools" class="page">
+      <div class="section-container">
+        <div class="section-heading">
+          <p>ARTIFICIAL INTELLIGENCE</p>
+          <h2>AI Tools & Workflows</h2>
+          <span>Autonomous AI models, neural pipelines, productivity workflows, and system automations.</span>
+        </div>
+        <div id="aiToolsGrid" class="content-grid">
+          <div class="empty-content">Loading AI Tools content...</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PAGE: PROGRAMMING -->
+    <section id="programming" class="page">
+      <div class="section-container">
+        <div class="section-heading">
+          <p>SOFTWARE DEVELOPMENT</p>
+          <h2>Programming & Architecture</h2>
+          <span>Python, TypeScript, HTML5, CSS3, modern JavaScript, API design, and backend engineering.</span>
+        </div>
+        <div id="programmingGrid" class="content-grid">
+          <div class="empty-content">Loading Programming content...</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PAGE: BLOG / NEWS & COMMUNITY COMMENTS -->
+    <section id="blog" class="page">
+      <div class="section-container">
+        <div class="section-heading">
+          <p>DANIEL TECH EDITORIAL</p>
+          <h2>Blog & Tech News</h2>
+          <span>Articles, news, tutorials, and system releases published by Daniel Tech.</span>
         </div>
         <div id="blogGrid" class="blog-grid">
-            <div class="empty-content">No blog content has been published yet.</div>
+          <div class="empty-content">No articles published yet.</div>
         </div>
 
+        <!-- Comments Section -->
         <div class="comments-section">
-            <div class="section-heading small-heading">
-                <p>COMMUNITY</p>
-                <h2>Comments</h2>
-                <span>Leave a comment about Daniel Tech.</span>
+          <div class="section-heading small-heading">
+            <p>COMMUNITY</p>
+            <h2>Visitor Comments</h2>
+            <span>Share your feedback or questions about Daniel Tech.</span>
+          </div>
+          <form id="commentForm" class="comment-form">
+            <div class="form-group">
+              <label for="commentName">Your Name *</label>
+              <input type="text" id="commentName" name="visitor_name" placeholder="Enter your name" required>
             </div>
-            <form id="commentForm" class="comment-form">
-                <div class="form-group"><label for="commentName">Your Name</label><input type="text" id="commentName" name="visitor_name" placeholder="Enter your name" required></div>
-                <div class="form-group"><label for="commentEmail">Your Email</label><input type="email" id="commentEmail" name="visitor_email" placeholder="Enter your email"></div>
-                <div class="form-group"><label for="commentText">Your Comment</label><textarea id="commentText" name="comment" placeholder="Write your comment" required></textarea></div>
-                <button type="submit" class="primary-button">Post Comment</button>
-                <p id="commentStatus" class="form-status"></p>
-            </form>
-            <div id="commentsList" class="comments-list">
-                <p class="empty-content">No comments yet.</p>
+            <div class="form-group">
+              <label for="commentEmail">Your Email (Optional)</label>
+              <input type="email" id="commentEmail" name="visitor_email" placeholder="Enter your email">
             </div>
+            <div class="form-group">
+              <label for="commentText">Your Comment *</label>
+              <textarea id="commentText" name="comment" placeholder="Write your thoughts..." required></textarea>
+            </div>
+            <button type="submit" class="primary-button">Post Comment</button>
+            <p id="commentStatus" class="form-status"></p>
+          </form>
+          <div id="commentsList" class="comments-list">
+            <p class="empty-content">No comments yet. Be the first to comment!</p>
+          </div>
         </div>
-    </div>
-</section>
+      </div>
+    </section>
 
-<!-- =========================================================
-     CONTACT
-     ========================================================= -->
-<section id="contact" class="page">
-    <div class="section-container">
+    <!-- PAGE: CONTACT US (DIRECT GMAIL VIA WEB3FORMS KEY) -->
+    <section id="contact" class="page">
+      <div class="section-container">
         <div class="section-heading">
-            <p>GET IN TOUCH</p>
-            <h2>Contact Daniel Tech</h2>
-            <span>Tutumie ujumbe wako hapa, tutajibu haraka iwezekanavyo.</span>
+          <p>GET IN TOUCH</p>
+          <h2>Contact Daniel Tech</h2>
+          <span class="highlight-text">Tutumie ujumbe wako hapa, tutajibu haraka iwezekanavyo.</span>
         </div>
         <div class="contact-layout">
-            <div class="contact-information">
-                <div class="contact-card"><span>Email</span><strong id="contactEmailDisplay">danielshululu770@gmail.com</strong></div>
-                <div class="contact-card"><span>WhatsApp</span><strong id="contactWhatsAppDisplay">Available through WhatsApp</strong></div>
-                <div class="contact-card"><span>Response</span><strong>We will respond as soon as possible.</strong></div>
+          <div class="contact-information">
+            <div class="contact-card">
+              <span>Direct Email</span>
+              <strong id="contactEmailDisplay">danielshululu770@gmail.com</strong>
             </div>
-            <div class="contact-form-container">
-                <form id="contactForm">
-                    <input type="hidden" name="access_key" value="81e3fd5d-7a13-47cc-821a-f963ab6bf7c7">
-                    <input type="hidden" name="subject" value="New Contact Message - Daniel Tech">
-                    <input type="hidden" name="from_name" value="Daniel Tech Website">
-                    <div class="form-row">
-                        <div class="form-group"><label for="contactName">Name</label><input type="text" id="contactName" name="name" placeholder="Your name" required></div>
-                        <div class="form-group"><label for="contactEmail">Email</label><input type="email" id="contactEmail" name="email" placeholder="Your email" required></div>
-                    </div>
-                    <div class="form-group">
-                        <label for="contactService">Service</label>
-                        <select id="contactService" name="service">
-                            <option value="">Select a service</option>
-                            <option value="IT & Computer Support">IT & Computer Support</option>
-                            <option value="Graphic Design">Graphic Design</option>
-                            <option value="Video Editing">Video Editing</option>
-                            <option value="AI Video Creation">AI Video Creation</option>
-                            <option value="Website Development">Website Development</option>
-                            <option value="Social Media Content">Social Media Content</option>
-                            <option value="Digital Solutions">Digital Solutions</option>
-                            <option value="Other">Other</option>
-                        </select>
-                    </div>
-                    <div class="form-group"><label for="contactSubject">Subject</label><input type="text" id="contactSubject" name="message_subject" placeholder="Message subject" required></div>
-                    <div class="form-group"><label for="contactMessage">Message</label><textarea id="contactMessage" name="message" placeholder="Write your message" required></textarea></div>
-                    <button type="submit" id="contactSubmitButton" class="primary-button">Send Message</button>
-                    <p id="contactStatus" class="form-status"></p>
-                </form>
+            <div class="contact-card">
+              <span>WhatsApp Helpline</span>
+              <strong id="contactWhatsAppDisplay">+255 742 287 977</strong>
             </div>
-        </div>
-    </div>
-</section>
+            <div class="contact-card">
+              <span>Location</span>
+              <strong>Dar es Salaam, Tanzania</strong>
+            </div>
+            <div class="contact-card">
+              <span>Direct Inbox Notification</span>
+              <strong>Ujumbe wako unatumwa moja kwa moja kwenye inbox ya Gmail ya Daniel Shululu.</strong>
+            </div>
+          </div>
 
-<!-- =========================================================
-     SETTINGS (PRO VERSION)
-     ========================================================= -->
-<section id="settings" class="page">
-    <div class="section-container">
-        <div class="section-heading">
-            <p>WEBSITE SETTINGS</p>
-            <h2>Preferences</h2>
-            <span>Manage your Daniel Tech account and system settings.</span>
-        </div>
-        <div class="settings-page-content">
-            <div class="settings-card">
-                <h3>System Appearance & Locale</h3>
-                <p>Theme automatically adjusts based on your local time (Light during day, Dark at night) for eye protection.</p>
-                <div class="settings-buttons" style="margin-top: 15px;">
-                    <button type="button" id="settingsEN" class="settings-action">English</button>
-                    <button type="button" id="settingsSW" class="settings-action">Kiswahili</button>
-                </div>
-                <div class="form-group" style="margin-top: 20px;">
-                    <label>Preferred Currency</label>
-                    <select id="currencySelector">
-                        <option value="TZS">TZS - Tanzanian Shilling</option>
-                        <option value="USD">USD - US Dollar</option>
-                    </select>
-                </div>
-            </div>
-            <div class="settings-card">
-                <h3>Notifications & Privacy</h3>
-                <p>Control how we communicate with you and manage your data.</p>
-                <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 15px;">
-                    <label style="display: flex; align-items: center; gap: 10px; font-size: 14px; cursor: pointer;">
-                        <input type="checkbox" id="emailNotifCheck" checked> Receive Email Updates & Offers
-                    </label>
-                    <hr style="border-color: var(--line); margin: 10px 0;">
-                    <button type="button" class="settings-action danger-action" id="deleteAccountBtn" style="color: var(--color-error); border-color: var(--color-error);">
-                        Delete My Account
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
+          <div class="contact-form-container">
+            <form id="contactForm" action="https://api.web3forms.com/submit" method="POST">
+              <!-- Web3Forms Active Access Key -->
+              <input type="hidden" name="access_key" id="contactAccessKey" value="1cb63017-240b-4b68-b71f-51c53a824a97">
+              <input type="hidden" name="subject" value="New Message from Daniel Tech Client - Direct Gmail Delivery">
+              <input type="hidden" name="from_name" value="Daniel Tech Official Website">
 
-<!-- =========================================================
-     ABOUT, FAQ, DEVELOPER, VERSION, LEGAL
-     ========================================================= -->
-<section id="about" class="page"><div class="section-container"><div class="section-heading"><p>ABOUT</p><h2>About Daniel Tech</h2></div><div id="aboutContent" class="about-content"><p>Daniel Tech is a technology platform focused on digital solutions, computer services, programming, AI tools, software and technology education.</p></div></div></section>
-<section id="faq" class="page"><div class="section-container"><div class="section-heading"><p>HELP</p><h2>Frequently Asked Questions</h2></div><div id="faqContent" class="faq-content"><div class="empty-content">FAQ information will appear here.</div></div></div></section>
-<section id="developer" class="page"><div class="section-container"><div class="section-heading"><p>DEVELOPER</p><h2>Daniel Shululu</h2></div><div class="developer-content"><p>Daniel Tech is developed and maintained by Daniel Shululu.</p></div></div></section>
-<section id="version" class="page"><div class="section-container"><div class="section-heading"><p>SYSTEM</p><h2>Daniel Tech V2.0.0</h2></div><div class="version-content"><p>Version: <strong>2.0.0</strong></p><p>Developer: <strong>Daniel Shululu</strong></p><p>Released: <strong>2026</strong></p></div></div></section>
-<section id="version-history" class="page"><div class="section-container"><div class="section-heading"><p>HISTORY</p><h2>Version History</h2></div><div id="versionHistoryContent" class="version-history-content"><div class="version-item"><strong>V2.0.0</strong><span>Current major website system.</span></div></div></div></section>
-<section id="website-information" class="page"><div class="section-container"><div class="section-heading"><p>INFORMATION</p><h2>Website Information</h2></div><div class="website-information-content"><p>Website: <strong>Daniel Tech</strong></p><p>Version: <strong>V2.0.0</strong></p></div></div></section>
-<section id="privacy" class="page"><div class="section-container"><div class="section-heading"><p>LEGAL</p><h2>Privacy Policy</h2></div><div class="legal-content"><p>Daniel Tech respects user privacy and aims to handle submitted information responsibly.</p></div></div></section>
-<section id="cookies" class="page"><div class="section-container"><div class="section-heading"><p>LEGAL</p><h2>Cookie Policy</h2></div><div class="legal-content"><p>Daniel Tech may use browser storage and similar technologies to remember certain website preferences.</p></div></div></section>
-<section id="terms" class="page"><div class="section-container"><div class="section-heading"><p>LEGAL</p><h2>Terms & Conditions</h2></div><div class="legal-content"><p>By using Daniel Tech, visitors agree to use the website and its services responsibly.</p></div></div></section>
-<section id="help" class="page"><div class="section-container"><div class="section-heading"><p>SUPPORT</p><h2>Help & Support</h2></div><div class="help-content"><p>Use the Contact page to send a message to Daniel Tech.</p><button type="button" class="primary-button" data-page="contact">Contact Support</button></div></div></section>
-</main>
-
-<!-- =========================================================
-     CUSTOMER AUTH MODAL
-     ========================================================= -->
-<div id="authModal" class="modal">
-    <div class="modal-box">
-        <button type="button" class="modal-close" data-close-modal="authModal">Close</button>
-        <div class="modal-content">
-            <p class="modal-label">CUSTOMER ACCOUNT</p>
-            <h2 id="authModalTitle">Sign In</h2>
-            <form id="signInForm">
-                <div class="form-group"><label for="signInEmail">Email</label><input type="email" id="signInEmail" required autocomplete="email"></div>
-                <div class="form-group password-group">
-                    <label for="signInPassword">Password</label>
-                    <div class="password-input-wrapper">
-                        <input type="password" id="signInPassword" required autocomplete="current-password">
-                        <button type="button" class="password-toggle" data-password-target="signInPassword">Show</button>
-                    </div>
-                </div>
-                <button type="submit" class="primary-button">Sign In</button>
-                <p id="signInStatus" class="form-status"></p>
-            </form>
-            <form id="signUpForm" hidden>
-                <div class="form-group"><label for="signUpName">Full Name</label><input type="text" id="signUpName" required autocomplete="name"></div>
-                <div class="form-group"><label for="signUpEmail">Email</label><input type="email" id="signUpEmail" required autocomplete="email"></div>
-                <div class="form-group password-group">
-                    <label for="signUpPassword">Password</label>
-                    <div class="password-input-wrapper">
-                        <input type="password" id="signUpPassword" required minlength="8" autocomplete="new-password">
-                        <button type="button" class="password-toggle" data-password-target="signUpPassword">Show</button>
-                    </div>
-                </div>
-                <button type="submit" class="primary-button">Create Account</button>
-                <p id="signUpStatus" class="form-status"></p>
-            </form>
-            <button type="button" id="switchAuthMode" class="text-button">Create an account</button>
-        </div>
-    </div>
-</div>
-
-<!-- =========================================================
-     CUSTOMER DASHBOARD
-     ========================================================= -->
-<section id="customerDashboard" class="dashboard-screen" hidden>
-    <div class="dashboard-container">
-        <aside class="dashboard-sidebar">
-            <div class="dashboard-brand"><strong>Daniel</strong> Tech<span>Customer Portal</span></div>
-            <button type="button" class="dashboard-nav active" data-dashboard-panel="overview">Overview</button>
-            <button type="button" class="dashboard-nav" data-dashboard-panel="services">My Services</button>
-            <button type="button" class="dashboard-nav" data-dashboard-panel="requests">My Requests</button>
-            <button type="button" class="dashboard-nav" data-dashboard-panel="messages">Messages</button>
-            <button type="button" class="dashboard-nav" data-dashboard-panel="payments">Payments</button>
-            <button type="button" class="dashboard-nav" data-dashboard-panel="receipts">Receipts</button>
-            <button type="button" class="dashboard-nav" data-dashboard-panel="notifications">Notifications</button>
-            <button type="button" class="dashboard-nav" data-dashboard-panel="profile">Profile</button>
-            <button type="button" class="dashboard-nav" data-dashboard-panel="security">Security</button>
-            <button type="button" id="customerLogout" class="dashboard-nav danger-action">Logout</button>
-        </aside>
-        <div class="dashboard-main">
-            <div class="dashboard-header">
-                <div><p class="dashboard-label">CUSTOMER PORTAL</p><h2 id="customerWelcome">Welcome</h2></div>
-                <div class="dashboard-user"><span id="customerEmail">Customer</span></div>
-            </div>
-            
-            <div id="dashboardOverview" class="dashboard-panel active-dashboard-panel">
-                <div class="dashboard-stats">
-                    <div class="dashboard-stat"><span>Active Services</span><strong id="statActiveServices">0</strong></div>
-                    <div class="dashboard-stat"><span>Pending Requests</span><strong id="statPendingRequests">0</strong></div>
-                    <div class="dashboard-stat"><span>Pending Payments</span><strong id="statPendingPayments">0</strong></div>
-                    <div class="dashboard-stat"><span>Completed Services</span><strong id="statCompletedServices">0</strong></div>
-                </div>
-                <div class="dashboard-grid">
-                    <div class="dashboard-card"><h3>Recent Activity</h3><div id="customerRecentActivity"><p class="empty-content">No recent activity.</p></div></div>
-                    <div class="dashboard-card"><h3>Latest Receipt</h3><div id="latestReceipt"><p class="empty-content">No receipt available.</p></div></div>
-                </div>
-            </div>
-
-            <div id="dashboardServices" class="dashboard-panel"><div class="dashboard-card"><h3>My Services</h3><div id="customerServicesList"><p class="empty-content">No services found.</p></div></div></div>
-            <div id="dashboardRequests" class="dashboard-panel"><div class="dashboard-card"><h3>My Requests</h3><div id="customerRequestsList"><p class="empty-content">No requests found.</p></div></div></div>
-            <div id="dashboardMessages" class="dashboard-panel"><div class="dashboard-card"><h3>Messages</h3><div id="customerMessagesList"><p class="empty-content">No messages found.</p></div></div></div>
-            <div id="dashboardPayments" class="dashboard-panel"><div class="dashboard-card"><h3>Payments</h3><div id="customerPaymentsList"><p class="empty-content">No payment records found.</p></div></div></div>
-            
-            <!-- RECEIPTS SECTION WITH PRINT -->
-            <div id="dashboardReceipts" class="dashboard-panel">
-                <div class="dashboard-card">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                        <h3>My Receipts</h3>
-                        <button type="button" id="printReceiptBtn" class="secondary-button print-hidden" style="padding: 6px 12px; font-size: 12px;">🖨️ Print Latest Receipt</button>
-                    </div>
-                    <div id="customerReceiptsList" class="printable-area">
-                        <p class="empty-content print-hidden">No receipts found.</p>
-                    </div>
-                </div>
-            </div>
-
-            <div id="dashboardNotifications" class="dashboard-panel"><div class="dashboard-card"><h3>Notifications</h3><div id="customerNotificationsList"><p class="empty-content">No notifications found.</p></div></div></div>
-            <div id="dashboardProfile" class="dashboard-panel">
-                <div class="dashboard-card">
-                    <h3>Profile</h3>
-                    <form id="profileForm">
-                        <div class="form-group"><label>Full Name</label><input type="text" id="profileName"></div>
-                        <div class="form-group"><label>Email</label><input type="email" id="profileEmail" disabled></div>
-                        <button type="submit" class="primary-button">Save Profile</button>
-                        <p id="profileStatus" class="form-status"></p>
-                    </form>
-                </div>
-            </div>
-            <div id="dashboardSecurity" class="dashboard-panel">
-                <div class="dashboard-card">
-                    <h3>Security</h3>
-                    <button type="button" id="resetPasswordButton" class="secondary-button">Reset Password</button>
-                    <p id="securityStatus" class="form-status"></p>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- =========================================================
-     ADMIN DASHBOARD (PRO CMS)
-     ========================================================= -->
-<section id="adminDashboard" class="dashboard-screen" hidden>
-    <div class="dashboard-container">
-        <aside class="dashboard-sidebar">
-            <div class="dashboard-brand">
-                <strong>Admin</strong> Portal
-                <span>Daniel Tech V2.0</span>
-            </div>
-            <button type="button" class="dashboard-nav active" data-admin-panel="content">Publish & Schedule</button>
-            <button type="button" id="adminLogoutBtn" class="dashboard-nav danger-action" style="margin-top: auto;">Logout</button>
-        </aside>
-        
-        <div class="dashboard-main">
-            <div class="dashboard-header">
-                <div>
-                    <p class="dashboard-label">SYSTEM CONTROL</p>
-                    <h2 id="adminWelcome">Admin Dashboard</h2>
-                </div>
-            </div>
-
-            <!-- PUBLISH & SCHEDULE PANEL -->
-            <div id="adminContent" class="dashboard-panel active-dashboard-panel">
-                <div class="dashboard-card">
-                    <h3>Create or Schedule Post</h3>
-                    <form id="adminPostForm">
-                        <div class="form-group">
-                            <label for="postTitle">Post Title</label>
-                            <input type="text" id="postTitle" placeholder="e.g. Jinsi ya kutumia AI..." required>
-                        </div>
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="postCategory">Category</label>
-                                <select id="postCategory" required>
-                                    <option value="Tech">Tech News</option>
-                                    <option value="AI Tools">AI Tools</option>
-                                    <option value="Programming">Programming</option>
-                                    <option value="Gaming">Gaming</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label for="postSchedule">Schedule Date & Time</label>
-                                <input type="datetime-local" id="postSchedule">
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label for="postBody">Content</label>
-                            <textarea id="postBody" placeholder="Write your content here..." required></textarea>
-                        </div>
-                        <button type="submit" id="publishBtn" class="primary-button">Publish Post</button>
-                        <p id="adminPostStatus" class="form-status"></p>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- =========================================================
-     SERVICE & PAYMENT MODAL (PRO)
-     ========================================================= -->
-<div id="serviceModal" class="modal">
-    <div class="modal-box">
-        <button type="button" class="modal-close" data-close-modal="serviceModal">Close</button>
-        <div class="modal-content">
-            <p class="modal-label">SERVICE DETAILS</p>
-            <h2 id="serviceModalTitle">Service Name</h2>
-            <div id="serviceModalText" class="content-modal-body" style="margin-bottom: 20px;">
-                Service information will appear here.
-            </div>
-            
-            <div class="payment-section" style="background: var(--tint); padding: 20px; border-radius: 8px; margin-bottom: 20px; border: 1px solid var(--line);">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                    <strong style="font-size: 16px;">Total Price:</strong>
-                    <span id="servicePriceDisplay" style="font-size: 20px; color: var(--color-blue); font-weight: 800;">TZS 0.00</span>
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="contactName">Full Name *</label>
+                  <input type="text" id="contactName" name="name" placeholder="John Doe" required>
                 </div>
                 <div class="form-group">
-                    <label>Select Payment Method</label>
-                    <select id="paymentMethodSelect" style="margin-bottom: 10px;">
-                        <option value="card">Credit / Debit Card (Visa/Mastercard)</option>
-                        <option value="paypal">PayPal</option>
-                        <option value="mobile">Mobile Money (M-Pesa/Tigo Pesa)</option>
-                    </select>
+                  <label for="contactEmail">Email Address *</label>
+                  <input type="email" id="contactEmail" name="email" placeholder="john@example.com" required>
                 </div>
+              </div>
+
+              <div class="form-group">
+                <label for="contactService">Related Service (Optional)</label>
+                <select id="contactService" name="service">
+                  <option value="">Select a service category</option>
+                  <option value="Fullstack Web & API Architecture">Fullstack Web & API Architecture</option>
+                  <option value="Phone Diagnostics & Hardware Recovery">Phone Diagnostics & Hardware Recovery</option>
+                  <option value="Gaming Systems & Custom Rigs">Gaming Systems & Custom Rigs</option>
+                  <option value="Autonomous AI Systems & Automations">Autonomous AI Systems & Automations</option>
+                  <option value="Cloud & Supabase Integration">Cloud & Supabase Integration</option>
+                  <option value="Cybersecurity Audit">Cybersecurity Audit</option>
+                  <option value="Other Technology Solution">Other Technology Solution</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="contactSubject">Subject *</label>
+                <input type="text" id="contactSubject" name="message_subject" placeholder="Project quotation or technical inquiry" required>
+              </div>
+
+              <div class="form-group">
+                <label for="contactMessage">Message *</label>
+                <textarea id="contactMessage" name="message" placeholder="Please describe how we can assist your project..." required></textarea>
+              </div>
+
+              <button type="submit" id="contactSubmitButton" class="primary-button" style="width: 100%;">
+                <i class="fa-solid fa-paper-plane"></i> Send Message Directly to Gmail
+              </button>
+              <p id="contactStatus" class="form-status"></p>
+            </form>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PAGE: SETTINGS -->
+    <section id="settings" class="page">
+      <div class="section-container">
+        <div class="section-heading">
+          <p>PLATFORM CONFIGURATION</p>
+          <h2>Preferences & System Settings</h2>
+          <span>Control your viewing preferences, currency display, and account settings.</span>
+        </div>
+        <div class="settings-page-content">
+          <div class="settings-card">
+            <h3>Appearance & Theme</h3>
+            <p>Theme automatically adjusts according to local time (Light 06:00–17:59, Dark 18:00–05:59). You can also manually override it below:</p>
+            
+            <div class="form-group" style="margin-top: 15px;">
+              <label for="settingsThemeMode">Theme Mode</label>
+              <select id="settingsThemeMode">
+                <option value="auto">System / Automatic (Time-Based)</option>
+                <option value="light">Light Mode</option>
+                <option value="dark">Dark Mode</option>
+              </select>
             </div>
-            <button type="button" id="proceedToPayBtn" class="primary-button" style="width: 100%;">Proceed to Secure Payment</button>
-        </div>
-    </div>
-</div>
 
-<!-- =========================================================
-     CONTENT MODAL
-     ========================================================= -->
-<div id="contentModal" class="modal">
+            <div class="settings-buttons" style="margin-top: 15px;">
+              <button type="button" id="settingsEN" class="settings-action">English (ENG)</button>
+              <button type="button" id="settingsSW" class="settings-action">Kiswahili (KISW)</button>
+            </div>
+
+            <div class="form-group" style="margin-top: 20px;">
+              <label for="currencySelector">Preferred Currency</label>
+              <select id="currencySelector">
+                <option value="TZS">TZS - Tanzanian Shilling</option>
+                <option value="USD">USD - US Dollar</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="settings-card">
+            <h3>Notifications & Account</h3>
+            <p>Manage notifications and account data preferences.</p>
+            <div style="display: flex; flex-direction: column; gap: 14px; margin-top: 16px;">
+              <label style="display: flex; align-items: center; gap: 10px; font-size: 14px; cursor: pointer;">
+                <input type="checkbox" id="emailNotifCheck" checked> Receive Email Updates & Notifications
+              </label>
+              <hr style="border-color: var(--line); margin: 10px 0;">
+              <button type="button" class="settings-action danger-action" id="deleteAccountBtn" style="color: var(--color-error); border-color: var(--color-error);">
+                <i class="fa-solid fa-trash-can"></i> Delete My Account
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECONDARY / LEGAL PAGES -->
+    <section id="about" class="page">
+      <div class="section-container">
+        <div class="section-heading"><p>ABOUT DANIEL TECH</p><h2>About Us</h2></div>
+        <div class="about-content">
+          <p>Daniel Tech is a technology company delivering enterprise-grade software development, cutting-edge AI integration, high-performance computing, phone & gadget engineering, gaming setups, and professional technology consulting.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="faq" class="page">
+      <div class="section-container">
+        <div class="section-heading"><p>HELP & SUPPORT</p><h2>Frequently Asked Questions</h2></div>
+        <div class="faq-content">
+          <div class="version-item"><strong>How do I request a service?</strong><span>Browse our Services section, choose the desired service, and click "Request & Checkout" or submit a custom project request.</span></div>
+          <div class="version-item"><strong>Are videos and media provided for services?</strong><span>Yes, all our services feature 16:9 demonstration videos and images explaining specifications and deliverables.</span></div>
+          <div class="version-item"><strong>What payment methods are supported?</strong><span>We support Credit/Debit Card, PayPal, and Mobile Money (M-Pesa / Tigo Pesa). All payments are verified securely.</span></div>
+          <div class="version-item"><strong>How are completion deadlines estimated?</strong><span>Every service includes an Admin-configured estimated duration (e.g. 7 days, 4 hours). Once payment is confirmed, the completion date is automatically calculated.</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="developer" class="page">
+      <div class="section-container">
+        <div class="section-heading"><p>ENGINEERING</p><h2>Developer Information</h2></div>
+        <div class="developer-content">
+          <p><strong>Lead Architect:</strong> Daniel Shululu</p>
+          <p><strong>Stack:</strong> HTML5, CSS3, Vanilla TypeScript / JavaScript bundled with Vite, Supabase Postgres Database, Row-Level Security, and Web3Forms API.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="version" class="page">
+      <div class="section-container">
+        <div class="section-heading"><p>SYSTEM VERSION</p><h2>Daniel Tech V2.0.0</h2></div>
+        <div class="version-content">
+          <p>Version: <strong>2.0.0 (Production Release)</strong></p>
+          <p>Developer: <strong>Daniel Shululu</strong></p>
+          <p>Status: <strong>Active & Verified</strong></p>
+        </div>
+      </div>
+    </section>
+
+    <section id="version-history" class="page">
+      <div class="section-container">
+        <div class="section-heading"><p>RELEASE LOG</p><h2>Version History</h2></div>
+        <div class="version-history-content">
+          <div class="version-item"><strong>V2.0.0 (Latest Release)</strong><span>Full Customer Portal, Admin CMS with scheduled publishing, 16:9 Video/Image editable services, Direct Gmail Web3Forms delivery, and Print Receipts.</span></div>
+          <div class="version-item"><strong>V1.0.0</strong><span>Initial technology portfolio and service catalog release.</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="website-information" class="page">
+      <div class="section-container">
+        <div class="section-heading"><p>PLATFORM</p><h2>Website Information</h2></div>
+        <div class="website-information-content">
+          <p>Official website of Daniel Tech, engineered for high availability and secure customer service transactions.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="privacy" class="page">
+      <div class="section-container">
+        <div class="section-heading"><p>LEGAL</p><h2>Privacy Policy</h2></div>
+        <div class="legal-content">
+          <p>Daniel Tech respects user privacy. Credentials and personal customer details are secured via Supabase Row-Level Security. We do not sell or expose user data to third parties.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="cookies" class="page">
+      <div class="section-container">
+        <div class="section-heading"><p>LEGAL</p><h2>Cookie Policy</h2></div>
+        <div class="legal-content">
+          <p>We use essential local session cookies to securely preserve your login session, language preferences, and currency selections.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="terms" class="page">
+      <div class="section-container">
+        <div class="section-heading"><p>LEGAL</p><h2>Terms & Conditions</h2></div>
+        <div class="legal-content">
+          <p>By engaging services on Daniel Tech, clients agree to adhere to transparent project delivery milestones, official quotation approvals, and verified payment processing workflows.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="help" class="page">
+      <div class="section-container">
+        <div class="section-heading"><p>SUPPORT</p><h2>Help & Support</h2></div>
+        <div class="help-content">
+          <p>Need assistance or have questions regarding an existing request or order?</p>
+          <button type="button" class="primary-button" data-page="contact">
+            <i class="fa-solid fa-headset"></i> Contact Support
+          </button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- =========================================================
+       CUSTOMER DASHBOARD / PORTAL
+       ========================================================= -->
+  <section id="customerDashboard" class="dashboard-screen" hidden>
+    <div class="dashboard-container">
+      <aside class="dashboard-sidebar">
+        <div class="dashboard-brand">
+          <strong>Daniel</strong> Tech
+          <span>Customer Portal</span>
+        </div>
+        <button type="button" class="dashboard-nav active" data-dashboard-panel="overview"><i class="fa-solid fa-chart-pie"></i> Overview</button>
+        <button type="button" class="dashboard-nav" data-dashboard-panel="services"><i class="fa-solid fa-briefcase"></i> My Services</button>
+        <button type="button" class="dashboard-nav" data-dashboard-panel="requests"><i class="fa-solid fa-clipboard-list"></i> My Requests</button>
+        <button type="button" class="dashboard-nav" data-dashboard-panel="messages"><i class="fa-solid fa-envelope"></i> Messages</button>
+        <button type="button" class="dashboard-nav" data-dashboard-panel="payments"><i class="fa-solid fa-credit-card"></i> Payments</button>
+        <button type="button" class="dashboard-nav" data-dashboard-panel="receipts"><i class="fa-solid fa-receipt"></i> Receipts</button>
+        <button type="button" class="dashboard-nav" data-dashboard-panel="notifications"><i class="fa-solid fa-bell"></i> Notifications</button>
+        <button type="button" class="dashboard-nav" data-dashboard-panel="profile"><i class="fa-solid fa-user"></i> Profile</button>
+        <button type="button" class="dashboard-nav" data-dashboard-panel="security"><i class="fa-solid fa-lock"></i> Security</button>
+        <button type="button" id="customerLogout" class="dashboard-nav danger-action"><i class="fa-solid fa-arrow-right-from-bracket"></i> Logout</button>
+      </aside>
+
+      <div class="dashboard-main">
+        <div class="dashboard-header">
+          <div>
+            <p class="dashboard-label">CUSTOMER PORTAL</p>
+            <h2 id="customerWelcome">Welcome</h2>
+          </div>
+          <div class="dashboard-user">
+            <span id="customerEmail">customer@example.com</span>
+            <button type="button" class="secondary-button" id="btnCustomerExitToSite" style="padding: 6px 12px; margin-left: 12px; font-size: 12px;">
+              <i class="fa-solid fa-arrow-left"></i> Exit to Website
+            </button>
+          </div>
+        </div>
+
+        <!-- PANEL: OVERVIEW -->
+        <div id="dashboardOverview" class="dashboard-panel active-dashboard-panel">
+          <div class="dashboard-stats">
+            <div class="dashboard-stat"><span>Active Services</span><strong id="statActiveServices">0</strong></div>
+            <div class="dashboard-stat"><span>Pending Requests</span><strong id="statPendingRequests">0</strong></div>
+            <div class="dashboard-stat"><span>Pending Payments</span><strong id="statPendingPayments">0</strong></div>
+            <div class="dashboard-stat"><span>Completed Services</span><strong id="statCompletedServices">0</strong></div>
+          </div>
+          <div class="dashboard-grid">
+            <div class="dashboard-card">
+              <h3>Recent Activity</h3>
+              <div id="customerRecentActivity"><p class="empty-content">No recent activity.</p></div>
+            </div>
+            <div class="dashboard-card">
+              <h3>Latest Receipt</h3>
+              <div id="latestReceipt"><p class="empty-content">No receipt available yet.</p></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- PANEL: MY SERVICES / ORDERS -->
+        <div id="dashboardServices" class="dashboard-panel">
+          <div class="dashboard-card">
+            <h3>My Active & Completed Services</h3>
+            <div id="customerServicesList"><p class="empty-content">No active services found.</p></div>
+          </div>
+        </div>
+
+        <!-- PANEL: MY REQUESTS -->
+        <div id="dashboardRequests" class="dashboard-panel">
+          <div class="dashboard-card">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+              <h3>My Service Requests</h3>
+              <button type="button" class="primary-button" id="btnNewServiceRequest" style="padding: 6px 14px; font-size: 12px;">
+                <i class="fa-solid fa-plus"></i> New Request
+              </button>
+            </div>
+            <div id="customerRequestsList"><p class="empty-content">No requests found.</p></div>
+          </div>
+        </div>
+
+        <!-- PANEL: MESSAGES -->
+        <div id="dashboardMessages" class="dashboard-panel">
+          <div class="dashboard-card">
+            <h3>Messages & Inquiries</h3>
+            <div id="customerMessagesList"><p class="empty-content">No messages found.</p></div>
+          </div>
+        </div>
+
+        <!-- PANEL: PAYMENTS -->
+        <div id="dashboardPayments" class="dashboard-panel">
+          <div class="dashboard-card">
+            <h3>Payment History</h3>
+            <div id="customerPaymentsList"><p class="empty-content">No payment records found.</p></div>
+          </div>
+        </div>
+
+        <!-- PANEL: RECEIPTS (WITH STRICT PRINT RECEIPT) -->
+        <div id="dashboardReceipts" class="dashboard-panel">
+          <div class="dashboard-card">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+              <h3>Official Receipts</h3>
+              <button type="button" id="printReceiptBtn" class="secondary-button print-hidden" style="padding: 8px 16px; font-size: 13px;">
+                <i class="fa-solid fa-print"></i> Print Receipt
+              </button>
+            </div>
+            <div id="customerReceiptsList" class="printable-area">
+              <p class="empty-content print-hidden">No receipts found.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- PANEL: NOTIFICATIONS -->
+        <div id="dashboardNotifications" class="dashboard-panel">
+          <div class="dashboard-card">
+            <h3>Notifications</h3>
+            <div id="customerNotificationsList"><p class="empty-content">No notifications found.</p></div>
+          </div>
+        </div>
+
+        <!-- PANEL: PROFILE -->
+        <div id="dashboardProfile" class="dashboard-panel">
+          <div class="dashboard-card">
+            <h3>Customer Profile</h3>
+            <form id="profileForm">
+              <div class="form-group">
+                <label for="profileName">Full Name</label>
+                <input type="text" id="profileName">
+              </div>
+              <div class="form-group">
+                <label for="profileEmail">Email Address (Read-only)</label>
+                <input type="email" id="profileEmail" disabled>
+              </div>
+              <button type="submit" class="primary-button">Save Profile</button>
+              <p id="profileStatus" class="form-status"></p>
+            </form>
+          </div>
+        </div>
+
+        <!-- PANEL: SECURITY -->
+        <div id="dashboardSecurity" class="dashboard-panel">
+          <div class="dashboard-card">
+            <h3>Security & Password</h3>
+            <p>Need to update your password? Click below to receive a secure password reset link:</p>
+            <button type="button" id="resetPasswordButton" class="secondary-button" style="margin-top: 10px;">
+              <i class="fa-solid fa-key"></i> Send Password Reset Email
+            </button>
+            <p id="securityStatus" class="form-status"></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================
+       ADMIN DASHBOARD (PRIVATE /admin CMS)
+       ========================================================= -->
+  <section id="adminDashboard" class="dashboard-screen" hidden>
+    <div class="dashboard-container">
+      <aside class="dashboard-sidebar">
+        <div class="dashboard-brand">
+          <strong>Admin</strong> Portal
+          <span>Daniel Tech V2.0.0</span>
+        </div>
+        <button type="button" class="dashboard-nav active" data-admin-panel="services-cms"><i class="fa-solid fa-layer-group"></i> Services CMS (16:9)</button>
+        <button type="button" class="dashboard-nav" data-admin-panel="content"><i class="fa-solid fa-pen-nib"></i> Publish & News CMS</button>
+        <button type="button" class="dashboard-nav" data-admin-panel="requests-mgmt"><i class="fa-solid fa-clipboard-check"></i> Service Requests</button>
+        <button type="button" class="dashboard-nav" data-admin-panel="payments-mgmt"><i class="fa-solid fa-money-bill-transfer"></i> Payments & Orders</button>
+        <button type="button" class="dashboard-nav" data-admin-panel="messages-mgmt"><i class="fa-solid fa-inbox"></i> Inquiries</button>
+        <button type="button" id="adminLogoutBtn" class="dashboard-nav danger-action" style="margin-top: auto;">
+          <i class="fa-solid fa-arrow-right-from-bracket"></i> Admin Logout
+        </button>
+      </aside>
+
+      <div class="dashboard-main">
+        <div class="dashboard-header">
+          <div>
+            <p class="dashboard-label">SYSTEM CONTROL</p>
+            <h2 id="adminWelcome">Admin Dashboard</h2>
+          </div>
+          <div>
+            <button type="button" class="secondary-button" id="btnAdminExitToSite" style="padding: 6px 12px; font-size: 12px;">
+              <i class="fa-solid fa-globe"></i> View Website
+            </button>
+          </div>
+        </div>
+
+        <!-- ADMIN PANEL: SERVICES CMS (EDITABLE SERVICES WITH 16:9 VIDEO & IMAGE) -->
+        <div id="adminServicesPanel" class="dashboard-panel active-dashboard-panel">
+          <div class="dashboard-card">
+            <h3><i class="fa-solid fa-sliders"></i> Create or Edit Service (16:9 Video & Image)</h3>
+            <p style="color: var(--muted); font-size: 13px; margin-bottom: 16px;">
+              Configure all public services. Supports standard 16:9 ratio images and video embed/file URLs.
+            </p>
+
+            <form id="adminServiceForm">
+              <input type="hidden" id="svcEditId" value="">
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="svcTitle">Service Name *</label>
+                  <input type="text" id="svcTitle" placeholder="e.g. Phone Diagnostics & Firmware Recovery" required>
+                </div>
+                <div class="form-group">
+                  <label for="svcCategory">Category *</label>
+                  <select id="svcCategory" required>
+                    <option value="web">Web & Software Architecture</option>
+                    <option value="phone">Phone & Hardware Diagnostics</option>
+                    <option value="gaming">Gaming Systems & Rigs</option>
+                    <option value="ai">AI Tools & Automation</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="svcPriceTZS">Price (TZS) *</label>
+                  <input type="number" id="svcPriceTZS" placeholder="e.g. 90000" required>
+                </div>
+                <div class="form-group">
+                  <label for="svcPriceUSD">Price (USD) *</label>
+                  <input type="number" id="svcPriceUSD" placeholder="e.g. 35" required>
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="svcDuration">Estimated Completion Duration *</label>
+                  <input type="text" id="svcDuration" placeholder="e.g. 4 Hours, 7 Days" required>
+                </div>
+                <div class="form-group">
+                  <label for="svcDisplayOrder">Display Order</label>
+                  <input type="number" id="svcDisplayOrder" value="1" min="1">
+                </div>
+              </div>
+
+              <!-- 16:9 RATIO IMAGE & VIDEO URLS -->
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="svcImageUrl">16:9 Ratio Image URL</label>
+                  <input type="url" id="svcImageUrl" placeholder="https://.../image.webp (Aspect ratio 16:9)">
+                  <small style="color: var(--muted); font-size: 11px;">Standard ratio 16:9 (e.g. 1920x1080 or 1280x720)</small>
+                </div>
+                <div class="form-group">
+                  <label for="svcVideoUrl">16:9 Ratio Video URL (MP4 or YouTube/Vimeo embed)</label>
+                  <input type="url" id="svcVideoUrl" placeholder="https://.../video.mp4 or YouTube embed">
+                  <small style="color: var(--muted); font-size: 11px;">Displays in clean 16:9 video player inside service card & modal</small>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="svcShortDesc">Short Description (for Service Card) *</label>
+                <textarea id="svcShortDesc" rows="2" placeholder="Brief 1-2 sentence overview..." required></textarea>
+              </div>
+
+              <div class="form-group">
+                <label for="svcFullDesc">Full Description (for Service Modal & Quotations) *</label>
+                <textarea id="svcFullDesc" rows="4" placeholder="Detailed service description, packages, requirements, and deliverables..." required></textarea>
+              </div>
+
+              <div style="display: flex; gap: 10px;">
+                <button type="submit" id="btnSaveService" class="primary-button">
+                  <i class="fa-solid fa-cloud-arrow-up"></i> Save Service
+                </button>
+                <button type="button" id="btnCancelEditService" class="secondary-button hidden">Cancel</button>
+              </div>
+              <p id="adminServiceStatus" class="form-status"></p>
+            </form>
+          </div>
+
+          <div class="dashboard-card">
+            <h3>Existing Services Management</h3>
+            <div id="adminServicesList"><p class="empty-content">Loading services...</p></div>
+          </div>
+        </div>
+
+        <!-- ADMIN PANEL: CMS CONTENT (PUBLISH & SCHEDULE) -->
+        <div id="adminContentPanel" class="dashboard-panel">
+          <div class="dashboard-card">
+            <h3>Publish or Schedule Content</h3>
+            <form id="adminPostForm">
+              <input type="hidden" id="editPostId" value="">
+              
+              <div class="form-group">
+                <label for="postTitle">Post Title *</label>
+                <input type="text" id="postTitle" placeholder="e.g. Innovations in Mobile Hardware Diagnostics" required>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="postCategory">Category *</label>
+                  <select id="postCategory" required>
+                    <option value="Tech">Tech</option>
+                    <option value="Phone">Phone</option>
+                    <option value="AI Tools">AI Tools</option>
+                    <option value="Programming">Programming</option>
+                    <option value="Gaming">Gaming</option>
+                    <option value="Blog">Blog / News</option>
+                  </select>
+                </div>
+
+                <!-- CRITICAL: SCHEDULE DATE & TIME (Africa/Dar_es_Salaam) -->
+                <div class="form-group">
+                  <label for="postSchedule">Schedule Date & Time (Optional)</label>
+                  <input type="datetime-local" id="postSchedule">
+                  <small style="color: var(--muted); font-size: 11px;">Leave empty to publish immediately. Choose future time to schedule.</small>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="postBody">Content Body *</label>
+                <textarea id="postBody" placeholder="Write full article content here..." required></textarea>
+              </div>
+
+              <div style="display: flex; gap: 10px;">
+                <button type="submit" id="publishBtn" class="primary-button">
+                  <i class="fa-solid fa-cloud-arrow-up"></i> Save / Publish Post
+                </button>
+                <button type="button" id="cancelEditPostBtn" class="secondary-button hidden">Cancel Edit</button>
+              </div>
+              <p id="adminPostStatus" class="form-status"></p>
+            </form>
+          </div>
+
+          <div class="dashboard-card">
+            <h3>Manage Existing Articles</h3>
+            <div id="adminArticlesList"><p class="empty-content">Loading articles...</p></div>
+          </div>
+        </div>
+
+        <!-- ADMIN PANEL: SERVICE REQUESTS & QUOTATIONS -->
+        <div id="adminRequestsPanel" class="dashboard-panel">
+          <div class="dashboard-card">
+            <h3>Service Requests & Quotations</h3>
+            <div id="adminRequestsList"><p class="empty-content">Loading requests...</p></div>
+          </div>
+        </div>
+
+        <!-- ADMIN PANEL: PAYMENTS & ORDERS -->
+        <div id="adminPaymentsPanel" class="dashboard-panel">
+          <div class="dashboard-card">
+            <h3>Customer Payments Verification & Active Orders</h3>
+            <div id="adminPaymentsList"><p class="empty-content">Loading payments...</p></div>
+          </div>
+        </div>
+
+        <!-- ADMIN PANEL: MESSAGES -->
+        <div id="adminMessagesPanel" class="dashboard-panel">
+          <div class="dashboard-card">
+            <h3>Contact Messages & Inquiries</h3>
+            <div id="adminMessagesList"><p class="empty-content">Loading inquiries...</p></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================
+       MODALS
+       ========================================================= -->
+
+  <!-- 1. CUSTOMER AUTH MODAL -->
+  <div id="authModal" class="modal">
+    <div class="modal-box">
+      <button type="button" class="modal-close" data-close-modal="authModal">Close</button>
+      <div class="modal-content">
+        <p class="modal-label">CUSTOMER ACCOUNT</p>
+        <h2 id="authModalTitle">Sign In</h2>
+
+        <!-- SIGN IN FORM -->
+        <form id="signInForm">
+          <div class="form-group">
+            <label for="signInEmail">Email Address</label>
+            <input type="email" id="signInEmail" required autocomplete="email">
+          </div>
+          <div class="form-group password-group">
+            <label for="signInPassword">Password</label>
+            <div class="password-input-wrapper">
+              <input type="password" id="signInPassword" required autocomplete="current-password">
+              <button type="button" class="password-toggle" data-password-target="signInPassword">Show</button>
+            </div>
+          </div>
+          <button type="submit" class="primary-button" style="width: 100%;">Sign In</button>
+          <p id="signInStatus" class="form-status"></p>
+        </form>
+
+        <!-- SIGN UP FORM -->
+        <form id="signUpForm" hidden>
+          <div class="form-group">
+            <label for="signUpName">Full Name</label>
+            <input type="text" id="signUpName" required autocomplete="name">
+          </div>
+          <div class="form-group">
+            <label for="signUpEmail">Email Address</label>
+            <input type="email" id="signUpEmail" required autocomplete="email">
+          </div>
+          <div class="form-group password-group">
+            <label for="signUpPassword">Password (Min 8 characters)</label>
+            <div class="password-input-wrapper">
+              <input type="password" id="signUpPassword" required minlength="8" autocomplete="new-password">
+              <button type="button" class="password-toggle" data-password-target="signUpPassword">Show</button>
+            </div>
+          </div>
+          <div class="form-group password-group">
+            <label for="signUpConfirmPassword">Confirm Password</label>
+            <div class="password-input-wrapper">
+              <input type="password" id="signUpConfirmPassword" required minlength="8" autocomplete="new-password">
+              <button type="button" class="password-toggle" data-password-target="signUpConfirmPassword">Show</button>
+            </div>
+          </div>
+          <button type="submit" class="primary-button" style="width: 100%;">Create Account</button>
+          <p id="signUpStatus" class="form-status"></p>
+        </form>
+
+        <button type="button" id="switchAuthMode" class="text-button" style="margin-top: 15px;">Create an account</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. SERVICE MODAL & CHECKOUT (WITH 16:9 VIDEO & IMAGE) -->
+  <div id="serviceModal" class="modal">
+    <div class="modal-box service-modal-box">
+      <button type="button" class="modal-close" data-close-modal="serviceModal">Close</button>
+      <div class="modal-content">
+        <p class="modal-label">SERVICE DETAILS</p>
+        <h2 id="serviceModalTitle">Service Name</h2>
+
+        <!-- 16:9 Aspect Ratio Media Container (Video or Image) -->
+        <div id="serviceModalMedia" class="service-modal-media media-16-9" style="margin-bottom: 20px;">
+          <!-- Dynamically populated with 16:9 video or image -->
+        </div>
+
+        <div id="serviceModalText" class="content-modal-body" style="margin-bottom: 20px;">
+          Service information will appear here.
+        </div>
+        
+        <!-- Estimated Duration & Pricing -->
+        <div class="service-meta-box" style="display: flex; justify-content: space-between; background: var(--tint); padding: 14px 18px; border-radius: 8px; border: 1px solid var(--line); margin-bottom: 20px;">
+          <div>
+            <span style="font-size: 11px; color: var(--muted); display: block;">ESTIMATED COMPLETION</span>
+            <strong id="serviceModalDuration" style="color: var(--color-blue); font-size: 16px;">7 Days</strong>
+          </div>
+          <div style="text-align: right;">
+            <span style="font-size: 11px; color: var(--muted); display: block;">STANDARD PRICE</span>
+            <strong id="servicePriceDisplay" style="font-size: 18px; color: var(--color-blue);">TZS 0.00</strong>
+          </div>
+        </div>
+
+        <!-- PAYMENT METHOD SELECTOR -->
+        <div class="payment-section" style="background: var(--tint); padding: 20px; border-radius: 8px; margin-bottom: 20px; border: 1px solid var(--line);">
+          <div class="form-group" style="margin-bottom: 0;">
+            <label style="font-weight: 700; margin-bottom: 8px; display: block;">Select Payment Method</label>
+            <select id="paymentMethodSelect">
+              <option value="card">Credit / Debit Card (Visa/Mastercard)</option>
+              <option value="paypal">PayPal</option>
+              <option value="mobile">Mobile Money (M-Pesa / Tigo Pesa)</option>
+            </select>
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+          <button type="button" id="proceedToPayBtn" class="primary-button" style="width: 100%;">
+            <i class="fa-solid fa-lock"></i> Proceed to Secure Payment
+          </button>
+          <button type="button" id="btnOpenRequestForm" class="secondary-button" style="width: 100%;">
+            <i class="fa-solid fa-file-signature"></i> Request Custom Service
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. SERVICE REQUEST FORM MODAL (DT-REQ-000001) -->
+  <div id="serviceRequestModal" class="modal">
+    <div class="modal-box">
+      <button type="button" class="modal-close" data-close-modal="serviceRequestModal">Close</button>
+      <div class="modal-content">
+        <p class="modal-label">NEW SERVICE REQUEST</p>
+        <h2>Submit Project Requirements</h2>
+        <form id="customServiceRequestForm">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="reqCustomerName">Customer Name *</label>
+              <input type="text" id="reqCustomerName" required>
+            </div>
+            <div class="form-group">
+              <label for="reqEmail">Email Address *</label>
+              <input type="email" id="reqEmail" required>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="reqPhone">Phone / WhatsApp</label>
+              <input type="tel" id="reqPhone" placeholder="+255...">
+            </div>
+            <div class="form-group">
+              <label for="reqService">Selected Service *</label>
+              <input type="text" id="reqService" required>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="reqDescription">Project Description *</label>
+            <textarea id="reqDescription" placeholder="Describe what you need built or engineered..." required></textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="reqRequirements">Specific Technical Requirements</label>
+            <textarea id="reqRequirements" placeholder="E.g. framework preference, server requirements, design specs..."></textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="reqDeadline">Preferred Deadline</label>
+            <input type="date" id="reqDeadline">
+          </div>
+
+          <button type="submit" id="btnSubmitCustomRequest" class="primary-button" style="width: 100%;">
+            <i class="fa-solid fa-paper-plane"></i> Submit Request
+          </button>
+          <p id="customRequestStatus" class="form-status"></p>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. CONTENT / ARTICLE MODAL -->
+  <div id="contentModal" class="modal">
     <div class="modal-box content-modal-box">
-        <button type="button" class="modal-close" data-close-modal="contentModal">Close</button>
-        <div class="modal-content">
-            <p id="contentModalCategory" class="modal-label">CONTENT</p>
-            <h2 id="contentModalTitle">Article</h2>
-            <div id="contentModalBody" class="content-modal-body"></div>
-        </div>
+      <button type="button" class="modal-close" data-close-modal="contentModal">Close</button>
+      <div class="modal-content">
+        <p id="contentModalCategory" class="modal-label">CONTENT</p>
+        <h2 id="contentModalTitle">Article</h2>
+        <div id="contentModalBody" class="content-modal-body"></div>
+      </div>
     </div>
-</div>
+  </div>
 
-<!-- =========================================================
-     FOOTER
-     ========================================================= -->
-<footer class="site-footer">
+  <!-- =========================================================
+       FOOTER
+       ========================================================= -->
+  <footer class="site-footer">
     <div class="section-container footer-container">
-        <div class="footer-about">
-            <div class="logo"><span>Daniel</span> Tech</div>
-            <p id="footerText">Daniel Tech is a technology platform focused on digital solutions, computer services and technology education.</p>
-        </div>
-        <div class="footer-contact">
-            <span>Email: <strong id="footerEmail">danielshululu770@gmail.com</strong></span>
-            <span id="footerPhoneRow">Phone: <strong id="footerPhone"></strong></span>
-            <span id="footerAddress"></span>
-        </div>
-        <div id="footerSocialLinks" class="footer-social"></div>
+      <div class="footer-about">
+        <div class="logo"><span>Daniel</span> Tech</div>
+        <p id="footerText">Daniel Tech is a premier technology platform focused on digital engineering, software architecture, phone systems, gaming rigs, and computer solutions.</p>
+      </div>
+      <div class="footer-contact">
+        <span>Email: <strong id="footerEmail">danielshululu770@gmail.com</strong></span>
+        <span id="footerPhoneRow">Phone: <strong id="footerPhone">+255 742 287 977</strong></span>
+        <span id="footerAddress">Dar es Salaam, Tanzania</span>
+      </div>
+      <div id="footerSocialLinks" class="footer-social"></div>
     </div>
     <div class="footer-bottom">
-        <span>&copy; <span id="footerYear"></span> Daniel Tech. All rights reserved.</span>
-        <div class="footer-legal">
-            <button type="button" data-page="privacy">Privacy</button>
-            <button type="button" data-page="cookies">Cookies</button>
-            <button type="button" data-page="terms">Terms</button>
-            <button type="button" data-page="help">Help</button>
-        </div>
+      <span>&copy; <span id="footerYear">2026</span> Daniel Tech V2.0.0. All rights reserved.</span>
+      <div class="footer-legal">
+        <button type="button" data-page="privacy">Privacy</button>
+        <button type="button" data-page="cookies">Cookies</button>
+        <button type="button" data-page="terms">Terms</button>
+        <button type="button" data-page="help">Help</button>
+      </div>
     </div>
-</footer>
+  </footer>
 
-<a href="https://wa.me/255742287977" target="_blank" rel="noopener noreferrer" class="whatsapp-button">WhatsApp</a>
-<button type="button" id="backTop" class="back-top">Top</button>
+  <a href="https://wa.me/255742287977" target="_blank" rel="noopener noreferrer" class="whatsapp-button">WhatsApp</a>
+  <button type="button" id="backTop" class="back-top">Top</button>
 
-<script>
-(function () {
-    const yearEl = document.getElementById("footerYear");
-    if (yearEl) yearEl.textContent = new Date().getFullYear();
-})();
-</script>
+  <script>
+    (function () {
+      const yearEl = document.getElementById("footerYear");
+      if (yearEl) yearEl.textContent = new Date().getFullYear();
+    })();
+  </script>
 </body>
 </html>
