@@ -1,304 +1,1540 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <meta name="google-site-verification" content="YT29c5mfboXHqdivqlpQ9F-KVEr8fo8bwh9Q--r5Vl8" />
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Daniel Tech - Technology, computer services, web development, AI tools, programming, gaming and software solutions.">
-    <meta name="author" content="Daniel Tech">
-    <title>Daniel Tech | V2.0</title>
-    <link rel="icon" href="data:,">
-    <link rel="stylesheet" href="style.css">
 
-    <!-- DANIEL TECH V2.0 - AUTOMATIC TIME-BASED THEME -->
-    <script>
-        (function() {
-            function updateTheme() {
-                const hours = new Date().getHours(); 
-                const isDarkMode = hours >= 18 || hours < 6;
-                if (isDarkMode) {
-                    document.documentElement.classList.add('dark-mode');
-                    document.body.classList.add('dark-mode');
-                } else {
-                    document.documentElement.classList.remove('dark-mode');
-                    document.body.classList.remove('dark-mode');
-                }
-            }
-            updateTheme();
-            setInterval(updateTheme, 60000);
-            document.addEventListener('DOMContentLoaded', updateTheme);
-        })();
-    </script>
+    <meta name="description"
+          content="Daniel Tech - Technology, computer services, web development, AI tools, programming, gaming and software solutions.">
+
+    <meta name="author" content="Daniel Tech">
+
+    <title>Daniel Tech</title>
+
+    <link rel="icon" href="data:,">
+
+    <link rel="stylesheet" href="style.css?v=20260903-1">
 </head>
+
 <body>
 
 <!-- ================= HEADER ================= -->
+
 <header class="site-header">
+
     <div class="header-container">
+
         <a href="#" class="logo" data-page="home">
             <span>Daniel</span> Tech
         </a>
 
         <nav class="main-nav" id="mainNav">
-            <a href="#" data-page="home" data-en="Home" data-sw="Mwanzo">Home</a>
-            <a href="#" data-page="services" data-en="Services" data-sw="Huduma">Services</a>
-            <a href="#" data-page="features" data-en="Features" data-sw="Mbinu">Features</a>
-            <a href="#" data-page="blog" data-en="Blog / News" data-sw="Makala">Blog / News</a>
-            <a href="#" data-page="contact" data-en="Contact" data-sw="Mawasiliano">Contact</a>
+
+            <a href="#" data-page="home">Home</a>
+
+            <a href="#" data-page="services">Services</a>
+
+            <a href="#" data-page="features">Features</a>
+
+            <a href="#" data-page="blog">Blog / News</a>
+
+            <a href="#" data-page="contact">Contact</a>
+
         </nav>
 
         <div class="header-actions">
-            <!-- Language Toggle -->
-            <button type="button" id="langToggle" class="lang-button">SW</button>
-            
-            <!-- Auth Buttons -->
-            <button type="button" id="authBtn" class="primary-button" onclick="openModal('loginModal')" data-en="Log In / Sign Up" data-sw="Ingia / Jisajili">Log In</button>
-            <button type="button" id="customerDashBtn" class="dashboard-button" style="display: none;" data-en="My Account" data-sw="Akaunti Yangu">My Account</button>
-            <button type="button" id="logoutBtn" class="logout-button-small" style="display: none;" data-en="Log Out" data-sw="Toka">Log Out</button>
 
-            <!-- Settings & Menu -->
-            <button type="button" id="settingsButton" class="header-button" data-en="Settings" data-sw="Mipangilio">Settings</button>
-            <button type="button" id="menuButton" class="menu-button">Menu</button>
+            <button
+                type="button"
+                id="darkModeButton"
+                class="header-button">
+                Dark Mode
+            </button>
+
+            <button
+                type="button"
+                id="settingsButton"
+                class="header-button">
+                Settings
+            </button>
+
+            <button
+                type="button"
+                id="menuButton"
+                class="menu-button">
+                Menu
+            </button>
+
         </div>
+
     </div>
+
 </header>
 
+
 <!-- ================= NEWS BAR ================= -->
+
 <div class="news-bar">
+
     <div class="news-container">
-        <strong data-en="Latest News" data-sw="Habari Mpya">Latest News</strong>
+
+        <strong>Latest News</strong>
+
         <div class="news-ticker">
-            <div id="newsContent" data-en="Welcome to Daniel Tech — Technology, AI, Gaming, Programming and Digital Solutions." data-sw="Karibu Daniel Tech — Teknolojia, AI, Michezo, Programu na Huduma za Kidijitali.">
-                Welcome to Daniel Tech — Technology, AI, Gaming, Programming and Digital Solutions.
+            <div id="newsContent">
+                Welcome to Daniel Tech.
             </div>
         </div>
+
     </div>
+
 </div>
 
+
 <!-- ================= MAIN ================= -->
+
 <main>
 
+
 <!-- ================= HOME ================= -->
+
 <section id="home" class="page active-page">
+
     <div class="hero">
+
         <div class="hero-content">
-            <p class="hero-label" data-en="TECHNOLOGY • DIGITAL SOLUTIONS • INNOVATION" data-sw="TEKNOLOJIA • HUDUMA ZA KIDIJITALI • UBUNIFU">
+
+            <p class="hero-label">
                 TECHNOLOGY • DIGITAL SOLUTIONS • INNOVATION
             </p>
+
             <h1>
-                <span style="color: var(--text); display:inline;" data-en="Welcome to" data-sw="Karibu">Welcome to</span>
-                <span class="gradient-text">Daniel Tech</span>
+                Welcome to
+                <span>Daniel Tech</span>
             </h1>
-            <p class="hero-description" data-en="Your technology platform for computer services, web development, programming, AI tools, software solutions, gaming and useful technology tips." data-sw="Jukwaa lako la teknolojia kwa huduma za kompyuta, utengenezaji wa tovuti, programu, zana za AI, na mbinu muhimu za teknolojia.">
-                Your technology platform for computer services, web development, programming, AI tools, software solutions, gaming and useful technology tips.
+
+            <p class="hero-description">
+                Your technology platform for computer services,
+                web development, programming, AI tools, software
+                solutions, gaming and useful technology tips.
             </p>
+
             <div class="hero-buttons">
-                <button type="button" class="primary-button" data-page="services" data-en="Explore Services" data-sw="Angalia Huduma">Explore Services</button>
-                <button type="button" class="secondary-button" data-page="contact" data-en="Contact Daniel Tech" data-sw="Wasiliana Nasi">Contact Daniel Tech</button>
+
+                <button
+                    type="button"
+                    class="primary-button"
+                    data-page="services">
+                    Explore Services
+                </button>
+
+                <button
+                    type="button"
+                    class="secondary-button"
+                    data-page="contact">
+                    Contact Daniel Tech
+                </button>
+
             </div>
+
         </div>
+
 
         <div class="hero-card">
-            <div class="hero-card-top">Daniel Tech</div>
-            <div class="hero-card-content">
-                <div class="hero-stat">
-                    <strong data-en="Web" data-sw="Web">Web</strong>
-                    <span data-en="Development" data-sw="Utengenezaji">Development</span>
-                </div>
-                <div class="hero-stat">
-                    <strong data-en="AI" data-sw="AI">AI</strong>
-                    <span data-en="Solutions" data-sw="Suluhisho">Solutions</span>
-                </div>
-                <div class="hero-stat">
-                    <strong data-en="ICT" data-sw="ICT">ICT</strong>
-                    <span data-en="Services" data-sw="Huduma">Services</span>
-                </div>
-                <div class="hero-stat">
-                    <strong data-en="Tech" data-sw="Tech">Tech</strong>
-                    <span data-en="Tips" data-sw="Mbinu">Tips</span>
-                </div>
+
+            <div class="hero-card-top">
+                Daniel Tech
             </div>
+
+            <div class="hero-card-content">
+
+                <div class="hero-stat">
+                    <strong>Web</strong>
+                    <span>Development</span>
+                </div>
+
+                <div class="hero-stat">
+                    <strong>AI</strong>
+                    <span>Solutions</span>
+                </div>
+
+                <div class="hero-stat">
+                    <strong>ICT</strong>
+                    <span>Services</span>
+                </div>
+
+                <div class="hero-stat">
+                    <strong>Tech</strong>
+                    <span>Tips</span>
+                </div>
+
+            </div>
+
         </div>
+
     </div>
+
+
+    <!-- Latest Content -->
+
+    <div class="section-container">
+
+        <div class="section-heading">
+
+            <p>WHAT'S NEW</p>
+
+            <h2>Latest Content</h2>
+
+            <span>
+                Discover the latest technology content published
+                on Daniel Tech.
+            </span>
+
+        </div>
+
+        <div id="latestContent" class="content-grid">
+
+            <div class="empty-content">
+                No content has been published yet.
+            </div>
+
+        </div>
+
+    </div>
+
 </section>
+
 
 <!-- ================= SERVICES ================= -->
+
 <section id="services" class="page">
+
     <div class="section-container">
+
         <div class="section-heading">
-            <p data-en="DANIEL TECH SERVICES" data-sw="HUDUMA ZA DANIEL TECH">DANIEL TECH SERVICES</p>
-            <h2 data-en="Our Services" data-sw="Huduma Zetu">Our Services</h2>
-            <span data-en="Professional technology services and digital solutions." data-sw="Huduma za teknolojia za kiprofesheni na masuluhisho ya kidijitali.">Professional technology services and digital solutions.</span>
+
+            <p>DANIEL TECH SERVICES</p>
+
+            <h2>Our Services</h2>
+
+            <span>
+                Professional technology services and digital solutions.
+            </span>
+
         </div>
+
+
         <div class="service-grid">
+
+
             <article class="service-card">
+
                 <div class="card-number">01</div>
-                <h3 data-en="Web Development" data-sw="Utengenezaji Tovuti">Web Development</h3>
-                <p data-en="Modern, responsive and professional websites for businesses." data-sw="Tovuti za kisasa na za kiprofesheni kwa biashara.">Modern, responsive and professional websites for businesses.</p>
-                <button type="button" class="view-button">View Service</button>
+
+                <h3>Web Development</h3>
+
+                <p>
+                    Modern, responsive and professional websites
+                    for businesses, organizations and personal projects.
+                </p>
+
+                <button
+                    type="button"
+                    class="view-button service-view-button"
+                    data-service="web">
+                    View Service
+                </button>
+
             </article>
+
+
             <article class="service-card">
+
                 <div class="card-number">02</div>
-                <h3 data-en="AI Video Creation" data-sw="Tengeneza Video za AI">AI Video Creation</h3>
-                <p data-en="Promotional videos, business videos, and social media content." data-sw="Video za matangazo, biashara, na maudhui ya mitandao.">Promotional videos, business videos, and social media content.</p>
-                <button type="button" class="view-button">View Service</button>
+
+                <h3>Graphics Design</h3>
+
+                <p>
+                    Professional digital designs for logos,
+                    posters, social media and other creative projects.
+                </p>
+
+                <button
+                    type="button"
+                    class="view-button service-view-button"
+                    data-service="graphics">
+                    View Service
+                </button>
+
             </article>
+
+
             <article class="service-card">
+
                 <div class="card-number">03</div>
-                <h3 data-en="Computer Services" data-sw="Huduma za Kompyuta">Computer Services</h3>
-                <p data-en="Computer setup, software installation, and general ICT support." data-sw="Matengenezo ya kompyuta na msaada wa ICT.">Computer setup, software installation, and general ICT support.</p>
-                <button type="button" class="view-button">View Service</button>
+
+                <h3>Cyber Security</h3>
+
+                <p>
+                    Technology security guidance, digital safety
+                    awareness and basic cybersecurity solutions.
+                </p>
+
+                <button
+                    type="button"
+                    class="view-button service-view-button"
+                    data-service="security">
+                    View Service
+                </button>
+
             </article>
+
+
+            <article class="service-card">
+
+                <div class="card-number">04</div>
+
+                <h3>Computer Services</h3>
+
+                <p>
+                    Computer setup, software installation,
+                    troubleshooting and general ICT support.
+                </p>
+
+                <button
+                    type="button"
+                    class="view-button service-view-button"
+                    data-service="computer">
+                    View Service
+                </button>
+
+            </article>
+
+
+            <article class="service-card">
+
+                <div class="card-number">05</div>
+
+                <h3>Software Solutions</h3>
+
+                <p>
+                    Software solutions and digital tools designed
+                    to make everyday work easier.
+                </p>
+
+                <button
+                    type="button"
+                    class="view-button service-view-button"
+                    data-service="software">
+                    View Service
+                </button>
+
+            </article>
+
+
+            <article class="service-card">
+
+                <div class="card-number">06</div>
+
+                <h3>AI Solutions</h3>
+
+                <p>
+                    Practical use of artificial intelligence tools
+                    for learning, productivity and digital projects.
+                </p>
+
+                <button
+                    type="button"
+                    class="view-button service-view-button"
+                    data-service="ai">
+                    View Service
+                </button>
+
+            </article>
+
         </div>
+
     </div>
+
 </section>
+
 
 <!-- ================= FEATURES ================= -->
+
 <section id="features" class="page">
+
     <div class="section-container">
+
         <div class="section-heading">
-            <p data-en="TECHNOLOGY KNOWLEDGE" data-sw="MAARIFA YA TEKNOLOJIA">TECHNOLOGY KNOWLEDGE</p>
-            <h2 data-en="Features" data-sw="Mbinu Mbalimbali">Features</h2>
-            <span data-en="Useful technology information and practical guides." data-sw="Taarifa muhimu za teknolojia na miongozo.">Useful technology information and practical guides.</span>
+
+            <p>TECHNOLOGY KNOWLEDGE</p>
+
+            <h2>Features</h2>
+
+            <span>
+                Useful technology information and practical guides.
+            </span>
+
         </div>
+
+
         <div class="feature-grid">
+
+
             <article class="feature-card">
+
                 <div class="feature-number">01</div>
-                <h3 data-en="Computer Tips" data-sw="Mbinu za Kompyuta">Computer Tips</h3>
-                <p data-en="Learn useful computer tricks and maintenance tips." data-sw="Jifunze mbinu muhimu za kutunza kompyuta.">Learn useful computer tricks and maintenance tips.</p>
-                <button type="button" class="view-button">Explore</button>
+
+                <h3>Computer Tips</h3>
+
+                <p>
+                    Learn useful computer tricks, maintenance tips
+                    and productivity techniques.
+                </p>
+
+                <button
+                    type="button"
+                    class="view-button feature-view-button"
+                    data-feature="computer-tips">
+                    Explore
+                </button>
+
             </article>
+
+
             <article class="feature-card">
+
                 <div class="feature-number">02</div>
-                <h3 data-en="Phone Tips" data-sw="Mbinu za Simu">Phone Tips</h3>
-                <p data-en="Discover useful smartphone settings and tricks." data-sw="Gundua mipangilio muhimu ya simu janja.">Discover useful smartphone settings and tricks.</p>
-                <button type="button" class="view-button">Explore</button>
+
+                <h3>Phone Tips</h3>
+
+                <p>
+                    Discover useful smartphone settings,
+                    troubleshooting methods and practical tips.
+                </p>
+
+                <button
+                    type="button"
+                    class="view-button feature-view-button"
+                    data-feature="phone-tips">
+                    Explore
+                </button>
+
             </article>
+
+
             <article class="feature-card">
+
                 <div class="feature-number">03</div>
-                <h3 data-en="AI Tools" data-sw="Zana za AI">AI Tools</h3>
-                <p data-en="Learn about useful artificial intelligence tools." data-sw="Jifunze kuhusu zana muhimu za Akili Bandia (AI).">Learn about useful artificial intelligence tools.</p>
-                <button type="button" class="view-button">Explore</button>
+
+                <h3>AI Tools</h3>
+
+                <p>
+                    Learn about useful artificial intelligence
+                    tools and how they can improve productivity.
+                </p>
+
+                <button
+                    type="button"
+                    class="view-button feature-view-button"
+                    data-feature="ai-tools">
+                    Explore
+                </button>
+
             </article>
+
+
+            <article class="feature-card">
+
+                <div class="feature-number">04</div>
+
+                <h3>Gaming</h3>
+
+                <p>
+                    Gaming tips, software information,
+                    performance improvements and guides.
+                </p>
+
+                <button
+                    type="button"
+                    class="view-button feature-view-button"
+                    data-feature="gaming">
+                    Explore
+                </button>
+
+            </article>
+
+
+            <article class="feature-card">
+
+                <div class="feature-number">05</div>
+
+                <h3>Programming</h3>
+
+                <p>
+                    Programming concepts, coding tutorials
+                    and useful development resources.
+                </p>
+
+                <button
+                    type="button"
+                    class="view-button feature-view-button"
+                    data-feature="programming">
+                    Explore
+                </button>
+
+            </article>
+
+
+            <article class="feature-card">
+
+                <div class="feature-number">06</div>
+
+                <h3>Software Tips</h3>
+
+                <p>
+                    Guides for installing, configuring and
+                    using useful computer software.
+                </p>
+
+                <button
+                    type="button"
+                    class="view-button feature-view-button"
+                    data-feature="software-tips">
+                    Explore
+                </button>
+
+            </article>
+
         </div>
+
     </div>
+
 </section>
 
-<!-- ================= BLOG / NEWS ================= -->
+
+<!-- ================= BLOG ================= -->
+
 <section id="blog" class="page">
+
     <div class="section-container">
+
         <div class="section-heading">
-            <p data-en="DANIEL TECH BLOG" data-sw="DANIEL TECH BLOG">DANIEL TECH BLOG</p>
-            <h2 data-en="Blog / News" data-sw="Habari / Makala">Blog / News</h2>
-            <span data-en="Technology news, tutorials, and published content." data-sw="Habari za teknolojia na maudhui mbalimbali.">Technology news, tutorials, and published content.</span>
+
+            <p>DANIEL TECH BLOG</p>
+
+            <h2>Blog / News</h2>
+
+            <span>
+                Technology news, tutorials, tips and published content.
+            </span>
+
         </div>
+
+
         <div id="blogGrid" class="blog-grid">
-            <div class="empty-content" data-en="No blog content has been published yet." data-sw="Hakuna makala yoyote iliyochapishwa bado.">
+
+            <div class="empty-content">
                 No blog content has been published yet.
             </div>
+
         </div>
+
+
+        <!-- Local Comments -->
+
+        <div class="comments-section">
+
+            <div class="section-heading small-heading">
+
+                <p>COMMUNITY</p>
+
+                <h2>Comments</h2>
+
+                <span>
+                    Leave a comment about Daniel Tech.
+                </span>
+
+            </div>
+
+
+            <form id="commentForm" class="comment-form">
+
+                <div class="form-group">
+
+                    <label for="commentName">
+                        Your Name
+                    </label>
+
+                    <input
+                        type="text"
+                        id="commentName"
+                        placeholder="Enter your name"
+                        required>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="commentText">
+                        Your Comment
+                    </label>
+
+                    <textarea
+                        id="commentText"
+                        placeholder="Write your comment"
+                        required></textarea>
+
+                </div>
+
+
+                <button
+                    type="submit"
+                    class="primary-button">
+                    Post Comment
+                </button>
+
+            </form>
+
+
+            <div id="commentsList" class="comments-list">
+
+                <p class="empty-content">
+                    No comments yet.
+                </p>
+
+            </div>
+
+        </div>
+
     </div>
+
 </section>
+
 
 <!-- ================= CONTACT ================= -->
+
 <section id="contact" class="page">
+
     <div class="section-container">
+
         <div class="section-heading">
-            <p data-en="GET IN TOUCH" data-sw="WASILIANA NASI">GET IN TOUCH</p>
-            <h2 data-en="Contact Daniel Tech" data-sw="Wasiliana na Daniel Tech">Contact Daniel Tech</h2>
+
+            <p>GET IN TOUCH</p>
+
+            <h2>Contact Daniel Tech</h2>
+
+            <span>
+                Send us a message and we will get back to you.
+            </span>
+
         </div>
+
+
         <div class="contact-layout">
+
+
             <div class="contact-information">
+
                 <div class="contact-card">
-                    <span>Phone / WhatsApp</span>
-                    <strong>0742287977</strong>
+
+                    <span>Phone</span>
+
+                    <strong>
+                        0742287977
+                    </strong>
+
                 </div>
+
+
                 <div class="contact-card">
+
+                    <span>WhatsApp</span>
+
+                    <strong>
+                        0742287977
+                    </strong>
+
+                </div>
+
+
+                <div class="contact-card">
+
                     <span>Email</span>
-                    <strong>danielshululu770@gmail.com</strong>
+
+                    <strong>
+                        danielshululu770@gmail.com
+                    </strong>
+
                 </div>
+
+
+                <div class="contact-card">
+
+                    <span>Response</span>
+
+                    <strong>
+                        We will respond as soon as possible.
+                    </strong>
+
+                </div>
+
             </div>
+
+
             <div class="contact-form-container">
+
                 <form id="contactForm">
+
                     <div class="form-row">
+
                         <div class="form-group">
-                            <label data-en="Name" data-sw="Jina">Name</label>
-                            <input type="text" required>
+
+                            <label for="contactName">
+                                Name
+                            </label>
+
+                            <input
+                                type="text"
+                                id="contactName"
+                                placeholder="Your name"
+                                required>
+
                         </div>
+
+
                         <div class="form-group">
-                            <label data-en="Email" data-sw="Barua pepe">Email</label>
-                            <input type="email" required>
+
+                            <label for="contactEmail">
+                                Email
+                            </label>
+
+                            <input
+                                type="email"
+                                id="contactEmail"
+                                placeholder="Your email"
+                                required>
+
                         </div>
+
                     </div>
+
+
                     <div class="form-group">
-                        <label data-en="Subject" data-sw="Mada">Subject</label>
-                        <input type="text" required>
+
+                        <label for="contactSubject">
+                            Subject
+                        </label>
+
+                        <input
+                            type="text"
+                            id="contactSubject"
+                            placeholder="Message subject"
+                            required>
+
                     </div>
+
+
                     <div class="form-group">
-                        <label data-en="Message" data-sw="Ujumbe">Message</label>
-                        <textarea required></textarea>
+
+                        <label for="contactMessage">
+                            Message
+                        </label>
+
+                        <textarea
+                            id="contactMessage"
+                            placeholder="Write your message"
+                            required></textarea>
+
                     </div>
-                    <button type="submit" class="primary-button" data-en="Send Message" data-sw="Tuma Ujumbe">Send Message</button>
+
+
+                    <button
+                        type="submit"
+                        class="primary-button">
+                        Send Message
+                    </button>
+
+
+                    <p id="contactStatus" class="form-status"></p>
+
                 </form>
+
             </div>
+
         </div>
+
     </div>
+
 </section>
+
 </main>
 
+
 <!-- ================= FOOTER ================= -->
+
 <footer class="site-footer">
+
     <div class="section-container footer-container">
+
         <div class="footer-about">
-            <div class="logo"><span>Daniel</span> Tech</div>
-            <p data-en="Daniel Tech is a technology platform focused on digital solutions and computer services." data-sw="Daniel Tech ni jukwaa la teknolojia linalolenga masuluhisho ya kidijitali na huduma za kompyuta.">
-                Daniel Tech is a technology platform focused on digital solutions and computer services.
+
+            <div class="logo">
+                <span>Daniel</span> Tech
+            </div>
+
+            <p id="footerText">
+                Daniel Tech is a technology platform focused on
+                digital solutions, computer services and technology
+                education.
             </p>
+
         </div>
+
+
         <div class="footer-contact">
-            <span>Email: <strong>danielshululu770@gmail.com</strong></span>
-            <span>Phone: <strong>0742287977</strong></span>
+
+            <span>Email: <strong id="footerEmail">danielshululu770@gmail.com</strong></span>
+            <span>Phone: <strong id="footerPhone">0742287977</strong></span>
+            <span id="footerAddress"></span>
+
         </div>
+
+
+        <div id="footerSocialLinks" class="footer-social">
+        </div>
+
     </div>
+
+
     <div class="footer-bottom">
         <span>&copy; <span id="footerYear"></span> Daniel Tech. All rights reserved.</span>
     </div>
+
 </footer>
 
-<!-- ================= SETTINGS PANEL ================= -->
+
+<!-- ================= SETTINGS ================= -->
+
 <aside id="settingsPanel" class="settings-panel">
+
     <div class="settings-header">
-        <h3 data-en="Settings" data-sw="Mipangilio">Settings</h3>
-        <button type="button" id="closeSettings" class="close-button">Close</button>
+
+        <h3>Settings</h3>
+
+        <button
+            type="button"
+            id="closeSettings"
+            class="close-button">
+            Close
+        </button>
+
     </div>
+
+
     <div class="settings-content">
-        <button type="button" id="aboutButton" class="settings-action" data-en="About Daniel Tech" data-sw="Kuhusu Daniel Tech">About Daniel Tech</button>
-        <p style="margin-top:20px; font-size:12px; color:var(--slate-gray);" data-en="Theme changes automatically based on your local time." data-sw="Muonekano unabadilika kulingana na muda wako wa sasa.">Theme changes automatically based on your local time.</p>
+
+        <label class="setting-option">
+
+            <span>
+                Dark Mode
+            </span>
+
+            <input
+                type="checkbox"
+                id="settingsDarkMode">
+
+        </label>
+
+
+        <button
+            type="button"
+            id="aboutButton"
+            class="settings-action">
+            About Daniel Tech
+        </button>
+
+
+        <button
+            type="button"
+            id="adminButton"
+            class="settings-action">
+            Admin Login
+        </button>
+
     </div>
+
 </aside>
+
+
+<!-- ================= OVERLAY ================= -->
+
 <div id="overlay" class="overlay"></div>
 
-<!-- ================= AUTH MODAL (Login/Signup) ================= -->
-<div id="loginModal" class="modal">
-    <div class="modal-box auth-box">
-        <button type="button" class="modal-close" onclick="closeModal('loginModal')">X</button>
-        <h2 id="authTitle" data-en="Log In" data-sw="Ingia">Log In</h2>
-        <form id="authForm" style="display:flex; flex-direction:column; gap:15px; margin-top:20px;">
-            <input type="email" id="authEmail" placeholder="Email / Barua pepe" class="auth-input" required>
-            <div class="password-wrapper" style="position:relative;">
-                <input type="password" id="authPassword" placeholder="Password / Nenosiri" class="auth-input" required style="width:100%;">
-                <span class="toggle-password" onclick="togglePassword('authPassword')" style="position:absolute; right:12px; top:12px; cursor:pointer; color:var(--gold); font-weight:bold; font-size:12px;">Show</span>
-            </div>
-            <button type="submit" class="primary-button" id="authSubmit" data-en="Log In" data-sw="Ingia">Log In</button>
-            <p id="authStatus" style="font-size:12px; color:var(--slate-gray);"></p>
-        </form>
-        <p class="switch-auth" style="margin-top:20px; font-size:13px; text-align:center;">
-            <span data-en="Don't have an account?" data-sw="Huna akaunti?">Don't have an account?</span> 
-            <a href="#" onclick="switchAuthMode()" id="authSwitchLink" style="color:var(--gold); font-weight:bold;" data-en="Sign Up" data-sw="Jisajili">Sign Up</a>
-        </p>
+
+<!-- ================= ABOUT MODAL ================= -->
+
+<div id="aboutModal" class="modal">
+
+    <div class="modal-box">
+
+        <button
+            type="button"
+            class="modal-close"
+            data-close-modal="aboutModal">
+            Close
+        </button>
+
+        <div class="modal-content">
+
+            <p class="modal-label">
+                ABOUT
+            </p>
+
+            <h2>Daniel Tech</h2>
+
+            <p>
+                Daniel Tech is a technology platform focused on
+                digital solutions, computer services, programming,
+                AI tools, software and technology education.
+            </p>
+
+            <p>
+                Our goal is to make technology easier to understand
+                and more useful for everyday users.
+            </p>
+
+        </div>
+
     </div>
+
 </div>
 
+
+<!-- ================= SERVICE MODAL ================= -->
+
+<div id="serviceModal" class="modal">
+
+    <div class="modal-box">
+
+        <button
+            type="button"
+            class="modal-close"
+            data-close-modal="serviceModal">
+            Close
+        </button>
+
+        <div class="modal-content">
+
+            <p class="modal-label">
+                SERVICE
+            </p>
+
+            <h2 id="serviceModalTitle">
+                Service
+            </h2>
+
+            <p id="serviceModalText">
+                Service information.
+            </p>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- ================= FEATURE MODAL ================= -->
+
+<div id="featureModal" class="modal">
+
+    <div class="modal-box">
+
+        <button
+            type="button"
+            class="modal-close"
+            data-close-modal="featureModal">
+            Close
+        </button>
+
+        <div class="modal-content">
+
+            <p class="modal-label">
+                FEATURE
+            </p>
+
+            <h2 id="featureModalTitle">
+                Feature
+            </h2>
+
+            <p id="featureModalText">
+                Feature information.
+            </p>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- ================= ADMIN LOGIN ================= -->
+
+<div id="adminLoginModal" class="modal">
+
+    <div class="modal-box admin-login-box">
+
+        <button
+            type="button"
+            class="modal-close"
+            data-close-modal="adminLoginModal">
+            Close
+        </button>
+
+
+        <div class="modal-content">
+
+            <p class="modal-label">
+                DANIEL TECH ADMIN
+            </p>
+
+            <h2>Admin Login</h2>
+
+            <p>
+                Login to manage Daniel Tech content and visitor messages.
+            </p>
+
+
+            <form id="adminLoginForm">
+
+                <div class="form-group">
+
+                    <label for="adminUsername">
+                        Admin Email
+                    </label>
+
+                    <input
+                        type="email"
+                        id="adminUsername"
+                        placeholder="Admin email"
+                        required>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="adminPassword">
+                        Password
+                    </label>
+
+                    <input
+                        type="password"
+                        id="adminPassword"
+                        placeholder="Admin password"
+                        required>
+
+                </div>
+
+
+                <button
+                    type="submit"
+                    class="primary-button">
+                    Login
+                </button>
+
+
+                <p id="loginMessage" class="form-status"></p>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- ================= ADMIN DASHBOARD ================= -->
+
+<div id="dashboardModal" class="modal">
+
+    <div class="modal-box dashboard-box">
+
+        <div class="dashboard-header">
+
+            <div>
+
+                <p class="modal-label">
+                    ADMIN AREA
+                </p>
+
+                <h2>Daniel Tech Dashboard</h2>
+
+            </div>
+
+            <button
+                type="button"
+                class="modal-close"
+                data-close-modal="dashboardModal">
+                Close
+            </button>
+
+        </div>
+
+
+        <!-- Dashboard section tabs -->
+
+        <div class="dashboard-tabs dashboard-actions">
+
+            <button type="button" class="dashboard-button dashboard-tab active" data-panel="overview">Overview</button>
+            <button type="button" class="dashboard-button dashboard-tab" data-panel="home">Home Page</button>
+            <button type="button" class="dashboard-button dashboard-tab" data-panel="services">Services</button>
+            <button type="button" class="dashboard-button dashboard-tab" data-panel="features">Features</button>
+            <button type="button" class="dashboard-button dashboard-tab" data-panel="news">News / Blog</button>
+            <button type="button" class="dashboard-button dashboard-tab" data-panel="about">About</button>
+            <button type="button" class="dashboard-button dashboard-tab" data-panel="footer">Footer / Contact</button>
+            <button type="button" class="dashboard-button dashboard-tab" data-panel="messages">Messages</button>
+
+        </div>
+
+
+        <!-- OVERVIEW PANEL -->
+
+        <div class="admin-panel active-panel" data-panel="overview">
+
+            <div class="admin-content-area">
+
+                <h3>Dashboard Overview</h3>
+
+                <div class="stats-grid">
+
+                    <div class="stat-box">
+                        <strong id="statServices">0</strong>
+                        <span>Total Services</span>
+                    </div>
+
+                    <div class="stat-box">
+                        <strong id="statFeatures">0</strong>
+                        <span>Total Features</span>
+                    </div>
+
+                    <div class="stat-box">
+                        <strong id="statContents">0</strong>
+                        <span>Total News</span>
+                    </div>
+
+                    <div class="stat-box">
+                        <strong id="statPublished">0</strong>
+                        <span>Published Content</span>
+                    </div>
+
+                    <div class="stat-box">
+                        <strong id="statMessages">0</strong>
+                        <span>Messages</span>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- HOME PANEL -->
+
+        <div class="admin-panel" data-panel="home">
+
+            <div class="admin-editor">
+
+                <h3>Home Page</h3>
+
+                <div class="form-group">
+                    <label for="homeHeroTitle">Hero Title</label>
+                    <input type="text" id="homeHeroTitle" placeholder="Daniel Tech">
+                </div>
+
+                <div class="form-group">
+                    <label for="homeHeroSubtitle">Hero Subtitle</label>
+                    <input type="text" id="homeHeroSubtitle" placeholder="TECHNOLOGY • DIGITAL SOLUTIONS • INNOVATION">
+                </div>
+
+                <div class="form-group">
+                    <label for="homeHeroDescription">Hero Description</label>
+                    <textarea id="homeHeroDescription" placeholder="Hero description text"></textarea>
+                </div>
+
+                <div class="form-row">
+
+                    <div class="form-group">
+                        <label for="homeHeroButtonText">Hero Button Text</label>
+                        <input type="text" id="homeHeroButtonText" placeholder="Explore Services">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="homeHeroButtonLink">Hero Button Link</label>
+                        <input type="text" id="homeHeroButtonLink" placeholder="services">
+                    </div>
+
+                </div>
+
+                <div class="form-group">
+                    <label for="homeWelcomeTitle">Welcome Section Title</label>
+                    <input type="text" id="homeWelcomeTitle" placeholder="What's New">
+                </div>
+
+                <div class="form-group">
+                    <label for="homeWelcomeText">Welcome Section Text</label>
+                    <textarea id="homeWelcomeText" placeholder="Welcome section text"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="homeCtaTitle">Call To Action Title</label>
+                    <input type="text" id="homeCtaTitle" placeholder="Optional">
+                </div>
+
+                <div class="form-group">
+                    <label for="homeCtaText">Call To Action Text</label>
+                    <textarea id="homeCtaText" placeholder="Optional"></textarea>
+                </div>
+
+                <button type="button" id="saveHomeButton" class="primary-button">Save Home Page</button>
+
+                <p id="homeEditorStatus" class="form-status"></p>
+
+            </div>
+
+        </div>
+
+
+        <!-- SERVICES PANEL -->
+
+        <div class="admin-panel" data-panel="services">
+
+            <div class="admin-content-area">
+                <h3>Services</h3>
+                <div id="adminServiceList"></div>
+            </div>
+
+            <div class="admin-editor">
+
+                <h3>Add / Edit Service</h3>
+
+                <div class="form-group">
+                    <label for="serviceEditorTitle">Title</label>
+                    <input type="text" id="serviceEditorTitle" placeholder="Service title">
+                </div>
+
+                <div class="form-group">
+                    <label for="serviceEditorDescription">Short Description</label>
+                    <textarea id="serviceEditorDescription" placeholder="Short description"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="serviceEditorFullDescription">Full Description</label>
+                    <textarea id="serviceEditorFullDescription" placeholder="Full description shown in the modal"></textarea>
+                </div>
+
+                <div class="form-row">
+
+                    <div class="form-group">
+                        <label for="serviceEditorOrder">Display Order</label>
+                        <input type="number" id="serviceEditorOrder" value="0">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="serviceEditorStatus">Status</label>
+                        <select id="serviceEditorStatus">
+                            <option value="published">Published</option>
+                            <option value="draft">Draft</option>
+                        </select>
+                    </div>
+
+                </div>
+
+                <button type="button" id="saveServiceButton" class="primary-button">Add Service</button>
+                <button type="button" id="cancelServiceEditButton" class="secondary-button">Cancel</button>
+
+                <p id="serviceEditorStatusMsg" class="form-status"></p>
+
+            </div>
+
+        </div>
+
+
+        <!-- FEATURES PANEL -->
+
+        <div class="admin-panel" data-panel="features">
+
+            <div class="admin-content-area">
+                <h3>Features</h3>
+                <div id="adminFeatureList"></div>
+            </div>
+
+            <div class="admin-editor">
+
+                <h3>Add / Edit Feature</h3>
+
+                <div class="form-group">
+                    <label for="featureEditorTitle">Title</label>
+                    <input type="text" id="featureEditorTitle" placeholder="Feature title">
+                </div>
+
+                <div class="form-group">
+                    <label for="featureEditorDescription">Short Description</label>
+                    <textarea id="featureEditorDescription" placeholder="Short description"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="featureEditorFullDescription">Full Description</label>
+                    <textarea id="featureEditorFullDescription" placeholder="Full description shown in the modal"></textarea>
+                </div>
+
+                <div class="form-row">
+
+                    <div class="form-group">
+                        <label for="featureEditorOrder">Display Order</label>
+                        <input type="number" id="featureEditorOrder" value="0">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="featureEditorStatus">Status</label>
+                        <select id="featureEditorStatus">
+                            <option value="published">Published</option>
+                            <option value="draft">Draft</option>
+                        </select>
+                    </div>
+
+                </div>
+
+                <button type="button" id="saveFeatureButton" class="primary-button">Add Feature</button>
+                <button type="button" id="cancelFeatureEditButton" class="secondary-button">Cancel</button>
+
+                <p id="featureEditorStatusMsg" class="form-status"></p>
+
+            </div>
+
+        </div>
+
+
+        <!-- NEWS PANEL -->
+
+        <div class="admin-panel" data-panel="news">
+
+            <div class="dashboard-actions">
+
+                <button type="button" id="addNewsButton" class="dashboard-button">Add News</button>
+                <button type="button" id="addTipButton" class="dashboard-button">Add Tip</button>
+                <button type="button" id="addVideoButton" class="dashboard-button">Add Video</button>
+                <button type="button" id="addPdfButton" class="dashboard-button">Add PDF</button>
+
+            </div>
+
+            <div id="adminEditor" class="admin-editor">
+
+                <h3>Add / Edit Content</h3>
+
+                <div class="form-group">
+                    <label for="contentTitle">Title</label>
+                    <input type="text" id="contentTitle" placeholder="Content title">
+                </div>
+
+                <div class="form-row">
+
+                    <div class="form-group">
+                        <label for="contentCategory">Category</label>
+                        <select id="contentCategory">
+                            <option value="news">News</option>
+                            <option value="tip">Tip</option>
+                            <option value="video">Video</option>
+                            <option value="pdf">PDF</option>
+                            <option value="article">Article</option>
+                            <option value="announcement">Announcement</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="contentStatusSelect">Status</label>
+                        <select id="contentStatusSelect">
+                            <option value="published">Published</option>
+                            <option value="draft">Draft</option>
+                        </select>
+                    </div>
+
+                </div>
+
+                <div class="form-group">
+                    <label for="contentText">Description / Content</label>
+                    <textarea id="contentText" placeholder="Write your content here"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="contentFile">File (image, video, audio or PDF)</label>
+                    <input type="file" id="contentFile">
+                </div>
+
+                <label class="setting-option">
+                    <span>Featured</span>
+                    <input type="checkbox" id="contentFeatured">
+                </label>
+
+                <button type="button" id="saveContentButton" class="primary-button">Publish Content</button>
+
+                <p id="contentStatus" class="form-status"></p>
+
+            </div>
+
+
+            <div class="admin-content-area">
+
+                <h3>Published Content</h3>
+
+                <div id="adminContentList">
+                    <p class="empty-content">No content available.</p>
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ABOUT PANEL -->
+
+        <div class="admin-panel" data-panel="about">
+
+            <div class="admin-editor">
+
+                <h3>About Section</h3>
+
+                <div class="form-group">
+                    <label for="aboutTitle">Title</label>
+                    <input type="text" id="aboutTitle" placeholder="Daniel Tech">
+                </div>
+
+                <div class="form-group">
+                    <label for="aboutDescription">Description</label>
+                    <textarea id="aboutDescription" placeholder="About description"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="aboutMission">Mission</label>
+                    <textarea id="aboutMission" placeholder="Mission statement"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="aboutVision">Vision</label>
+                    <textarea id="aboutVision" placeholder="Vision statement"></textarea>
+                </div>
+
+                <button type="button" id="saveAboutButton" class="primary-button">Save About</button>
+
+                <p id="aboutEditorStatus" class="form-status"></p>
+
+            </div>
+
+        </div>
+
+
+        <!-- FOOTER PANEL -->
+
+        <div class="admin-panel" data-panel="footer">
+
+            <div class="admin-editor">
+
+                <h3>Footer / Contact</h3>
+
+                <div class="form-group">
+                    <label for="footerTextInput">Footer Description</label>
+                    <textarea id="footerTextInput" placeholder="Footer description"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="footerEmailInput">Email</label>
+                    <input type="email" id="footerEmailInput" placeholder="Contact email">
+                </div>
+
+                <div class="form-group">
+                    <label for="footerPhoneInput">Phone</label>
+                    <input type="text" id="footerPhoneInput" placeholder="Contact phone">
+                </div>
+
+                <div class="form-group">
+                    <label for="footerAddressInput">Address</label>
+                    <input type="text" id="footerAddressInput" placeholder="Address (optional)">
+                </div>
+
+                <button type="button" id="saveFooterButton" class="primary-button">Save Footer</button>
+
+                <p id="footerEditorStatus" class="form-status"></p>
+
+            </div>
+
+        </div>
+
+
+        <!-- MESSAGES PANEL -->
+
+        <div class="admin-panel" data-panel="messages">
+
+            <div class="admin-messages-section">
+
+                <h3>Visitor Messages</h3>
+
+                <button type="button" id="refreshMessagesButton" class="dashboard-button">Refresh Messages</button>
+
+                <div id="adminMessagesList" class="admin-messages-list">
+                    <p class="empty-content">No messages yet.</p>
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <button
+            type="button"
+            id="logoutButton"
+            class="logout-button">
+            Logout
+        </button>
+
+    </div>
+
+</div>
+
+
+<!-- ================= BACK TO TOP ================= -->
+
+<button
+    type="button"
+    id="backTop"
+    class="back-top">
+    Top
+</button>
+
+
+<!-- ================= WHATSAPP ================= -->
+
+<a
+    href="https://wa.me/255742287977"
+    target="_blank"
+    rel="noopener noreferrer"
+    class="whatsapp-button">
+    WhatsApp
+</a>
+
+
+<!-- ================= JAVASCRIPT ================= -->
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
-<script src="script.js"></script>
+<script src="script.js?v=20260903-3"></script>
+<script>
+    var yearEl = document.getElementById("footerYear");
+    if (yearEl) { yearEl.textContent = new Date().getFullYear(); }
+</script>
+
 </body>
 </html>
