@@ -19,7 +19,7 @@
   <!-- Supabase JS Client Library -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-  <!-- Vite Asset Links (Standard Vite entry points) -->
+  <!-- Asset Links (Relative for GitHub Pages and Vite) -->
   <link rel="stylesheet" crossorigin href="./style.css">
   <script type="module" crossorigin src="./script.js"></script>
 </head>
@@ -42,8 +42,8 @@
         </div>
 
         <div class="auth-buttons" id="headerAuthButtons">
-          <button type="button" id="signInButton" class="header-button">Sign In</button>
-          <button type="button" id="signUpButton" class="header-button primary-header-button">Sign Up</button>
+          <button type="button" id="signInButton" class="header-button" data-i18n="btn-signin">Sign In</button>
+          <button type="button" id="signUpButton" class="header-button primary-header-button" data-i18n="btn-signup">Sign Up</button>
         </div>
 
         <!-- Authenticated quick trigger -->
@@ -60,15 +60,15 @@
       </div>
     </div>
 
-    <!-- Main Public Navigation (Organized with Gaming and Phone services integrated into Services) -->
+    <!-- Main Public Navigation -->
     <nav class="main-nav" id="mainNav">
-      <a href="#home" data-page="home" class="active">Home</a>
-      <a href="#services" data-page="services">Services</a>
-      <a href="#tech" data-page="tech">Tech</a>
-      <a href="#ai-tools" data-page="ai-tools">AI Tools</a>
-      <a href="#programming" data-page="programming">Programming</a>
-      <a href="#blog" data-page="blog">Blog / News</a>
-      <a href="#contact" data-page="contact">Contact</a>
+      <a href="#home" data-page="home" class="active" data-i18n="nav-home">Home</a>
+      <a href="#services" data-page="services" data-i18n="nav-services">Services</a>
+      <a href="#tech" data-page="tech" data-i18n="nav-tech">Tech</a>
+      <a href="#ai-tools" data-page="ai-tools" data-i18n="nav-ai-tools">AI Tools</a>
+      <a href="#programming" data-page="programming" data-i18n="nav-programming">Programming</a>
+      <a href="#blog" data-page="blog" data-i18n="nav-blog">Blog / News</a>
+      <a href="#contact" data-page="contact" data-i18n="nav-contact">Contact</a>
     </nav>
   </header>
 
@@ -77,7 +77,7 @@
        ========================================================= -->
   <div class="news-bar" id="newsBar">
     <div class="news-container">
-      <strong>Latest News</strong>
+      <strong data-i18n="news-label">Latest News</strong>
       <div class="news-ticker">
         <div id="newsContent">
           Welcome to Daniel Tech | Bringing Your Idea To Life Through Tech Solutions.
@@ -138,17 +138,17 @@
     <section id="home" class="page active-page">
       <div class="hero">
         <div class="hero-content">
-          <p class="hero-label">TECHNOLOGY &bull; DIGITAL SOLUTIONS &bull; INNOVATION</p>
-          <h1>Welcome to <span>Daniel Tech</span></h1>
-          <p class="hero-description">
-            Your premier technology platform for enterprise computer services, web development, custom programming, autonomous AI tools, software engineering, gaming systems, phone diagnostics, and professional technology consulting.
+          <p class="hero-label" data-i18n="hero-label">DANIEL TECH V2.0.0</p>
+          <h1>Daniel <span>Tech</span></h1>
+          <p class="hero-description" data-i18n="hero-description">
+            We engineer cutting-edge web platforms, mobile solutions, AI integrations, cloud infrastructure, and immersive gaming experiences — built for the future, optimized for today.
           </p>
           <div class="hero-buttons">
-            <button type="button" class="primary-button" data-page="services">
-              <i class="fa-solid fa-layer-group"></i> Explore Services
+            <button type="button" class="primary-button" data-page="services" data-i18n="hero-btn-primary">
+              <i class="fa-solid fa-layer-group"></i> Get Started
             </button>
-            <button type="button" class="secondary-button" data-page="contact">
-              <i class="fa-solid fa-paper-plane"></i> Contact Daniel Tech
+            <button type="button" class="secondary-button" data-page="services" data-i18n="hero-btn-secondary">
+              <i class="fa-solid fa-arrow-right"></i> View Services
             </button>
           </div>
         </div>
@@ -304,7 +304,7 @@
             </div>
             <div class="contact-card">
               <span>Location</span>
-              <strong>Dodoma, Tanzania</strong>
+              <strong>Dar es Salaam, Tanzania</strong>
             </div>
             <div class="contact-card">
               <span>Direct Inbox Notification</span>
