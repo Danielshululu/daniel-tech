@@ -317,6 +317,9 @@ a {
   display: flex;
   flex-direction: column;
   gap: 8px;
+  flex: 1;
+  overflow-y: auto;
+  padding-bottom: 8px;
 }
 
 .drawer-user-box {
@@ -356,6 +359,9 @@ a {
 .drawer-action.danger-action {
   color: var(--color-orange);
   border-color: rgba(217, 83, 79, 0.4);
+  margin-top: auto;
+  border-top: 1px solid rgba(217, 83, 79, 0.3);
+  padding-top: 14px;
 }
 
 .drawer-action.danger-action:hover {
