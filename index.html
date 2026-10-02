@@ -11,7 +11,7 @@
 <title>Daniel Tech</title>
 
 <link rel="icon" href="data:,">
-<link rel="stylesheet" href="style.css?v=20261002-3">
+<link rel="stylesheet" href="/src/style.css?v=20261002-3">
 
 <script>
 (function () {
@@ -27,6 +27,9 @@
     setInterval(updateTheme, 30000);
 })();
 </script>
+  <meta property="og:image" content="https://bolt.new/static/og_default.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content="https://bolt.new/static/og_default.png">
 </head>
 
 <body>
@@ -36,72 +39,45 @@
 ========================================================= -->
 
 <header class="site-header">
-    <div class="header-container">
-
-        <a href="#" class="logo" data-page="home">
+    <div class="header-top-row">
+        <div class="logo" data-page="home">
             <span>Daniel</span> Tech
-        </a>
-
-        <nav class="main-nav" id="mainNav">
-
-            <a href="#" data-page="home">Home</a>
-
-            <a href="#" data-page="tech">Tech</a>
-
-            <a href="#" data-page="phone">Phone</a>
-
-            <a href="#" data-page="ai-tools">AI Tools</a>
-
-            <a href="#" data-page="programming">Programming</a>
-
-            <a href="#" data-page="gaming">Gaming</a>
-
-            <a href="#" data-page="services">Services</a>
-
-            <a href="#" data-page="blog">Blog / News</a>
-
-            <a href="#" data-page="contact">Contact</a>
-
-        </nav>
+        </div>
 
         <div class="header-actions">
-
-            <div class="language-auth">
-
-                <div class="language-switch">
-                    <button type="button" id="languageEN" class="language-button active">
-                        EN
-                    </button>
-
-                    <button type="button" id="languageSW" class="language-button">
-                        SW
-                    </button>
-                </div>
-
-                <div class="auth-buttons">
-                    <button type="button" id="signInButton" class="header-button">
-                        Sign In
-                    </button>
-
-                    <button type="button" id="signUpButton" class="header-button primary-header-button">
-                        Sign Up
-                    </button>
-                </div>
-
+            <div class="language-switch">
+                <button type="button" id="languageEN" class="language-button active">
+                    ENG
+                </button>
+                <button type="button" id="languageSW" class="language-button">
+                    KISW
+                </button>
             </div>
-
+            <div class="auth-buttons">
+                <button type="button" id="signInButton" class="header-button">
+                    Sign In
+                </button>
+                <button type="button" id="signUpButton" class="header-button primary-header-button">
+                    Sign Up
+                </button>
+            </div>
             <button
                 type="button"
                 id="menuButton"
                 class="menu-button"
                 aria-label="Open menu"
                 aria-expanded="false">
-                Menu
+                <span class="hamburger-icon" aria-hidden="true"></span>
             </button>
-
         </div>
-
     </div>
+
+    <nav class="main-nav" id="mainNav">
+        <a href="#" data-page="home">Home</a>
+        <a href="#" data-page="services">Services</a>
+        <a href="#" data-page="blog">News</a>
+        <a href="#" data-page="contact">Contact</a>
+    </nav>
 </header>
 
 
@@ -120,7 +96,8 @@
         <button
             type="button"
             id="closeMenu"
-            class="close-button">
+            class="close-button"
+            aria-label="Close menu">
             Close
         </button>
     </div>
@@ -1980,27 +1957,17 @@
 
 
 <!-- =========================================================
-     SUPABASE
-========================================================= -->
-
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
-
-<!-- =========================================================
      MAIN JAVASCRIPT
 ========================================================= -->
 
-<script src="script.js?v=20261002-3"></script>
-
+<script type="module" src="/src/script.js?v=20261002-3"></script>
 
 <script>
 (function () {
-
     const yearEl = document.getElementById("footerYear");
-
     if (yearEl) {
         yearEl.textContent = new Date().getFullYear();
     }
-
 })();
 </script>
 
