@@ -14,7 +14,38 @@
 
     <link rel="icon" href="data:,">
 
-    <link rel="stylesheet" href="style.css?v=20260903-1">
+    <link rel="stylesheet" href="style.css?v=20261002-1">
+
+    <!-- DANIEL TECH V2.0 - AUTOMATIC TIME-BASED THEME SCRIPT -->
+    <script>
+        (function() {
+            function updateTheme() {
+                const now = new Date();
+                const hours = now.getHours(); 
+                
+                // 06:00 AM (6) hadi 05:59 PM (17) -> Light Mode (Ondoa darasa la 'dark-mode')
+                // 06:00 PM (18) hadi 05:59 AM (5) -> Dark Mode (Weka darasa la 'dark-mode')
+                const isDarkMode = hours >= 18 || hours < 6;
+                
+                if (isDarkMode) {
+                    document.documentElement.classList.add('dark-mode');
+                    document.body.classList.add('dark-mode');
+                } else {
+                    document.documentElement.classList.remove('dark-mode');
+                    document.body.classList.remove('dark-mode');
+                }
+            }
+
+            // Set the theme immediately before the DOM loads
+            updateTheme();
+
+            // Mfumo utajikagua kila dakika (kama mtu ameacha ukurasa wazi)
+            setInterval(updateTheme, 60000);
+            
+            // Subiri mpaka DOM iwe tayari (kwa fallback)
+            document.addEventListener('DOMContentLoaded', updateTheme);
+        })();
+    </script>
 </head>
 
 <body>
@@ -44,13 +75,6 @@
         </nav>
 
         <div class="header-actions">
-
-            <button
-                type="button"
-                id="darkModeButton"
-                class="header-button">
-                Dark Mode
-            </button>
 
             <button
                 type="button"
@@ -836,32 +860,13 @@
 
     <div class="settings-content">
 
-        <label class="setting-option">
-
-            <span>
-                Dark Mode
-            </span>
-
-            <input
-                type="checkbox"
-                id="settingsDarkMode">
-
-        </label>
-
+        <!-- Kitufe cha Dark Mode kimeondolewa hapa kwa sababu Theme inabadilika automatically -->
 
         <button
             type="button"
             id="aboutButton"
             class="settings-action">
             About Daniel Tech
-        </button>
-
-
-        <button
-            type="button"
-            id="adminButton"
-            class="settings-action">
-            Admin Login
         </button>
 
     </div>
@@ -981,531 +986,6 @@
 </div>
 
 
-<!-- ================= ADMIN LOGIN ================= -->
-
-<div id="adminLoginModal" class="modal">
-
-    <div class="modal-box admin-login-box">
-
-        <button
-            type="button"
-            class="modal-close"
-            data-close-modal="adminLoginModal">
-            Close
-        </button>
-
-
-        <div class="modal-content">
-
-            <p class="modal-label">
-                DANIEL TECH ADMIN
-            </p>
-
-            <h2>Admin Login</h2>
-
-            <p>
-                Login to manage Daniel Tech content and visitor messages.
-            </p>
-
-
-            <form id="adminLoginForm">
-
-                <div class="form-group">
-
-                    <label for="adminUsername">
-                        Admin Email
-                    </label>
-
-                    <input
-                        type="email"
-                        id="adminUsername"
-                        placeholder="Admin email"
-                        required>
-
-                </div>
-
-
-                <div class="form-group">
-
-                    <label for="adminPassword">
-                        Password
-                    </label>
-
-                    <input
-                        type="password"
-                        id="adminPassword"
-                        placeholder="Admin password"
-                        required>
-
-                </div>
-
-
-                <button
-                    type="submit"
-                    class="primary-button">
-                    Login
-                </button>
-
-
-                <p id="loginMessage" class="form-status"></p>
-
-            </form>
-
-        </div>
-
-    </div>
-
-</div>
-
-
-<!-- ================= ADMIN DASHBOARD ================= -->
-
-<div id="dashboardModal" class="modal">
-
-    <div class="modal-box dashboard-box">
-
-        <div class="dashboard-header">
-
-            <div>
-
-                <p class="modal-label">
-                    ADMIN AREA
-                </p>
-
-                <h2>Daniel Tech Dashboard</h2>
-
-            </div>
-
-            <button
-                type="button"
-                class="modal-close"
-                data-close-modal="dashboardModal">
-                Close
-            </button>
-
-        </div>
-
-
-        <!-- Dashboard section tabs -->
-
-        <div class="dashboard-tabs dashboard-actions">
-
-            <button type="button" class="dashboard-button dashboard-tab active" data-panel="overview">Overview</button>
-            <button type="button" class="dashboard-button dashboard-tab" data-panel="home">Home Page</button>
-            <button type="button" class="dashboard-button dashboard-tab" data-panel="services">Services</button>
-            <button type="button" class="dashboard-button dashboard-tab" data-panel="features">Features</button>
-            <button type="button" class="dashboard-button dashboard-tab" data-panel="news">News / Blog</button>
-            <button type="button" class="dashboard-button dashboard-tab" data-panel="about">About</button>
-            <button type="button" class="dashboard-button dashboard-tab" data-panel="footer">Footer / Contact</button>
-            <button type="button" class="dashboard-button dashboard-tab" data-panel="messages">Messages</button>
-
-        </div>
-
-
-        <!-- OVERVIEW PANEL -->
-
-        <div class="admin-panel active-panel" data-panel="overview">
-
-            <div class="admin-content-area">
-
-                <h3>Dashboard Overview</h3>
-
-                <div class="stats-grid">
-
-                    <div class="stat-box">
-                        <strong id="statServices">0</strong>
-                        <span>Total Services</span>
-                    </div>
-
-                    <div class="stat-box">
-                        <strong id="statFeatures">0</strong>
-                        <span>Total Features</span>
-                    </div>
-
-                    <div class="stat-box">
-                        <strong id="statContents">0</strong>
-                        <span>Total News</span>
-                    </div>
-
-                    <div class="stat-box">
-                        <strong id="statPublished">0</strong>
-                        <span>Published Content</span>
-                    </div>
-
-                    <div class="stat-box">
-                        <strong id="statMessages">0</strong>
-                        <span>Messages</span>
-                    </div>
-
-                </div>
-
-            </div>
-
-        </div>
-
-
-        <!-- HOME PANEL -->
-
-        <div class="admin-panel" data-panel="home">
-
-            <div class="admin-editor">
-
-                <h3>Home Page</h3>
-
-                <div class="form-group">
-                    <label for="homeHeroTitle">Hero Title</label>
-                    <input type="text" id="homeHeroTitle" placeholder="Daniel Tech">
-                </div>
-
-                <div class="form-group">
-                    <label for="homeHeroSubtitle">Hero Subtitle</label>
-                    <input type="text" id="homeHeroSubtitle" placeholder="TECHNOLOGY • DIGITAL SOLUTIONS • INNOVATION">
-                </div>
-
-                <div class="form-group">
-                    <label for="homeHeroDescription">Hero Description</label>
-                    <textarea id="homeHeroDescription" placeholder="Hero description text"></textarea>
-                </div>
-
-                <div class="form-row">
-
-                    <div class="form-group">
-                        <label for="homeHeroButtonText">Hero Button Text</label>
-                        <input type="text" id="homeHeroButtonText" placeholder="Explore Services">
-                    </div>
-
-                    <div class="form-group">
-                        <label for="homeHeroButtonLink">Hero Button Link</label>
-                        <input type="text" id="homeHeroButtonLink" placeholder="services">
-                    </div>
-
-                </div>
-
-                <div class="form-group">
-                    <label for="homeWelcomeTitle">Welcome Section Title</label>
-                    <input type="text" id="homeWelcomeTitle" placeholder="What's New">
-                </div>
-
-                <div class="form-group">
-                    <label for="homeWelcomeText">Welcome Section Text</label>
-                    <textarea id="homeWelcomeText" placeholder="Welcome section text"></textarea>
-                </div>
-
-                <div class="form-group">
-                    <label for="homeCtaTitle">Call To Action Title</label>
-                    <input type="text" id="homeCtaTitle" placeholder="Optional">
-                </div>
-
-                <div class="form-group">
-                    <label for="homeCtaText">Call To Action Text</label>
-                    <textarea id="homeCtaText" placeholder="Optional"></textarea>
-                </div>
-
-                <button type="button" id="saveHomeButton" class="primary-button">Save Home Page</button>
-
-                <p id="homeEditorStatus" class="form-status"></p>
-
-            </div>
-
-        </div>
-
-
-        <!-- SERVICES PANEL -->
-
-        <div class="admin-panel" data-panel="services">
-
-            <div class="admin-content-area">
-                <h3>Services</h3>
-                <div id="adminServiceList"></div>
-            </div>
-
-            <div class="admin-editor">
-
-                <h3>Add / Edit Service</h3>
-
-                <div class="form-group">
-                    <label for="serviceEditorTitle">Title</label>
-                    <input type="text" id="serviceEditorTitle" placeholder="Service title">
-                </div>
-
-                <div class="form-group">
-                    <label for="serviceEditorDescription">Short Description</label>
-                    <textarea id="serviceEditorDescription" placeholder="Short description"></textarea>
-                </div>
-
-                <div class="form-group">
-                    <label for="serviceEditorFullDescription">Full Description</label>
-                    <textarea id="serviceEditorFullDescription" placeholder="Full description shown in the modal"></textarea>
-                </div>
-
-                <div class="form-row">
-
-                    <div class="form-group">
-                        <label for="serviceEditorOrder">Display Order</label>
-                        <input type="number" id="serviceEditorOrder" value="0">
-                    </div>
-
-                    <div class="form-group">
-                        <label for="serviceEditorStatus">Status</label>
-                        <select id="serviceEditorStatus">
-                            <option value="published">Published</option>
-                            <option value="draft">Draft</option>
-                        </select>
-                    </div>
-
-                </div>
-
-                <button type="button" id="saveServiceButton" class="primary-button">Add Service</button>
-                <button type="button" id="cancelServiceEditButton" class="secondary-button">Cancel</button>
-
-                <p id="serviceEditorStatusMsg" class="form-status"></p>
-
-            </div>
-
-        </div>
-
-
-        <!-- FEATURES PANEL -->
-
-        <div class="admin-panel" data-panel="features">
-
-            <div class="admin-content-area">
-                <h3>Features</h3>
-                <div id="adminFeatureList"></div>
-            </div>
-
-            <div class="admin-editor">
-
-                <h3>Add / Edit Feature</h3>
-
-                <div class="form-group">
-                    <label for="featureEditorTitle">Title</label>
-                    <input type="text" id="featureEditorTitle" placeholder="Feature title">
-                </div>
-
-                <div class="form-group">
-                    <label for="featureEditorDescription">Short Description</label>
-                    <textarea id="featureEditorDescription" placeholder="Short description"></textarea>
-                </div>
-
-                <div class="form-group">
-                    <label for="featureEditorFullDescription">Full Description</label>
-                    <textarea id="featureEditorFullDescription" placeholder="Full description shown in the modal"></textarea>
-                </div>
-
-                <div class="form-row">
-
-                    <div class="form-group">
-                        <label for="featureEditorOrder">Display Order</label>
-                        <input type="number" id="featureEditorOrder" value="0">
-                    </div>
-
-                    <div class="form-group">
-                        <label for="featureEditorStatus">Status</label>
-                        <select id="featureEditorStatus">
-                            <option value="published">Published</option>
-                            <option value="draft">Draft</option>
-                        </select>
-                    </div>
-
-                </div>
-
-                <button type="button" id="saveFeatureButton" class="primary-button">Add Feature</button>
-                <button type="button" id="cancelFeatureEditButton" class="secondary-button">Cancel</button>
-
-                <p id="featureEditorStatusMsg" class="form-status"></p>
-
-            </div>
-
-        </div>
-
-
-        <!-- NEWS PANEL -->
-
-        <div class="admin-panel" data-panel="news">
-
-            <div class="dashboard-actions">
-
-                <button type="button" id="addNewsButton" class="dashboard-button">Add News</button>
-                <button type="button" id="addTipButton" class="dashboard-button">Add Tip</button>
-                <button type="button" id="addVideoButton" class="dashboard-button">Add Video</button>
-                <button type="button" id="addPdfButton" class="dashboard-button">Add PDF</button>
-
-            </div>
-
-            <div id="adminEditor" class="admin-editor">
-
-                <h3>Add / Edit Content</h3>
-
-                <div class="form-group">
-                    <label for="contentTitle">Title</label>
-                    <input type="text" id="contentTitle" placeholder="Content title">
-                </div>
-
-                <div class="form-row">
-
-                    <div class="form-group">
-                        <label for="contentCategory">Category</label>
-                        <select id="contentCategory">
-                            <option value="news">News</option>
-                            <option value="tip">Tip</option>
-                            <option value="video">Video</option>
-                            <option value="pdf">PDF</option>
-                            <option value="article">Article</option>
-                            <option value="announcement">Announcement</option>
-                        </select>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="contentStatusSelect">Status</label>
-                        <select id="contentStatusSelect">
-                            <option value="published">Published</option>
-                            <option value="draft">Draft</option>
-                        </select>
-                    </div>
-
-                </div>
-
-                <div class="form-group">
-                    <label for="contentText">Description / Content</label>
-                    <textarea id="contentText" placeholder="Write your content here"></textarea>
-                </div>
-
-                <div class="form-group">
-                    <label for="contentFile">File (image, video, audio or PDF)</label>
-                    <input type="file" id="contentFile">
-                </div>
-
-                <label class="setting-option">
-                    <span>Featured</span>
-                    <input type="checkbox" id="contentFeatured">
-                </label>
-
-                <button type="button" id="saveContentButton" class="primary-button">Publish Content</button>
-
-                <p id="contentStatus" class="form-status"></p>
-
-            </div>
-
-
-            <div class="admin-content-area">
-
-                <h3>Published Content</h3>
-
-                <div id="adminContentList">
-                    <p class="empty-content">No content available.</p>
-                </div>
-
-            </div>
-
-        </div>
-
-
-        <!-- ABOUT PANEL -->
-
-        <div class="admin-panel" data-panel="about">
-
-            <div class="admin-editor">
-
-                <h3>About Section</h3>
-
-                <div class="form-group">
-                    <label for="aboutTitle">Title</label>
-                    <input type="text" id="aboutTitle" placeholder="Daniel Tech">
-                </div>
-
-                <div class="form-group">
-                    <label for="aboutDescription">Description</label>
-                    <textarea id="aboutDescription" placeholder="About description"></textarea>
-                </div>
-
-                <div class="form-group">
-                    <label for="aboutMission">Mission</label>
-                    <textarea id="aboutMission" placeholder="Mission statement"></textarea>
-                </div>
-
-                <div class="form-group">
-                    <label for="aboutVision">Vision</label>
-                    <textarea id="aboutVision" placeholder="Vision statement"></textarea>
-                </div>
-
-                <button type="button" id="saveAboutButton" class="primary-button">Save About</button>
-
-                <p id="aboutEditorStatus" class="form-status"></p>
-
-            </div>
-
-        </div>
-
-
-        <!-- FOOTER PANEL -->
-
-        <div class="admin-panel" data-panel="footer">
-
-            <div class="admin-editor">
-
-                <h3>Footer / Contact</h3>
-
-                <div class="form-group">
-                    <label for="footerTextInput">Footer Description</label>
-                    <textarea id="footerTextInput" placeholder="Footer description"></textarea>
-                </div>
-
-                <div class="form-group">
-                    <label for="footerEmailInput">Email</label>
-                    <input type="email" id="footerEmailInput" placeholder="Contact email">
-                </div>
-
-                <div class="form-group">
-                    <label for="footerPhoneInput">Phone</label>
-                    <input type="text" id="footerPhoneInput" placeholder="Contact phone">
-                </div>
-
-                <div class="form-group">
-                    <label for="footerAddressInput">Address</label>
-                    <input type="text" id="footerAddressInput" placeholder="Address (optional)">
-                </div>
-
-                <button type="button" id="saveFooterButton" class="primary-button">Save Footer</button>
-
-                <p id="footerEditorStatus" class="form-status"></p>
-
-            </div>
-
-        </div>
-
-
-        <!-- MESSAGES PANEL -->
-
-        <div class="admin-panel" data-panel="messages">
-
-            <div class="admin-messages-section">
-
-                <h3>Visitor Messages</h3>
-
-                <button type="button" id="refreshMessagesButton" class="dashboard-button">Refresh Messages</button>
-
-                <div id="adminMessagesList" class="admin-messages-list">
-                    <p class="empty-content">No messages yet.</p>
-                </div>
-
-            </div>
-
-        </div>
-
-
-        <button
-            type="button"
-            id="logoutButton"
-            class="logout-button">
-            Logout
-        </button>
-
-    </div>
-
-</div>
-
-
 <!-- ================= BACK TO TOP ================= -->
 
 <button
@@ -1530,7 +1010,7 @@
 <!-- ================= JAVASCRIPT ================= -->
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
-<script src="script.js?v=20260903-3"></script>
+<script src="script.js?v=20261002-1"></script>
 <script>
     var yearEl = document.getElementById("footerYear");
     if (yearEl) { yearEl.textContent = new Date().getFullYear(); }
