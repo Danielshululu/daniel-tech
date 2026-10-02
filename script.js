@@ -1,317 +1,589 @@
-```javascript
 /* =========================================================
-   DANIEL TECH - MAIN JAVASCRIPT (Supabase-backed)
-   Theme is handled automatically by the script in index.html
-   (06:00-17:59 light, 18:00-05:59 dark).
-========================================================= */
+   DANIEL TECH V2.0.0
+   MAIN JAVASCRIPT
+   ========================================================= */
 
-/* 0. SUPABASE CONFIG */
+"use strict";
+
+/* =========================================================
+   1. CONFIGURATION
+   ========================================================= */
+
 const SUPABASE_URL = "https://bodprzntcloioncwhpvr.supabase.co";
-const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_x4riG5RXLpA_7RNBneJA";
-const ADMIN_UID = "05fef3eb-16a3-4554-9d9b-de7d2b29144b";
+
+const SUPABASE_PUBLISHABLE_KEY =
+    "sb_publishable_x4riqGTgHI3btFxG5RXLpA_7RNBneJA";
+
+const ADMIN_UID =
+    "05fef3eb-16a3-4554-9d9b-de7d2b29144b";
+
 const STORAGE_BUCKET = "daniel-files";
 
-/* Web3Forms */
-const WEB3FORMS_ENDPOINT = "https://api.web3forms.com/submit";
-const WEB3FORMS_ACCESS_KEY = "81e3fd5d-7a13-47cc-821a-f963ab6bf7c7";
+const WEB3FORMS_ACCESS_KEY =
+    "81e3fd5d-7a13-47cc-821a-f963ab6bf7c7";
+
+const WEB3FORMS_ENDPOINT =
+    "https://api.web3forms.com/submit";
+
 
 const sb = window.supabase.createClient(
     SUPABASE_URL,
     SUPABASE_PUBLISHABLE_KEY
 );
 
+
 let currentSession = null;
+let currentUser = null;
 let isAdmin = false;
+let currentService = null;
 
 
 /* =========================================================
-   1. HELPERS
-========================================================= */
+   2. HELPERS
+   ========================================================= */
 
-function qs(id) {
-    return document.getElementById(id);
+function qs(selector) {
+    return document.querySelector(selector);
 }
 
-function escapeHtml(text) {
-    const div = document.createElement("div");
-    div.textContent = text == null ? "" : String(text);
-    return div.innerHTML;
+
+function qsa(selector) {
+    return document.querySelectorAll(selector);
 }
+
+
+function escapeHtml(value) {
+
+    if (value === null || value === undefined) {
+        return "";
+    }
+
+    return String(value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
+
 
 function formatDate(value) {
-    if (!value) return "";
 
-    const d = new Date(value);
+    if (!value) {
+        return "";
+    }
 
-    if (isNaN(d.getTime())) return "";
+    const date = new Date(value);
 
-    return d.toLocaleDateString();
+    if (Number.isNaN(date.getTime())) {
+        return "";
+    }
+
+    return date.toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "short",
+        day: "numeric"
+    });
 }
 
-function slugify(text) {
-    return String(text)
-        .toLowerCase()
-        .trim()
-        .replace(/[^a-z0-9]+/g, "-")
-        .replace(/(^-|-$)/g, "")
-        || ("item-" + Date.now());
+
+function setStatus(element, message, isError = false) {
+
+    if (!element) {
+        return;
+    }
+
+    element.textContent = message;
+    element.classList.toggle("error", Boolean(isError));
+    element.classList.toggle("success", !isError && Boolean(message));
 }
 
-function setStatus(el, message, isError) {
-    if (!el) return;
-
-    el.textContent = message || "";
-
-    el.style.color = isError
-        ? "var(--color-error)"
-        : "";
-}
 
 function setText(id, value) {
-    const el = qs(id);
 
-    if (el) {
-        el.textContent = value;
+    const element = document.getElementById(id);
+
+    if (element) {
+        element.textContent = value || "";
+    }
+}
+
+
+function showElement(element) {
+
+    if (element) {
+        element.hidden = false;
+    }
+}
+
+
+function hideElement(element) {
+
+    if (element) {
+        element.hidden = true;
     }
 }
 
 
 /* =========================================================
-   2. NAVIGATION / PAGES
-========================================================= */
+   3. THEME
+   ========================================================= */
 
-const pages = document.querySelectorAll(".page");
-const navLinks = document.querySelectorAll("[data-page]");
-const mainNav = qs("mainNav");
-const menuButton = qs("menuButton");
+function updateTheme() {
+
+    const hour = new Date().getHours();
+
+    document.documentElement.classList.toggle(
+        "dark-mode",
+        hour >= 18 || hour < 6
+    );
+}
+
+updateTheme();
+
+setInterval(updateTheme, 30000);
+
+
+/* =========================================================
+   4. PAGE NAVIGATION
+   ========================================================= */
+
+const pages = qsa(".page");
+
 
 function showPage(pageName) {
 
-    pages.forEach((page) => {
-        page.classList.remove("active-page");
-    });
-
-    const target = qs(pageName);
-
-    if (target) {
-        target.classList.add("active-page");
+    if (!pageName) {
+        return;
     }
 
-    navLinks.forEach((link) => {
+    /*
+       Customer dashboard is handled separately.
+    */
 
-        link.classList.remove("active");
+    if (pageName === "customer-dashboard") {
+        openCustomerDashboard();
+        return;
+    }
 
-        if (link.dataset.page === pageName) {
-            link.classList.add("active");
-        }
+
+    pages.forEach(page => {
+
+        page.classList.remove("active-page");
 
     });
 
-    window.scrollTo({
-        top: 0,
-        behavior: "smooth"
+
+    const target = document.getElementById(pageName);
+
+    if (target) {
+
+        target.classList.add("active-page");
+
+        window.scrollTo({
+            top: 0,
+            behavior: "smooth"
+        });
+
+    }
+
+
+    qsa("[data-page]").forEach(link => {
+
+        link.classList.toggle(
+            "active",
+            link.getAttribute("data-page") === pageName
+        );
+
     });
 
-    closeMobileMenu();
+
+    closeMenuDrawer();
 }
 
-navLinks.forEach((link) => {
 
-    link.addEventListener("click", function (event) {
+qsa("[data-page]").forEach(element => {
+
+    element.addEventListener("click", function (event) {
 
         event.preventDefault();
 
-        const page = this.dataset.page;
+        const pageName =
+            this.getAttribute("data-page");
 
-        if (page) {
-            showPage(page);
-        }
+        showPage(pageName);
 
     });
 
 });
 
-function closeMobileMenu() {
-
-    if (mainNav) {
-        mainNav.classList.remove("active");
-    }
-
-}
-
-if (menuButton && mainNav) {
-
-    menuButton.addEventListener("click", () => {
-
-        mainNav.classList.toggle("active");
-
-    });
-
-}
-
 
 /* =========================================================
-   3. SETTINGS
-========================================================= */
+   5. HAMBURGER DRAWER
+   ========================================================= */
 
-const settingsButton = qs("settingsButton");
-const settingsPanel = qs("settingsPanel");
-const closeSettingsButton = qs("closeSettings");
+const menuButton = qs("menuButton");
+const menuDrawer = qs("menuDrawer");
+const closeMenu = qs("closeMenu");
 const overlay = qs("overlay");
 
-function openSettings() {
-    showPage("settings");
+
+function openMenuDrawer() {
+
+    if (menuDrawer) {
+        menuDrawer.classList.add("open");
+    }
+
+    if (overlay) {
+        overlay.classList.add("active");
+    }
+
+    if (menuButton) {
+        menuButton.setAttribute(
+            "aria-expanded",
+            "true"
+        );
+    }
+
+    document.body.classList.add("menu-open");
 }
 
-function closeSettingsPanel() {
 
-    if (settingsPanel) {
-        settingsPanel.classList.remove("active");
+function closeMenuDrawer() {
+
+    if (menuDrawer) {
+        menuDrawer.classList.remove("open");
     }
 
     if (overlay) {
         overlay.classList.remove("active");
     }
 
+    if (menuButton) {
+        menuButton.setAttribute(
+            "aria-expanded",
+            "false"
+        );
+    }
+
+    document.body.classList.remove("menu-open");
 }
 
-if (settingsButton) {
 
-    settingsButton.addEventListener(
+if (menuButton) {
+
+    menuButton.addEventListener(
         "click",
-        openSettings
+        openMenuDrawer
     );
 
 }
 
-if (closeSettingsButton) {
 
-    closeSettingsButton.addEventListener(
+if (closeMenu) {
+
+    closeMenu.addEventListener(
         "click",
-        closeSettingsPanel
+        closeMenuDrawer
     );
 
 }
+
 
 if (overlay) {
 
     overlay.addEventListener(
         "click",
-        closeSettingsPanel
+        closeMenuDrawer
     );
 
 }
 
 
 /* =========================================================
-   4. MODALS
-========================================================= */
+   6. MODALS
+   ========================================================= */
 
-function openModal(modalId) {
+function openModal(id) {
 
-    const modal = qs(modalId);
+    const modal = document.getElementById(id);
 
-    if (modal) {
-
-        modal.classList.add("active");
-
-        document.body.style.overflow = "hidden";
-
+    if (!modal) {
+        return;
     }
 
+    modal.classList.add("active");
+
+    document.body.classList.add("modal-open");
 }
 
-function closeModal(modalId) {
 
-    const modal = qs(modalId);
+function closeModal(id) {
 
-    if (modal) {
+    const modal = document.getElementById(id);
 
-        modal.classList.remove("active");
-
-        document.body.style.overflow = "";
-
+    if (!modal) {
+        return;
     }
 
+    modal.classList.remove("active");
+
+    if (!document.querySelector(".modal.active")) {
+        document.body.classList.remove("modal-open");
+    }
 }
+
 
 function closeAllModals() {
 
-    document
-        .querySelectorAll(".modal.active")
-        .forEach((m) => m.classList.remove("active"));
+    qsa(".modal").forEach(modal => {
 
-    document.body.style.overflow = "";
+        modal.classList.remove("active");
 
+    });
+
+    document.body.classList.remove("modal-open");
 }
 
-document
-    .querySelectorAll(".modal-close")
-    .forEach((button) => {
 
-        button.addEventListener("click", () => {
+qsa("[data-close-modal]").forEach(button => {
 
-            const modalId = button.dataset.closeModal;
+    button.addEventListener("click", function () {
 
-            if (modalId) {
-
-                closeModal(modalId);
-
-            } else {
-
-                const modal = button.closest(".modal");
-
-                if (modal) {
-                    modal.classList.remove("active");
-                }
-
-            }
-
-        });
+        closeModal(
+            this.getAttribute("data-close-modal")
+        );
 
     });
 
-document
-    .querySelectorAll(".modal")
-    .forEach((modal) => {
+});
 
-        modal.addEventListener("click", (event) => {
 
-            if (event.target === modal) {
+qsa(".modal").forEach(modal => {
 
-                modal.classList.remove("active");
+    modal.addEventListener("click", function (event) {
 
-                document.body.style.overflow = "";
+        if (event.target === modal) {
 
-            }
+            closeModal(modal.id);
 
-        });
+        }
 
     });
 
-document.addEventListener("keydown", (event) => {
+});
+
+
+document.addEventListener("keydown", function (event) {
 
     if (event.key === "Escape") {
 
-        closeSettingsPanel();
-
         closeAllModals();
+        closeMenuDrawer();
 
     }
 
 });
 
-const aboutButton = qs("aboutButton");
 
-if (aboutButton) {
+/* =========================================================
+   7. LANGUAGE
+   ========================================================= */
 
-    aboutButton.addEventListener(
+function setLanguage(language) {
+
+    localStorage.setItem(
+        "danielTechLanguage",
+        language
+    );
+
+    qsa(".language-button").forEach(button => {
+
+        button.classList.remove("active");
+
+    });
+
+
+    if (language === "sw") {
+
+        const sw =
+            qs("languageSW");
+
+        if (sw) {
+            sw.classList.add("active");
+        }
+
+    } else {
+
+        const en =
+            qs("languageEN");
+
+        if (en) {
+            en.classList.add("active");
+        }
+
+    }
+
+    /*
+       Full translation system can be expanded later.
+       Current system keeps English as the primary UI.
+    */
+}
+
+
+const savedLanguage =
+    localStorage.getItem("danielTechLanguage") || "en";
+
+setLanguage(savedLanguage);
+
+
+const languageEN = qs("languageEN");
+const languageSW = qs("languageSW");
+
+if (languageEN) {
+
+    languageEN.addEventListener(
         "click",
-        () => {
+        () => setLanguage("en")
+    );
 
-            closeSettingsPanel();
+}
 
-            openModal("aboutModal");
+if (languageSW) {
+
+    languageSW.addEventListener(
+        "click",
+        () => setLanguage("sw")
+    );
+
+}
+
+
+const settingsEN = qs("settingsEN");
+const settingsSW = qs("settingsSW");
+
+if (settingsEN) {
+
+    settingsEN.addEventListener(
+        "click",
+        () => setLanguage("en")
+    );
+
+}
+
+if (settingsSW) {
+
+    settingsSW.addEventListener(
+        "click",
+        () => setLanguage("sw")
+    );
+
+}
+
+
+/* =========================================================
+   8. AUTH MODAL
+   ========================================================= */
+
+const authModal =
+    qs("authModal");
+
+const signInButton =
+    qs("signInButton");
+
+const signUpButton =
+    qs("signUpButton");
+
+const signInForm =
+    qs("signInForm");
+
+const signUpForm =
+    qs("signUpForm");
+
+const switchAuthMode =
+    qs("switchAuthMode");
+
+const authModalTitle =
+    qs("authModalTitle");
+
+
+function openSignIn() {
+
+    if (authModalTitle) {
+        authModalTitle.textContent = "Sign In";
+    }
+
+    if (signInForm) {
+        signInForm.hidden = false;
+    }
+
+    if (signUpForm) {
+        signUpForm.hidden = true;
+    }
+
+    if (switchAuthMode) {
+        switchAuthMode.textContent =
+            "Create an account";
+    }
+
+    openModal("authModal");
+}
+
+
+function openSignUp() {
+
+    if (authModalTitle) {
+        authModalTitle.textContent = "Create Account";
+    }
+
+    if (signInForm) {
+        signInForm.hidden = true;
+    }
+
+    if (signUpForm) {
+        signUpForm.hidden = false;
+    }
+
+    if (switchAuthMode) {
+        switchAuthMode.textContent =
+            "Already have an account? Sign In";
+    }
+
+    openModal("authModal");
+}
+
+
+if (signInButton) {
+
+    signInButton.addEventListener(
+        "click",
+        openSignIn
+    );
+
+}
+
+
+if (signUpButton) {
+
+    signUpButton.addEventListener(
+        "click",
+        openSignUp
+    );
+
+}
+
+
+if (switchAuthMode) {
+
+    switchAuthMode.addEventListener(
+        "click",
+        function () {
+
+            if (signInForm && !signInForm.hidden) {
+                openSignUp();
+            } else {
+                openSignIn();
+            }
 
         }
     );
@@ -320,34 +592,468 @@ if (aboutButton) {
 
 
 /* =========================================================
-   5. SERVICES (PUBLIC)
-========================================================= */
+   9. PASSWORD SHOW / HIDE
+   ========================================================= */
 
-const fallbackServiceText = {
+qsa(".password-toggle").forEach(button => {
 
-    web:
-        "We provide modern responsive website development and digital web solutions.",
+    button.addEventListener("click", function () {
 
-    graphics:
-        "Creative graphics, digital branding and visual content solutions.",
+        const targetId =
+            this.getAttribute(
+                "data-password-target"
+            );
 
-    security:
-        "Technology awareness, security guidance and digital safety information.",
+        const input =
+            document.getElementById(targetId);
 
-    computer:
-        "Computer troubleshooting, software installation and general technology support.",
+        if (!input) {
+            return;
+        }
 
-    software:
-        "Software guidance, applications and digital technology solutions.",
+        if (input.type === "password") {
 
-    ai:
-        "Information and solutions involving modern artificial intelligence tools."
+            input.type = "text";
+            this.textContent = "Hide";
 
-};
+        } else {
 
-let servicesData = [];
+            input.type = "password";
+            this.textContent = "Show";
+
+        }
+
+    });
+
+});
+
+
+/* =========================================================
+   10. SIGN UP
+   ========================================================= */
+
+if (signUpForm) {
+
+    signUpForm.addEventListener(
+        "submit",
+        async function (event) {
+
+            event.preventDefault();
+
+            const name =
+                qs("signUpName")?.value.trim();
+
+            const email =
+                qs("signUpEmail")?.value.trim();
+
+            const password =
+                qs("signUpPassword")?.value;
+
+            const status =
+                qs("signUpStatus");
+
+            if (!name || !email || !password) {
+
+                setStatus(
+                    status,
+                    "Please complete all fields.",
+                    true
+                );
+
+                return;
+            }
+
+
+            setStatus(
+                status,
+                "Creating your account..."
+            );
+
+
+            try {
+
+                const {
+                    data,
+                    error
+                } = await sb.auth.signUp({
+
+                    email,
+                    password,
+
+                    options: {
+                        data: {
+                            full_name: name
+                        }
+                    }
+
+                });
+
+
+                if (error) {
+                    throw error;
+                }
+
+
+                if (data.user) {
+
+                    setStatus(
+                        status,
+                        "Account created successfully. Check your email if verification is required."
+                    );
+
+                }
+
+            } catch (error) {
+
+                console.error(
+                    "Sign up error:",
+                    error
+                );
+
+                setStatus(
+                    status,
+                    error.message ||
+                    "Unable to create account.",
+                    true
+                );
+
+            }
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   11. SIGN IN
+   ========================================================= */
+
+if (signInForm) {
+
+    signInForm.addEventListener(
+        "submit",
+        async function (event) {
+
+            event.preventDefault();
+
+            const email =
+                qs("signInEmail")?.value.trim();
+
+            const password =
+                qs("signInPassword")?.value;
+
+            const status =
+                qs("signInStatus");
+
+
+            if (!email || !password) {
+
+                setStatus(
+                    status,
+                    "Please enter your email and password.",
+                    true
+                );
+
+                return;
+            }
+
+
+            setStatus(
+                status,
+                "Signing in..."
+            );
+
+
+            try {
+
+                const {
+                    data,
+                    error
+                } = await sb.auth.signInWithPassword({
+
+                    email,
+                    password
+
+                });
+
+
+                if (error) {
+                    throw error;
+                }
+
+
+                currentSession =
+                    data.session;
+
+                currentUser =
+                    data.user;
+
+
+                await handleAuthenticatedUser();
+
+
+            } catch (error) {
+
+                console.error(
+                    "Sign in error:",
+                    error
+                );
+
+                setStatus(
+                    status,
+                    error.message ||
+                    "Sign in failed.",
+                    true
+                );
+
+            }
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   12. AUTH SESSION
+   ========================================================= */
+
+async function handleAuthenticatedUser() {
+
+    if (!currentUser) {
+        return;
+    }
+
+
+    isAdmin =
+        currentUser.id === ADMIN_UID;
+
+
+    closeAllModals();
+
+
+    if (isAdmin) {
+
+        /*
+           Admin authorization must still be enforced
+           by Supabase RLS / database role.
+        */
+
+        console.log(
+            "Authenticated admin:",
+            currentUser.id
+        );
+
+        await updateAuthUI();
+
+        return;
+    }
+
+
+    await updateAuthUI();
+
+    await loadCustomerDashboard();
+
+    openCustomerDashboard();
+
+}
+
+
+async function initializeAuth() {
+
+    try {
+
+        const {
+            data,
+            error
+        } = await sb.auth.getSession();
+
+
+        if (error) {
+            throw error;
+        }
+
+
+        currentSession =
+            data.session || null;
+
+        currentUser =
+            data.session?.user || null;
+
+
+        if (currentUser) {
+
+            isAdmin =
+                currentUser.id === ADMIN_UID;
+
+            await updateAuthUI();
+
+        }
+
+    } catch (error) {
+
+        console.error(
+            "Auth initialization error:",
+            error
+        );
+
+    }
+
+
+    sb.auth.onAuthStateChange(
+        async function (event, session) {
+
+            currentSession =
+                session || null;
+
+            currentUser =
+                session?.user || null;
+
+
+            isAdmin =
+                currentUser?.id === ADMIN_UID;
+
+
+            await updateAuthUI();
+
+        }
+    );
+
+}
+
+
+async function updateAuthUI() {
+
+    const drawerSignOut =
+        qs("drawerSignOut");
+
+    if (currentUser) {
+
+        if (signInButton) {
+            signInButton.textContent =
+                isAdmin ? "Admin" : "Dashboard";
+        }
+
+        if (signUpButton) {
+            signUpButton.textContent =
+                isAdmin ? "Admin" : "Account";
+        }
+
+        if (drawerSignOut) {
+            drawerSignOut.hidden = false;
+        }
+
+    } else {
+
+        if (signInButton) {
+            signInButton.textContent = "Sign In";
+        }
+
+        if (signUpButton) {
+            signUpButton.textContent = "Sign Up";
+        }
+
+        if (drawerSignOut) {
+            drawerSignOut.hidden = true;
+        }
+
+    }
+
+}
+
+
+/* =========================================================
+   13. LOGOUT
+   ========================================================= */
+
+async function logoutUser() {
+
+    try {
+
+        const {
+            error
+        } = await sb.auth.signOut();
+
+        if (error) {
+            throw error;
+        }
+
+
+        currentSession = null;
+        currentUser = null;
+        isAdmin = false;
+
+
+        const dashboard =
+            qs("customerDashboard");
+
+        if (dashboard) {
+            dashboard.hidden = true;
+        }
+
+
+        await updateAuthUI();
+
+        showPage("home");
+
+
+    } catch (error) {
+
+        console.error(
+            "Logout error:",
+            error
+        );
+
+    }
+
+}
+
+
+const customerLogout =
+    qs("customerLogout");
+
+const drawerSignOut =
+    qs("drawerSignOut");
+
+
+if (customerLogout) {
+
+    customerLogout.addEventListener(
+        "click",
+        logoutUser
+    );
+
+}
+
+
+if (drawerSignOut) {
+
+    drawerSignOut.addEventListener(
+        "click",
+        logoutUser
+    );
+
+}
+
+
+/* =========================================================
+   14. SERVICES
+   ========================================================= */
 
 async function loadServices() {
+
+    const grid =
+        qs("serviceGrid");
+
+    if (!grid) {
+        return;
+    }
+
+
+    grid.innerHTML =
+        '<div class="empty-content">Loading services...</div>';
+
 
     try {
 
@@ -362,264 +1068,277 @@ async function loadServices() {
                 ascending: true
             });
 
-        if (error) throw error;
 
-        if (data && data.length > 0) {
-
-            servicesData = data;
-
-            renderServiceGrid(data);
-
+        if (error) {
+            throw error;
         }
 
-    } catch (err) {
 
-        console.error(
-            "loadServices failed, keeping default cards:",
-            err
+        if (!data || data.length === 0) {
+
+            grid.innerHTML =
+                '<div class="empty-content">No services are currently available.</div>';
+
+            return;
+        }
+
+
+        grid.innerHTML =
+            data.map((service, index) => {
+
+                return `
+                    <article class="service-card">
+
+                        <div class="card-number">
+                            ${String(index + 1).padStart(2, "0")}
+                        </div>
+
+                        <h3>
+                            ${escapeHtml(service.title)}
+                        </h3>
+
+                        <p>
+                            ${escapeHtml(service.description || "")}
+                        </p>
+
+                        <button
+                            type="button"
+                            class="view-button service-view-button"
+                            data-service-id="${escapeHtml(service.id)}">
+
+                            View Service
+
+                        </button>
+
+                    </article>
+                `;
+
+            }).join("");
+
+
+        qsa(".service-view-button").forEach(
+            button => {
+
+                button.addEventListener(
+                    "click",
+                    function () {
+
+                        const id =
+                            this.getAttribute(
+                                "data-service-id"
+                            );
+
+                        const service =
+                            data.find(
+                                item =>
+                                    String(item.id) === String(id)
+                            );
+
+                        if (service) {
+                            openServiceModal(service);
+                        }
+
+                    }
+                );
+
+            }
         );
 
-    }
 
-}
+    } catch (error) {
 
-function renderServiceGrid(services) {
-
-    const grid =
-        document.querySelector("#services .service-grid");
-
-    if (!grid) return;
-
-    grid.innerHTML = services
-        .map((service, index) => `
-
-        <article class="service-card">
-
-            <div class="card-number">
-                ${String(index + 1).padStart(2, "0")}
-            </div>
-
-            <h3>
-                ${escapeHtml(service.title)}
-            </h3>
-
-            <p>
-                ${escapeHtml(service.description)}
-            </p>
-
-            <button
-                type="button"
-                class="view-button service-view-button"
-                data-service="${service.id}">
-                View Service
-            </button>
-
-        </article>
-
-    `)
-        .join("");
-
-}
-
-document
-    .querySelector("#services .service-grid")
-    ?.addEventListener("click", (event) => {
-
-        const button =
-            event.target.closest(".service-view-button");
-
-        if (!button) return;
-
-        const key = button.dataset.service;
-
-        const fromDb =
-            servicesData.find(
-                (s) => String(s.id) === String(key)
-            );
-
-        const title =
-            fromDb
-                ? fromDb.title
-                : button
-                    .closest(".service-card")
-                    .querySelector("h3")
-                    .textContent
-                    .trim();
-
-        const text =
-            fromDb
-                ? fromDb.full_description ||
-                  fromDb.description
-                : fallbackServiceText[key] ||
-                  button
-                    .closest(".service-card")
-                    .querySelector("p")
-                    .textContent
-                    .trim();
-
-        qs("serviceModalTitle").textContent = title;
-
-        qs("serviceModalText").textContent = text;
-
-        openModal("serviceModal");
-
-    });
-
-
-/* =========================================================
-   6. FEATURES (PUBLIC)
-========================================================= */
-
-const fallbackFeatureText = {
-
-    "computer-tips":
-        "Useful computer tricks, maintenance information and troubleshooting guides.",
-
-    "phone-tips":
-        "Smartphone settings, tricks and useful mobile technology information.",
-
-    "ai-tools":
-        "Useful artificial intelligence tools and practical ways to use them.",
-
-    gaming:
-        "Gaming technology, performance settings and useful gaming information.",
-
-    programming:
-        "Programming knowledge, coding tips and development resources.",
-
-    "software-tips":
-        "Software guides, applications and useful technology tutorials."
-
-};
-
-let featuresData = [];
-
-async function loadFeatures() {
-
-    try {
-
-        const {
-            data,
+        console.error(
+            "Services error:",
             error
-        } = await sb
-            .from("features")
-            .select("*")
-            .eq("status", "published")
-            .order("display_order", {
-                ascending: true
-            });
-
-        if (error) throw error;
-
-        if (data && data.length > 0) {
-
-            featuresData = data;
-
-            renderFeatureGrid(data);
-
-        }
-
-    } catch (err) {
-
-        console.error(
-            "loadFeatures failed, keeping default cards:",
-            err
         );
+
+        grid.innerHTML =
+            '<div class="empty-content">Unable to load services right now.</div>';
 
     }
 
 }
 
-function renderFeatureGrid(features) {
 
-    const grid =
-        document.querySelector("#features .feature-grid");
+/* =========================================================
+   15. SERVICE MODAL
+   ========================================================= */
 
-    if (!grid) return;
+function openServiceModal(service) {
 
-    grid.innerHTML = features
-        .map((feature, index) => `
+    currentService = service;
 
-        <article class="feature-card">
 
-            <div class="feature-number">
-                ${String(index + 1).padStart(2, "0")}
-            </div>
+    setText(
+        "serviceModalTitle",
+        service.title
+    );
 
-            <h3>
-                ${escapeHtml(feature.title)}
-            </h3>
 
+    const text =
+        qs("serviceModalText");
+
+    if (text) {
+
+        text.innerHTML = `
             <p>
-                ${escapeHtml(feature.description)}
+                ${escapeHtml(
+                    service.full_description ||
+                    service.description ||
+                    ""
+                )}
             </p>
+        `;
 
-            <button
-                type="button"
-                class="view-button feature-view-button"
-                data-feature="${feature.id}">
-                Explore
-            </button>
+    }
 
-        </article>
 
-    `)
-        .join("");
+    openModal("serviceModal");
 
 }
 
-document
-    .querySelector("#features .feature-grid")
-    ?.addEventListener("click", (event) => {
 
-        const button =
-            event.target.closest(".feature-view-button");
+const requestServiceFromModal =
+    qs("requestServiceFromModal");
 
-        if (!button) return;
 
-        const key = button.dataset.feature;
+if (requestServiceFromModal) {
 
-        const fromDb =
-            featuresData.find(
-                (f) => String(f.id) === String(key)
-            );
+    requestServiceFromModal.addEventListener(
+        "click",
+        function () {
 
-        const title =
-            fromDb
-                ? fromDb.title
-                : button
-                    .closest(".feature-card")
-                    .querySelector("h3")
-                    .textContent
-                    .trim();
+            closeModal("serviceModal");
 
-        const text =
-            fromDb
-                ? fromDb.full_description ||
-                  fromDb.description
-                : fallbackFeatureText[key] ||
-                  button
-                    .closest(".feature-card")
-                    .querySelector("p")
-                    .textContent
-                    .trim();
+            showPage("contact");
 
-        qs("featureModalTitle").textContent = title;
+            const serviceSelect =
+                qs("contactService");
 
-        qs("featureModalText").textContent = text;
+            if (
+                serviceSelect &&
+                currentService
+            ) {
 
-        openModal("featureModal");
+                const title =
+                    currentService.title;
 
-    });
+                const option =
+                    Array.from(
+                        serviceSelect.options
+                    ).find(
+                        option =>
+                            option.textContent.trim()
+                                .toLowerCase() ===
+                            title.toLowerCase()
+                    );
+
+                if (option) {
+                    serviceSelect.value =
+                        option.value;
+                }
+
+            }
+
+        }
+    );
+
+}
 
 
 /* =========================================================
-   7. BLOG / NEWS (PUBLIC)
-========================================================= */
+   16. CONTENT
+   ========================================================= */
 
-let publishedContents = [];
+function contentCategoryValue(content) {
 
-async function loadPublicContents() {
+    return String(
+        content.section ||
+        content.category ||
+        ""
+    ).trim().toLowerCase();
+
+}
+
+
+function contentCardMarkup(content) {
+
+    const title =
+        escapeHtml(content.title || "Untitled");
+
+    const description =
+        escapeHtml(
+            content.description ||
+            content.meta_description ||
+            content.body_html?.replace(/<[^>]*>/g, "").slice(0, 160) ||
+            ""
+        );
+
+
+    const image =
+        content.featured_image ||
+        content.thumbnail_url ||
+        content.og_image_url ||
+        "";
+
+
+    return `
+        <article class="content-card">
+
+            ${
+                image
+                ?
+                `<img
+                    src="${escapeHtml(image)}"
+                    alt="${title}"
+                    loading="lazy">`
+                :
+                ""
+            }
+
+            <div class="content-card-body">
+
+                <span class="content-category">
+                    ${escapeHtml(
+                        content.section ||
+                        content.category ||
+                        "Technology"
+                    )}
+                </span>
+
+                <h3>
+                    ${title}
+                </h3>
+
+                <p>
+                    ${description}
+                </p>
+
+                <div class="content-card-meta">
+                    ${formatDate(
+                        content.published_at ||
+                        content.created_at
+                    )}
+                </div>
+
+                <button
+                    type="button"
+                    class="view-button content-view-button"
+                    data-content-id="${escapeHtml(content.id)}">
+
+                    Read More
+
+                </button>
+
+            </div>
+
+        </article>
+    `;
+
+}
+
+
+async function loadContents() {
 
     try {
 
@@ -630,409 +1349,295 @@ async function loadPublicContents() {
             .from("contents")
             .select("*")
             .eq("status", "published")
-            .order("display_order", {
-                ascending: true
-            })
             .order("created_at", {
                 ascending: false
             });
 
-        if (error) throw error;
 
-        publishedContents = data || [];
+        if (error) {
+            throw error;
+        }
 
-    } catch (err) {
 
-        console.error(
-            "loadPublicContents failed:",
-            err
+        const contents =
+            data || [];
+
+
+        renderContentCategory(
+            "techGrid",
+            contents,
+            ["tech", "technology"]
         );
 
-        publishedContents = [];
+
+        renderContentCategory(
+            "phoneGrid",
+            contents,
+            ["phone", "mobile"]
+        );
+
+
+        renderContentCategory(
+            "aiToolsGrid",
+            contents,
+            ["ai", "ai tools", "ai-tools"]
+        );
+
+
+        renderContentCategory(
+            "programmingGrid",
+            contents,
+            ["programming", "programming tutorials"]
+        );
+
+
+        renderContentCategory(
+            "gamingGrid",
+            contents,
+            ["gaming", "games", "game"]
+        );
+
+
+        renderBlog(
+            contents
+        );
+
+
+        renderLatest(
+            contents
+        );
+
+
+        qsa(".content-view-button").forEach(
+            button => {
+
+                button.addEventListener(
+                    "click",
+                    function () {
+
+                        const id =
+                            this.getAttribute(
+                                "data-content-id"
+                            );
+
+                        const content =
+                            contents.find(
+                                item =>
+                                    String(item.id) === String(id)
+                            );
+
+                        if (content) {
+                            openContentModal(content);
+                        }
+
+                    }
+                );
+
+            }
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "Content loading error:",
+            error
+        );
 
     }
 
-    renderBlogGrid();
-
-    renderLatestContent();
-
 }
 
-function contentCardMarkup(item, forHome) {
 
-    let mediaBlock = "";
+function renderContentCategory(
+    elementId,
+    contents,
+    categories
+) {
 
-    if (item.thumbnail_url) {
+    const container =
+        qs(elementId);
 
-        mediaBlock = `
-            <div class="blog-card-media">
-
-                <img
-                    src="${escapeHtml(item.thumbnail_url)}"
-                    alt="${escapeHtml(item.title)}"
-                    loading="lazy">
-
-            </div>
-        `;
-
-    } else if (
-        item.category === "video" &&
-        item.media_url
-    ) {
-
-        mediaBlock = `
-            <div class="blog-card-media">
-
-                <video
-                    src="${escapeHtml(item.media_url)}"
-                    controls>
-                </video>
-
-            </div>
-        `;
-
+    if (!container) {
+        return;
     }
 
-    const shareUrl =
-        `${window.location.origin}${window.location.pathname}#article-${item.id}`;
 
-    return `
+    const filtered =
+        contents.filter(content =>
+            categories.includes(
+                contentCategoryValue(content)
+            )
+        );
 
-        <article
-            class="blog-card"
-            id="article-${item.id}">
 
-            ${mediaBlock}
+    if (filtered.length === 0) {
 
-            <div class="blog-card-body">
-
-                <div class="blog-category">
-                    ${escapeHtml(item.category || "news")}
-                </div>
-
-                <h3>
-                    ${escapeHtml(item.title)}
-                </h3>
-
-                <p>
-                    ${escapeHtml(
-                        item.description ||
-                        (item.content
-                            ? item.content.slice(0, 140)
-                            : "")
-                    )}
-                </p>
-
-                <span class="blog-date">
-                    ${formatDate(
-                        item.published_at ||
-                        item.created_at
-                    )}
-                </span>
-
-                ${
-                    item.file_url
-                        ? `
-                            <div class="content-file">
-                                <a
-                                    href="${escapeHtml(item.file_url)}"
-                                    target="_blank"
-                                    rel="noopener noreferrer">
-                                    Open File
-                                </a>
-                            </div>
-                        `
-                        : ""
-                }
-
-                ${
-                    !forHome
-                        ? shareButtonsMarkup(
-                            item.id,
-                            shareUrl,
-                            item.title
-                        )
-                        : ""
-                }
-
-            </div>
-
-        </article>
-
-    `;
-
-}
-
-function shareButtonsMarkup(id, url, title) {
-
-    const u = encodeURIComponent(url);
-    const t = encodeURIComponent(title);
-
-    return `
-
-        <div
-            class="share-buttons"
-            data-share-url="${escapeHtml(url)}">
-
-            <a
-                class="view-button"
-                target="_blank"
-                rel="noopener noreferrer"
-                href="https://api.whatsapp.com/send?text=${t}%20${u}">
-                WhatsApp
-            </a>
-
-            <a
-                class="view-button"
-                target="_blank"
-                rel="noopener noreferrer"
-                href="https://www.facebook.com/sharer/sharer.php?u=${u}">
-                Facebook
-            </a>
-
-            <a
-                class="view-button"
-                target="_blank"
-                rel="noopener noreferrer"
-                href="https://twitter.com/intent/tweet?text=${t}&url=${u}">
-                X
-            </a>
-
-            <button
-                type="button"
-                class="view-button copy-link-button"
-                data-url="${escapeHtml(url)}">
-                Copy Link
-            </button>
-
-        </div>
-
-    `;
-
-}
-
-function renderBlogGrid() {
-
-    const blogGrid = qs("blogGrid");
-
-    if (!blogGrid) return;
-
-    if (publishedContents.length === 0) {
-
-        blogGrid.innerHTML =
-            `<div class="empty-content">
-                No blog content has been published yet.
-            </div>`;
+        container.innerHTML =
+            '<div class="empty-content">No content has been published yet.</div>';
 
         return;
     }
 
-    blogGrid.innerHTML =
-        publishedContents
-            .map((item) =>
-                contentCardMarkup(item, false)
-            )
+
+    container.innerHTML =
+        filtered
+            .map(contentCardMarkup)
             .join("");
 
 }
 
-function renderLatestContent() {
 
-    const latest = qs("latestContent");
+function renderBlog(contents) {
 
-    if (!latest) return;
+    const container =
+        qs("blogGrid");
 
-    if (publishedContents.length === 0) {
-
-        latest.innerHTML =
-            `<div class="empty-content">
-                No content has been published yet.
-            </div>`;
-
+    if (!container) {
         return;
-
     }
 
-    latest.innerHTML =
-        publishedContents
-            .slice(0, 3)
-            .map((item) =>
-                contentCardMarkup(item, true)
-            )
-            .join("");
 
-}
+    if (!contents.length) {
 
-document.addEventListener("click", (event) => {
-
-    const shareBtn =
-        event.target.closest(".copy-link-button");
-
-    if (!shareBtn) return;
-
-    const url = shareBtn.dataset.url;
-
-    navigator.clipboard
-        .writeText(url)
-        .then(() => {
-
-            const original =
-                shareBtn.textContent;
-
-            shareBtn.textContent = "Copied";
-
-            setTimeout(
-                () => (
-                    shareBtn.textContent = original
-                ),
-                1500
-            );
-
-        })
-        .catch(() => {
-
-            alert(
-                "Could not copy the link automatically. Link: " +
-                url
-            );
-
-        });
-
-});
-
-
-/* =========================================================
-   8. LOCAL COMMENTS (BROWSER ONLY)
-========================================================= */
-
-let comments = [];
-
-try {
-
-    comments =
-        JSON.parse(
-            localStorage.getItem(
-                "danielTechComments"
-            )
-        ) || [];
-
-} catch (e) {
-
-    comments = [];
-
-}
-
-const commentForm = qs("commentForm");
-const commentsList = qs("commentsList");
-
-function renderComments() {
-
-    if (!commentsList) return;
-
-    if (comments.length === 0) {
-
-        commentsList.innerHTML =
-            `<p class="empty-content">
-                No comments yet.
-            </p>`;
+        container.innerHTML =
+            '<div class="empty-content">No blog content has been published yet.</div>';
 
         return;
-
     }
 
-    commentsList.innerHTML =
-        comments
-            .map((c) => `
 
-                <div class="comment-item">
-
-                    <strong>
-                        ${escapeHtml(c.name)}
-                    </strong>
-
-                    <p>
-                        ${escapeHtml(c.text)}
-                    </p>
-
-                </div>
-
-            `)
+    container.innerHTML =
+        contents
+            .map(contentCardMarkup)
             .join("");
 
 }
 
-if (commentForm) {
 
-    commentForm.addEventListener(
-        "submit",
-        (event) => {
+function renderLatest(contents) {
 
-            event.preventDefault();
+    const container =
+        qs("latestContent");
 
-            const name =
-                qs("commentName").value.trim();
+    if (!container) {
+        return;
+    }
 
-            const text =
-                qs("commentText").value.trim();
 
-            if (!name || !text) return;
+    const latest =
+        contents.slice(0, 3);
 
-            comments.push({
-                name,
-                text
-            });
 
-            localStorage.setItem(
-                "danielTechComments",
-                JSON.stringify(comments)
-            );
+    if (!latest.length) {
 
-            commentForm.reset();
+        container.innerHTML =
+            '<div class="empty-content">No content has been published yet.</div>';
 
-            renderComments();
+        return;
+    }
+
+
+    container.innerHTML =
+        latest
+            .map(contentCardMarkup)
+            .join("");
+
+}
+
+
+function openContentModal(content) {
+
+    setText(
+        "contentModalCategory",
+        content.section ||
+        content.category ||
+        "CONTENT"
+    );
+
+
+    setText(
+        "contentModalTitle",
+        content.title ||
+        "Article"
+    );
+
+
+    const body =
+        qs("contentModalBody");
+
+
+    if (body) {
+
+        if (content.body_html) {
+
+            body.innerHTML =
+                content.body_html;
+
+        } else if (content.content) {
+
+            body.innerHTML =
+                `<p>${escapeHtml(
+                    content.content
+                )}</p>`;
+
+        } else {
+
+            body.innerHTML =
+                "<p>No content available.</p>";
 
         }
+
+    }
+
+
+    openModal(
+        "contentModal"
     );
 
 }
 
-renderComments();
-
 
 /* =========================================================
-   9. CONTACT FORM
-   WEB3FORMS + SUPABASE
-========================================================= */
+   17. CONTACT + WEB3FORMS + SUPABASE
+   ========================================================= */
 
-const contactForm = qs("contactForm");
-const contactStatus = qs("contactStatus");
+const contactForm =
+    qs("contactForm");
+
+const contactStatus =
+    qs("contactStatus");
+
+const contactSubmitButton =
+    qs("contactSubmitButton");
+
 
 if (contactForm) {
 
     contactForm.addEventListener(
         "submit",
-        async (event) => {
+        async function (event) {
 
             event.preventDefault();
 
+
             const name =
-                qs("contactName")?.value.trim() || "";
+                qs("contactName")?.value.trim();
 
             const email =
-                qs("contactEmail")?.value.trim() || "";
+                qs("contactEmail")?.value.trim();
+
+            const service =
+                qs("contactService")?.value.trim();
 
             const subject =
-                qs("contactSubject")?.value.trim() || "";
+                qs("contactSubject")?.value.trim();
 
             const message =
-                qs("contactMessage")?.value.trim() || "";
+                qs("contactMessage")?.value.trim();
 
-            if (
-                !name ||
-                !email ||
-                !subject ||
-                !message
-            ) {
+
+            if (!name || !email || !subject || !message) {
 
                 setStatus(
                     contactStatus,
@@ -1043,163 +1648,175 @@ if (contactForm) {
                 return;
             }
 
-            const submitButton =
-                contactForm.querySelector(
-                    'button[type="submit"]'
-                );
 
             const originalText =
-                submitButton
-                    ? submitButton.textContent
-                    : "Send Message";
+                contactSubmitButton
+                ? contactSubmitButton.textContent
+                : "Send Message";
 
-            if (submitButton) {
 
-                submitButton.disabled = true;
+            if (contactSubmitButton) {
 
-                submitButton.textContent =
+                contactSubmitButton.textContent =
                     "Sending...";
+
+                contactSubmitButton.disabled =
+                    true;
 
             }
 
+
             setStatus(
                 contactStatus,
-                "Sending your message...",
-                false
+                "Sending your message..."
             );
+
 
             try {
 
-                /* -----------------------------------------
-                   9.1 SEND MESSAGE TO WEB3FORMS
-                ----------------------------------------- */
+                /*
+                   WEB3FORMS
+                */
 
-                const formData = new FormData();
+                const web3Data =
+                    new FormData(contactForm);
 
-                formData.append(
+
+                web3Data.set(
                     "access_key",
                     WEB3FORMS_ACCESS_KEY
                 );
 
-                formData.append(
-                    "name",
-                    name
-                );
 
-                formData.append(
-                    "email",
-                    email
-                );
+                /*
+                   Send to Web3Forms
+                */
 
-                formData.append(
-                    "subject",
-                    subject
-                );
-
-                formData.append(
-                    "message",
-                    message
-                );
-
-                formData.append(
-                    "from_name",
-                    "Daniel Tech Website"
-                );
-
-                const web3Response =
+                const response =
                     await fetch(
                         WEB3FORMS_ENDPOINT,
                         {
                             method: "POST",
-                            body: formData
+                            body: web3Data
                         }
                     );
 
-                const web3Data =
-                    await web3Response.json();
+
+                let result = {};
+
+                try {
+
+                    result =
+                        await response.json();
+
+                } catch (jsonError) {
+
+                    console.warn(
+                        "Web3Forms JSON response unavailable."
+                    );
+
+                }
+
 
                 if (
-                    !web3Response.ok ||
-                    !web3Data.success
+                    !response.ok ||
+                    result.success === false
                 ) {
 
                     throw new Error(
-                        web3Data.message ||
-                        "Web3Forms submission failed."
+                        result.message ||
+                        "Web3Forms could not send the message."
                     );
 
                 }
 
-
-                /* -----------------------------------------
-                   9.2 SAVE COPY TO SUPABASE
-                   Admin dashboard can see the message.
-                ----------------------------------------- */
-
-                const {
-                    error: supabaseError
-                } = await sb
-                    .from("messages")
-                    .insert([
-                        {
-                            name: name,
-                            email: email,
-                            subject: subject,
-                            message: message,
-                            status: "unread"
-                        }
-                    ]);
 
                 /*
-                   Important:
-                   If Supabase fails but Web3Forms succeeds,
-                   do NOT tell the visitor that the entire
-                   message failed. The email has already been sent.
+                   ALSO STORE MESSAGE IN SUPABASE
+                   so admin can see it.
                 */
 
-                if (supabaseError) {
+                try {
 
-                    console.error(
-                        "Web3Forms succeeded, but Supabase message save failed:",
-                        supabaseError
+                    const {
+                        error: supabaseError
+                    } = await sb
+                        .from("messages")
+                        .insert([{
+
+                            name,
+                            email,
+
+                            subject,
+
+                            message,
+
+                            service:
+                                service || null,
+
+                            status:
+                                "unread"
+
+                        }]);
+
+
+                    if (supabaseError) {
+
+                        console.warn(
+                            "Message sent to Web3Forms but Supabase storage failed:",
+                            supabaseError
+                        );
+
+                    }
+
+                } catch (storageError) {
+
+                    console.warn(
+                        "Supabase message storage failed:",
+                        storageError
                     );
 
                 }
 
 
-                /* -----------------------------------------
-                   9.3 SUCCESS
-                ----------------------------------------- */
+                /*
+                   USER SUCCESS
+                */
 
                 setStatus(
                     contactStatus,
-                    "Your message has been sent successfully.",
-                    false
+                    "Your message has been sent successfully. We will respond as soon as possible."
                 );
 
+
                 contactForm.reset();
+
 
             } catch (error) {
 
                 console.error(
-                    "Contact form submission failed:",
+                    "Contact form error:",
                     error
                 );
 
+
                 setStatus(
                     contactStatus,
+                    error.message ||
                     "Sorry, your message could not be sent. Please try again.",
                     true
                 );
 
+
             } finally {
 
-                if (submitButton) {
+                if (contactSubmitButton) {
 
-                    submitButton.disabled = false;
-
-                    submitButton.textContent =
+                    contactSubmitButton.textContent =
                         originalText;
+
+                    contactSubmitButton.disabled =
+                        false;
 
                 }
 
@@ -1212,8 +1829,1519 @@ if (contactForm) {
 
 
 /* =========================================================
-   10. HOME / ABOUT / FOOTER
-========================================================= */
+   18. COMMENTS
+   ========================================================= */
+
+async function loadComments() {
+
+    const list =
+        qs("commentsList");
+
+    if (!list) {
+        return;
+    }
+
+
+    try {
+
+        const {
+            data,
+            error
+        } = await sb
+            .from("comments")
+            .select("*")
+            .eq("status", "approved")
+            .order("created_at", {
+                ascending: false
+            });
+
+
+        if (error) {
+            throw error;
+        }
+
+
+        if (!data || data.length === 0) {
+
+            list.innerHTML =
+                '<p class="empty-content">No comments yet.</p>';
+
+            return;
+        }
+
+
+        list.innerHTML =
+            data.map(comment => {
+
+                return `
+                    <div class="comment-item">
+
+                        <strong>
+                            ${escapeHtml(
+                                comment.visitor_name
+                            )}
+                        </strong>
+
+                        <span>
+                            ${formatDate(
+                                comment.created_at
+                            )}
+                        </span>
+
+                        <p>
+                            ${escapeHtml(
+                                comment.content
+                            )}
+                        </p>
+
+                    </div>
+                `;
+
+            }).join("");
+
+
+    } catch (error) {
+
+        console.error(
+            "Comments loading error:",
+            error
+        );
+
+        list.innerHTML =
+            '<p class="empty-content">Comments are currently unavailable.</p>';
+
+    }
+
+}
+
+
+const commentForm =
+    qs("commentForm");
+
+
+if (commentForm) {
+
+    commentForm.addEventListener(
+        "submit",
+        async function (event) {
+
+            event.preventDefault();
+
+
+            const name =
+                qs("commentName")?.value.trim();
+
+            const email =
+                qs("commentEmail")?.value.trim();
+
+            const comment =
+                qs("commentText")?.value.trim();
+
+            const status =
+                qs("commentStatus");
+
+
+            if (!name || !comment) {
+
+                setStatus(
+                    status,
+                    "Please enter your name and comment.",
+                    true
+                );
+
+                return;
+            }
+
+
+            setStatus(
+                status,
+                "Posting comment..."
+            );
+
+
+            try {
+
+                const {
+                    error
+                } = await sb
+                    .from("comments")
+                    .insert([{
+
+                        visitor_name: name,
+
+                        visitor_email:
+                            email || null,
+
+                        content: comment,
+
+                        status: "pending"
+
+                    }]);
+
+
+                if (error) {
+                    throw error;
+                }
+
+
+                setStatus(
+                    status,
+                    "Your comment has been submitted for review."
+                );
+
+
+                commentForm.reset();
+
+
+            } catch (error) {
+
+                console.error(
+                    "Comment error:",
+                    error
+                );
+
+
+                setStatus(
+                    status,
+                    "Unable to post your comment right now.",
+                    true
+                );
+
+            }
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   19. CUSTOMER DASHBOARD
+   ========================================================= */
+
+const customerDashboard =
+    qs("customerDashboard");
+
+
+function openCustomerDashboard() {
+
+    if (!currentUser) {
+
+        openSignIn();
+
+        return;
+    }
+
+
+    if (customerDashboard) {
+
+        customerDashboard.hidden = false;
+
+    }
+
+
+    document.body.classList.add(
+        "dashboard-open"
+    );
+
+
+    loadCustomerDashboard();
+
+}
+
+
+function closeCustomerDashboard() {
+
+    if (customerDashboard) {
+
+        customerDashboard.hidden = true;
+
+    }
+
+
+    document.body.classList.remove(
+        "dashboard-open"
+    );
+
+}
+
+
+qsa("[data-dashboard-panel]").forEach(
+    button => {
+
+        button.addEventListener(
+            "click",
+            function () {
+
+                const panel =
+                    this.getAttribute(
+                        "data-dashboard-panel"
+                    );
+
+                showDashboardPanel(panel);
+
+            }
+        );
+
+    }
+);
+
+
+function showDashboardPanel(panelName) {
+
+    qsa(".dashboard-nav").forEach(
+        button => {
+
+            button.classList.toggle(
+                "active",
+                button.getAttribute(
+                    "data-dashboard-panel"
+                ) === panelName
+            );
+
+        }
+    );
+
+
+    qsa(".dashboard-panel").forEach(
+        panel => {
+
+            panel.classList.remove(
+                "active-dashboard-panel"
+            );
+
+        }
+    );
+
+
+    const panelMap = {
+
+        overview:
+            "dashboardOverview",
+
+        services:
+            "dashboardServices",
+
+        requests:
+            "dashboardRequests",
+
+        messages:
+            "dashboardMessages",
+
+        payments:
+            "dashboardPayments",
+
+        receipts:
+            "dashboardReceipts",
+
+        notifications:
+            "dashboardNotifications",
+
+        profile:
+            "dashboardProfile",
+
+        security:
+            "dashboardSecurity"
+
+    };
+
+
+    const target =
+        document.getElementById(
+            panelMap[panelName]
+        );
+
+
+    if (target) {
+
+        target.classList.add(
+            "active-dashboard-panel"
+        );
+
+    }
+
+
+    if (panelName === "requests") {
+        loadCustomerRequests();
+    }
+
+    if (panelName === "services") {
+        loadCustomerOrders();
+    }
+
+    if (panelName === "messages") {
+        loadCustomerMessages();
+    }
+
+    if (panelName === "payments") {
+        loadCustomerPayments();
+    }
+
+    if (panelName === "receipts") {
+        loadCustomerReceipts();
+    }
+
+    if (panelName === "notifications") {
+        loadCustomerNotifications();
+    }
+
+    if (panelName === "profile") {
+        loadCustomerProfile();
+    }
+
+}
+
+
+/* =========================================================
+   20. CUSTOMER DATA
+   ========================================================= */
+
+async function loadCustomerDashboard() {
+
+    if (!currentUser) {
+        return;
+    }
+
+
+    setText(
+        "customerWelcome",
+        `Welcome, ${
+            currentUser.user_metadata?.full_name ||
+            currentUser.email?.split("@")[0] ||
+            "Customer"
+        }`
+    );
+
+
+    setText(
+        "customerEmail",
+        currentUser.email
+    );
+
+
+    setText(
+        "profileEmail",
+        currentUser.email
+    );
+
+
+    await Promise.allSettled([
+
+        loadCustomerStats(),
+
+        loadCustomerOrders(),
+
+        loadCustomerRequests(),
+
+        loadCustomerPayments(),
+
+        loadCustomerReceipts(),
+
+        loadCustomerNotifications(),
+
+        loadCustomerMessages(),
+
+        loadCustomerProfile()
+
+    ]);
+
+}
+
+
+/* =========================================================
+   21. CUSTOMER STATS
+   ========================================================= */
+
+async function loadCustomerStats() {
+
+    if (!currentUser) {
+        return;
+    }
+
+
+    try {
+
+        const requestsPromise =
+            sb
+                .from("service_requests")
+                .select("id,status")
+                .eq("user_id", currentUser.id);
+
+
+        const ordersPromise =
+            sb
+                .from("orders")
+                .select("id,status")
+                .eq("user_id", currentUser.id);
+
+
+        const paymentsPromise =
+            sb
+                .from("payments")
+                .select("id,status")
+                .eq("user_id", currentUser.id);
+
+
+        const [
+            requestsResult,
+            ordersResult,
+            paymentsResult
+        ] = await Promise.all([
+            requestsPromise,
+            ordersPromise,
+            paymentsPromise
+        ]);
+
+
+        if (requestsResult.error) {
+            throw requestsResult.error;
+        }
+
+
+        if (ordersResult.error) {
+            throw ordersResult.error;
+        }
+
+
+        if (paymentsResult.error) {
+            throw paymentsResult.error;
+        }
+
+
+        const requests =
+            requestsResult.data || [];
+
+        const orders =
+            ordersResult.data || [];
+
+        const payments =
+            paymentsResult.data || [];
+
+
+        const pendingRequests =
+            requests.filter(
+                item =>
+                    ![
+                        "Completed",
+                        "Closed"
+                    ].includes(item.status)
+            ).length;
+
+
+        const activeServices =
+            orders.filter(
+                item =>
+                    [
+                        "pending",
+                        "processing",
+                        "in_progress",
+                        "active"
+                    ].includes(
+                        String(item.status).toLowerCase()
+                    )
+            ).length;
+
+
+        const completedServices =
+            orders.filter(
+                item =>
+                    String(item.status).toLowerCase()
+                    === "completed"
+            ).length;
+
+
+        const pendingPayments =
+            payments.filter(
+                item =>
+                    String(item.status).toLowerCase()
+                    === "pending"
+            ).length;
+
+
+        setText(
+            "statActiveServices",
+            activeServices
+        );
+
+
+        setText(
+            "statPendingRequests",
+            pendingRequests
+        );
+
+
+        setText(
+            "statPendingPayments",
+            pendingPayments
+        );
+
+
+        setText(
+            "statCompletedServices",
+            completedServices
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "Customer stats error:",
+            error
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   22. CUSTOMER ORDERS / SERVICES
+   ========================================================= */
+
+async function loadCustomerOrders() {
+
+    if (!currentUser) {
+        return;
+    }
+
+
+    const list =
+        qs("customerServicesList");
+
+    if (!list) {
+        return;
+    }
+
+
+    try {
+
+        const {
+            data,
+            error
+        } = await sb
+            .from("orders")
+            .select("*")
+            .eq("user_id", currentUser.id)
+            .order("created_at", {
+                ascending: false
+            });
+
+
+        if (error) {
+            throw error;
+        }
+
+
+        if (!data || data.length === 0) {
+
+            list.innerHTML =
+                '<p class="empty-content">No services found.</p>';
+
+            return;
+        }
+
+
+        list.innerHTML =
+            data.map(order => {
+
+                return `
+                    <div class="dashboard-list-item">
+
+                        <strong>
+                            ${escapeHtml(
+                                order.service_title ||
+                                "Service"
+                            )}
+                        </strong>
+
+                        <span>
+                            Order:
+                            ${escapeHtml(
+                                order.order_number ||
+                                "-"
+                            )}
+                        </span>
+
+                        <span>
+                            Status:
+                            ${escapeHtml(
+                                order.status ||
+                                "-"
+                            )}
+                        </span>
+
+                        <span>
+                            ${escapeHtml(
+                                order.currency ||
+                                ""
+                            )}
+                            ${escapeHtml(
+                                order.amount ??
+                                ""
+                            )}
+                        </span>
+
+                    </div>
+                `;
+
+            }).join("");
+
+
+    } catch (error) {
+
+        console.error(
+            "Customer orders error:",
+            error
+        );
+
+        list.innerHTML =
+            '<p class="empty-content">Unable to load services.</p>';
+
+    }
+
+}
+
+
+/* =========================================================
+   23. CUSTOMER REQUESTS
+   ========================================================= */
+
+async function loadCustomerRequests() {
+
+    if (!currentUser) {
+        return;
+    }
+
+
+    const list =
+        qs("customerRequestsList");
+
+    if (!list) {
+        return;
+    }
+
+
+    try {
+
+        const {
+            data,
+            error
+        } = await sb
+            .from("service_requests")
+            .select("*")
+            .eq("user_id", currentUser.id)
+            .order("created_at", {
+                ascending: false
+            });
+
+
+        if (error) {
+            throw error;
+        }
+
+
+        if (!data || data.length === 0) {
+
+            list.innerHTML =
+                '<p class="empty-content">No requests found.</p>';
+
+            return;
+        }
+
+
+        list.innerHTML =
+            data.map(request => {
+
+                return `
+                    <div class="dashboard-list-item">
+
+                        <strong>
+                            ${escapeHtml(
+                                request.service_type ||
+                                "Service Request"
+                            )}
+                        </strong>
+
+                        <span>
+                            Request:
+                            ${escapeHtml(
+                                request.request_number ||
+                                "-"
+                            )}
+                        </span>
+
+                        <span>
+                            Status:
+                            ${escapeHtml(
+                                request.status ||
+                                "-"
+                            )}
+                        </span>
+
+                        <span>
+                            ${formatDate(
+                                request.created_at
+                            )}
+                        </span>
+
+                    </div>
+                `;
+
+            }).join("");
+
+
+    } catch (error) {
+
+        console.error(
+            "Customer requests error:",
+            error
+        );
+
+        list.innerHTML =
+            '<p class="empty-content">Unable to load requests.</p>';
+
+    }
+
+}
+
+
+/* =========================================================
+   24. CUSTOMER PAYMENTS
+   ========================================================= */
+
+async function loadCustomerPayments() {
+
+    if (!currentUser) {
+        return;
+    }
+
+
+    const list =
+        qs("customerPaymentsList");
+
+    if (!list) {
+        return;
+    }
+
+
+    try {
+
+        const {
+            data,
+            error
+        } = await sb
+            .from("payments")
+            .select("*")
+            .eq("user_id", currentUser.id)
+            .order("created_at", {
+                ascending: false
+            });
+
+
+        if (error) {
+            throw error;
+        }
+
+
+        if (!data || data.length === 0) {
+
+            list.innerHTML =
+                '<p class="empty-content">No payment records found.</p>';
+
+            return;
+        }
+
+
+        list.innerHTML =
+            data.map(payment => {
+
+                return `
+                    <div class="dashboard-list-item">
+
+                        <strong>
+                            ${escapeHtml(
+                                payment.payment_id ||
+                                "Payment"
+                            )}
+                        </strong>
+
+                        <span>
+                            Amount:
+                            ${escapeHtml(
+                                payment.currency ||
+                                ""
+                            )}
+                            ${escapeHtml(
+                                payment.amount ??
+                                ""
+                            )}
+                        </span>
+
+                        <span>
+                            Method:
+                            ${escapeHtml(
+                                payment.payment_method ||
+                                "-"
+                            )}
+                        </span>
+
+                        <span>
+                            Status:
+                            ${escapeHtml(
+                                payment.status ||
+                                "-"
+                            )}
+                        </span>
+
+                        <span>
+                            ${formatDate(
+                                payment.payment_date ||
+                                payment.created_at
+                            )}
+                        </span>
+
+                    </div>
+                `;
+
+            }).join("");
+
+
+    } catch (error) {
+
+        console.error(
+            "Customer payments error:",
+            error
+        );
+
+        list.innerHTML =
+            '<p class="empty-content">Unable to load payments.</p>';
+
+    }
+
+}
+
+
+/* =========================================================
+   25. CUSTOMER RECEIPTS
+   ========================================================= */
+
+async function loadCustomerReceipts() {
+
+    if (!currentUser) {
+        return;
+    }
+
+
+    const list =
+        qs("customerReceiptsList");
+
+    const latest =
+        qs("latestReceipt");
+
+
+    try {
+
+        const {
+            data,
+            error
+        } = await sb
+            .from("receipts")
+            .select("*")
+            .eq("user_id", currentUser.id)
+            .order("created_at", {
+                ascending: false
+            });
+
+
+        if (error) {
+            throw error;
+        }
+
+
+        if (!data || data.length === 0) {
+
+            if (list) {
+                list.innerHTML =
+                    '<p class="empty-content">No receipts found.</p>';
+            }
+
+            if (latest) {
+                latest.innerHTML =
+                    '<p class="empty-content">No receipt available.</p>';
+            }
+
+            return;
+        }
+
+
+        const receiptMarkup =
+            receipt => {
+
+                return `
+                    <div class="dashboard-list-item">
+
+                        <strong>
+                            Receipt:
+                            ${escapeHtml(
+                                receipt.receipt_number ||
+                                "-"
+                            )}
+                        </strong>
+
+                        <span>
+                            Service:
+                            ${escapeHtml(
+                                receipt.service_title ||
+                                "-"
+                            )}
+                        </span>
+
+                        <span>
+                            Amount:
+                            ${escapeHtml(
+                                receipt.currency ||
+                                ""
+                            )}
+                            ${escapeHtml(
+                                receipt.amount ??
+                                ""
+                            )}
+                        </span>
+
+                        <span>
+                            Status:
+                            ${escapeHtml(
+                                receipt.status ||
+                                "-"
+                            )}
+                        </span>
+
+                        <span>
+                            ${formatDate(
+                                receipt.payment_date ||
+                                receipt.created_at
+                            )}
+                        </span>
+
+                    </div>
+                `;
+
+            };
+
+
+        if (list) {
+
+            list.innerHTML =
+                data
+                    .map(receiptMarkup)
+                    .join("");
+
+        }
+
+
+        if (latest) {
+
+            latest.innerHTML =
+                receiptMarkup(data[0]);
+
+        }
+
+
+    } catch (error) {
+
+        console.error(
+            "Customer receipts error:",
+            error
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   26. CUSTOMER NOTIFICATIONS
+   ========================================================= */
+
+async function loadCustomerNotifications() {
+
+    if (!currentUser) {
+        return;
+    }
+
+
+    const list =
+        qs("customerNotificationsList");
+
+    const overview =
+        qs("overviewNotifications");
+
+
+    try {
+
+        const {
+            data,
+            error
+        } = await sb
+            .from("notifications")
+            .select("*")
+            .eq("user_id", currentUser.id)
+            .order("created_at", {
+                ascending: false
+            });
+
+
+        if (error) {
+            throw error;
+        }
+
+
+        if (!data || data.length === 0) {
+
+            if (list) {
+                list.innerHTML =
+                    '<p class="empty-content">No notifications found.</p>';
+            }
+
+            if (overview) {
+                overview.innerHTML =
+                    '<p class="empty-content">No new notifications.</p>';
+            }
+
+            return;
+        }
+
+
+        const markup =
+            data.map(notification => {
+
+                return `
+                    <div class="dashboard-list-item">
+
+                        <strong>
+                            ${escapeHtml(
+                                notification.title ||
+                                "Notification"
+                            )}
+                        </strong>
+
+                        <p>
+                            ${escapeHtml(
+                                notification.message ||
+                                ""
+                            )}
+                        </p>
+
+                        <span>
+                            ${formatDate(
+                                notification.created_at
+                            )}
+                        </span>
+
+                    </div>
+                `;
+
+            }).join("");
+
+
+        if (list) {
+            list.innerHTML = markup;
+        }
+
+
+        if (overview) {
+
+            overview.innerHTML =
+                data
+                    .slice(0, 3)
+                    .map(notification => {
+
+                        return `
+                            <div class="dashboard-list-item">
+
+                                <strong>
+                                    ${escapeHtml(
+                                        notification.title ||
+                                        "Notification"
+                                    )}
+                                </strong>
+
+                                <p>
+                                    ${escapeHtml(
+                                        notification.message ||
+                                        ""
+                                    )}
+                                </p>
+
+                            </div>
+                        `;
+
+                    })
+                    .join("");
+
+        }
+
+
+    } catch (error) {
+
+        console.error(
+            "Notifications error:",
+            error
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   27. CUSTOMER MESSAGES
+   ========================================================= */
+
+async function loadCustomerMessages() {
+
+    if (!currentUser) {
+        return;
+    }
+
+
+    const list =
+        qs("customerMessagesList");
+
+    if (!list) {
+        return;
+    }
+
+
+    /*
+       Messages currently use email matching because
+       the existing messages table may not yet contain
+       user_id.
+    */
+
+    try {
+
+        const {
+            data,
+            error
+        } = await sb
+            .from("messages")
+            .select("*")
+            .eq("email", currentUser.email)
+            .order("created_at", {
+                ascending: false
+            });
+
+
+        if (error) {
+            throw error;
+        }
+
+
+        if (!data || data.length === 0) {
+
+            list.innerHTML =
+                '<p class="empty-content">No messages found.</p>';
+
+            return;
+        }
+
+
+        list.innerHTML =
+            data.map(message => {
+
+                return `
+                    <div class="dashboard-list-item">
+
+                        <strong>
+                            ${escapeHtml(
+                                message.subject ||
+                                "Message"
+                            )}
+                        </strong>
+
+                        <p>
+                            ${escapeHtml(
+                                message.message ||
+                                ""
+                            )}
+                        </p>
+
+                        <span>
+                            Status:
+                            ${escapeHtml(
+                                message.status ||
+                                "-"
+                            )}
+                        </span>
+
+                        <span>
+                            ${formatDate(
+                                message.created_at
+                            )}
+                        </span>
+
+                    </div>
+                `;
+
+            }).join("");
+
+
+    } catch (error) {
+
+        console.error(
+            "Customer messages error:",
+            error
+        );
+
+        list.innerHTML =
+            '<p class="empty-content">Unable to load messages.</p>';
+
+    }
+
+}
+
+
+/* =========================================================
+   28. CUSTOMER PROFILE
+   ========================================================= */
+
+async function loadCustomerProfile() {
+
+    if (!currentUser) {
+        return;
+    }
+
+
+    try {
+
+        const {
+            data,
+            error
+        } = await sb
+            .from("profiles")
+            .select("*")
+            .eq("id", currentUser.id)
+            .maybeSingle();
+
+
+        if (error) {
+            throw error;
+        }
+
+
+        setText(
+            "profileEmail",
+            currentUser.email
+        );
+
+
+        const nameInput =
+            qs("profileName");
+
+
+        if (nameInput) {
+
+            nameInput.value =
+                data?.full_name ||
+                currentUser.user_metadata?.full_name ||
+                "";
+
+        }
+
+
+    } catch (error) {
+
+        console.error(
+            "Profile loading error:",
+            error
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   29. PROFILE UPDATE
+   ========================================================= */
+
+const profileForm =
+    qs("profileForm");
+
+
+if (profileForm) {
+
+    profileForm.addEventListener(
+        "submit",
+        async function (event) {
+
+            event.preventDefault();
+
+
+            if (!currentUser) {
+                return;
+            }
+
+
+            const name =
+                qs("profileName")?.value.trim();
+
+            const status =
+                qs("profileStatus");
+
+
+            if (!name) {
+
+                setStatus(
+                    status,
+                    "Please enter your name.",
+                    true
+                );
+
+                return;
+            }
+
+
+            setStatus(
+                status,
+                "Saving profile..."
+            );
+
+
+            try {
+
+                const {
+                    error
+                } = await sb
+                    .from("profiles")
+                    .update({
+
+                        full_name: name,
+
+                        updated_at:
+                            new Date().toISOString()
+
+                    })
+                    .eq(
+                        "id",
+                        currentUser.id
+                    );
+
+
+                if (error) {
+                    throw error;
+                }
+
+
+                setStatus(
+                    status,
+                    "Profile updated successfully."
+                );
+
+
+                setText(
+                    "customerWelcome",
+                    `Welcome, ${name}`
+                );
+
+
+            } catch (error) {
+
+                console.error(
+                    "Profile update error:",
+                    error
+                );
+
+
+                setStatus(
+                    status,
+                    "Unable to update profile.",
+                    true
+                );
+
+            }
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   30. PASSWORD RESET
+   ========================================================= */
+
+const resetPasswordButton =
+    qs("resetPasswordButton");
+
+
+if (resetPasswordButton) {
+
+    resetPasswordButton.addEventListener(
+        "click",
+        async function () {
+
+            if (!currentUser?.email) {
+                return;
+            }
+
+
+            const status =
+                qs("securityStatus");
+
+
+            setStatus(
+                status,
+                "Sending password reset email..."
+            );
+
+
+            try {
+
+                const {
+                    error
+                } = await sb.auth.resetPasswordForEmail(
+                    currentUser.email
+                );
+
+
+                if (error) {
+                    throw error;
+                }
+
+
+                setStatus(
+                    status,
+                    "Password reset instructions have been sent to your email."
+                );
+
+
+            } catch (error) {
+
+                console.error(
+                    "Password reset error:",
+                    error
+                );
+
+
+                setStatus(
+                    status,
+                    "Unable to send password reset email.",
+                    true
+                );
+
+            }
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   31. SITE SETTINGS
+   ========================================================= */
 
 async function loadSiteSettingsPublic() {
 
@@ -1226,99 +3354,130 @@ async function loadSiteSettingsPublic() {
             .from("site_settings")
             .select("*");
 
-        if (error) throw error;
 
-        const s = {};
-
-        (data || []).forEach(
-            (row) =>
-                (s[row.setting_key] =
-                    row.setting_value)
-        );
-
-        if (s.hero_subtitle) {
-
-            const l =
-                document.querySelector(".hero-label");
-
-            if (l) {
-                l.textContent =
-                    s.hero_subtitle;
-            }
-
+        if (error) {
+            throw error;
         }
 
-        if (s.hero_title) {
 
-            const sp =
+        if (!data) {
+            return;
+        }
+
+
+        const settings = {};
+
+
+        data.forEach(row => {
+
+            settings[row.setting_key] =
+                row.setting_value;
+
+        });
+
+
+        if (settings.hero_title) {
+
+            const hero =
                 document.querySelector(
-                    ".hero h1 span"
+                    ".hero h1"
                 );
 
-            if (sp) {
-                sp.textContent =
-                    s.hero_title;
+            if (hero) {
+                hero.innerHTML =
+                    escapeHtml(
+                        settings.hero_title
+                    );
             }
 
         }
 
-        if (s.hero_description) {
 
-            const d =
+        if (settings.hero_description) {
+
+            const heroDescription =
                 document.querySelector(
                     ".hero-description"
                 );
 
-            if (d) {
-                d.textContent =
-                    s.hero_description;
+            if (heroDescription) {
+                heroDescription.textContent =
+                    settings.hero_description;
             }
 
         }
 
-        if (qs("footerText") && s.footer_text) {
 
-            qs("footerText").textContent =
-                s.footer_text;
+        if (settings.footer_text) {
 
-        }
-
-        if (qs("footerEmail") && s.footer_email) {
-
-            qs("footerEmail").textContent =
-                s.footer_email;
+            setText(
+                "footerText",
+                settings.footer_text
+            );
 
         }
 
-        if (qs("footerPhone") && s.footer_phone) {
 
-            qs("footerPhone").textContent =
-                s.footer_phone;
+        if (settings.footer_email) {
 
-        }
+            setText(
+                "footerEmail",
+                settings.footer_email
+            );
 
-        if (
-            qs("footerAddress") &&
-            s.footer_address
-        ) {
-
-            qs("footerAddress").textContent =
-                s.footer_address;
+            setText(
+                "contactEmailDisplay",
+                settings.footer_email
+            );
 
         }
 
-    } catch (err) {
 
-        console.error(
-            "loadSiteSettingsPublic failed:",
-            err
+        if (settings.footer_phone) {
+
+            setText(
+                "footerPhone",
+                settings.footer_phone
+            );
+
+        }
+
+
+        if (settings.footer_address) {
+
+            setText(
+                "footerAddress",
+                settings.footer_address
+            );
+
+        }
+
+
+    } catch (error) {
+
+        console.warn(
+            "Site settings unavailable:",
+            error
         );
 
     }
 
 }
 
+
+/* =========================================================
+   32. ABOUT
+   ========================================================= */
+
 async function loadAboutPublic() {
+
+    const container =
+        qs("aboutContent");
+
+    if (!container) {
+        return;
+    }
+
 
     try {
 
@@ -1328,50 +3487,53 @@ async function loadAboutPublic() {
         } = await sb
             .from("about_sections")
             .select("*")
-            .eq("status", "published");
+            .eq("status", "published")
+            .order("display_order", {
+                ascending: true
+            });
 
-        if (error) throw error;
 
-        const main =
-            (data || []).find(
-                (s) =>
-                    s.section_key === "main"
-            );
-
-        if (main) {
-
-            const c =
-                document.querySelector(
-                    "#aboutModal .modal-content"
-                );
-
-            if (c) {
-
-                const h =
-                    c.querySelector("h2");
-
-                const p =
-                    c.querySelectorAll("p");
-
-                if (h && main.title) {
-                    h.textContent =
-                        main.title;
-                }
-
-                if (p[1] && main.content) {
-                    p[1].textContent =
-                        main.content;
-                }
-
-            }
-
+        if (error) {
+            throw error;
         }
 
-    } catch (err) {
 
-        console.error(
-            "loadAboutPublic failed:",
-            err
+        if (!data || data.length === 0) {
+            return;
+        }
+
+
+        container.innerHTML =
+            data.map(section => {
+
+                return `
+                    <div class="about-section">
+
+                        <h3>
+                            ${escapeHtml(
+                                section.title ||
+                                ""
+                            )}
+                        </h3>
+
+                        <p>
+                            ${escapeHtml(
+                                section.content ||
+                                ""
+                            )}
+                        </p>
+
+                    </div>
+                `;
+
+            }).join("");
+
+
+    } catch (error) {
+
+        console.warn(
+            "About content unavailable:",
+            error
         );
 
     }
@@ -1380,22 +3542,23 @@ async function loadAboutPublic() {
 
 
 /* =========================================================
-   10.1 SOCIAL LINKS
-   social_links table may not exist.
-   We safely skip it instead of generating an error.
-========================================================= */
+   33. SOCIAL LINKS
+   ========================================================= */
 
 async function loadSocialLinksPublic() {
 
     const container =
         qs("footerSocialLinks");
 
-    if (!container) return;
+    if (!container) {
+        return;
+    }
+
 
     /*
-       social_links was not part of the current database
-       schema. Therefore we intentionally leave this
-       container empty until the table is created.
+       The old project referenced a social_links table
+       which does not exist in the current database.
+       Therefore we safely skip the query.
     */
 
     container.innerHTML = "";
@@ -1404,2470 +3567,106 @@ async function loadSocialLinksPublic() {
 
 
 /* =========================================================
-   11. ADMIN AUTH
-========================================================= */
-
-const adminButton = qs("adminButton");
-const adminLoginForm = qs("adminLoginForm");
-const loginMessage = qs("loginMessage");
-
-if (adminButton) {
-
-    adminButton.addEventListener(
-        "click",
-        () => {
-
-            closeSettingsPanel();
-
-            openModal("adminLoginModal");
-
-        }
-    );
-
-}
-
-if (adminLoginForm) {
-
-    adminLoginForm.addEventListener(
-        "submit",
-        async (event) => {
-
-            event.preventDefault();
-
-            const email =
-                qs("adminUsername").value.trim();
-
-            const password =
-                qs("adminPassword").value;
-
-            setStatus(
-                loginMessage,
-                "Signing in...",
-                false
-            );
-
-            try {
-
-                const {
-                    data,
-                    error
-                } = await sb.auth.signInWithPassword({
-                    email,
-                    password
-                });
-
-                if (error) throw error;
-
-                const user = data.user;
-
-                if (
-                    !user ||
-                    user.id !== ADMIN_UID
-                ) {
-
-                    await sb.auth.signOut();
-
-                    setStatus(
-                        loginMessage,
-                        "This account is not authorized as admin.",
-                        true
-                    );
-
-                    return;
-
-                }
-
-                currentSession =
-                    data.session;
-
-                isAdmin = true;
-
-                closeModal(
-                    "adminLoginModal"
-                );
-
-                adminLoginForm.reset();
-
-                setStatus(
-                    loginMessage,
-                    "",
-                    false
-                );
-
-                openModal(
-                    "dashboardModal"
-                );
-
-                await refreshDashboard();
-
-            } catch (err) {
-
-                console.error(
-                    "admin login failed:",
-                    err
-                );
-
-                setStatus(
-                    loginMessage,
-                    "Invalid admin details. Please try again.",
-                    true
-                );
-
-            }
-
-        }
-    );
-
-}
-
-async function ensureAdminSession() {
-
-    const {
-        data,
-        error
-    } = await sb.auth.getSession();
-
-    if (
-        error ||
-        !data.session ||
-        data.session.user.id !== ADMIN_UID
-    ) {
-
-        isAdmin = false;
-
-        currentSession = null;
-
-        return false;
-
-    }
-
-    currentSession =
-        data.session;
-
-    isAdmin = true;
-
-    return true;
-
-}
-
-async function requireAdmin() {
-
-    const ok =
-        await ensureAdminSession();
-
-    if (!ok) {
-
-        closeModal(
-            "dashboardModal"
-        );
-
-        isAdmin = false;
-
-        alert(
-            "Your admin session has expired. Please log in again."
-        );
-
-        openModal(
-            "adminLoginModal"
-        );
-
-    }
-
-    return ok;
-
-}
-
-const logoutButton =
-    qs("logoutButton");
-
-if (logoutButton) {
-
-    logoutButton.addEventListener(
-        "click",
-        async () => {
-
-            try {
-
-                await sb.auth.signOut();
-
-            } catch (err) {
-
-                console.error(
-                    "logout failed:",
-                    err
-                );
-
-            }
-
-            isAdmin = false;
-
-            currentSession = null;
-
-            closeModal(
-                "dashboardModal"
-            );
-
-        }
-    );
-
-}
-
-(async function restoreAdminSession() {
-
-    await ensureAdminSession();
-
-})();
-
-
-/* =========================================================
-   12. ADMIN DASHBOARD - TABS
-========================================================= */
-
-const dashboardTabs =
-    document.querySelectorAll(
-        ".dashboard-tab"
-    );
-
-const dashboardPanels =
-    document.querySelectorAll(
-        ".admin-panel"
-    );
-
-function showDashboardPanel(panelName) {
-
-    dashboardPanels.forEach(
-        (p) =>
-            p.classList.remove(
-                "active-panel"
-            )
-    );
-
-    dashboardTabs.forEach(
-        (t) =>
-            t.classList.remove(
-                "active"
-            )
-    );
-
-    const panel =
-        document.querySelector(
-            `.admin-panel[data-panel="${panelName}"]`
-        );
-
-    const tab =
-        document.querySelector(
-            `.dashboard-tab[data-panel="${panelName}"]`
-        );
-
-    if (panel) {
-
-        panel.classList.add(
-            "active-panel"
-        );
-
-    }
-
-    if (tab) {
-
-        tab.classList.add(
-            "active"
-        );
-
-    }
-
-}
-
-dashboardTabs.forEach(
-    (tab) => {
-
-        tab.addEventListener(
-            "click",
-            () =>
-                showDashboardPanel(
-                    tab.dataset.panel
-                )
-        );
-
-    }
-);
-
-async function refreshDashboard() {
-
-    if (!(await requireAdmin())) return;
-
-    showDashboardPanel(
-        "overview"
-    );
-
-    await Promise.all([
-
-        loadDashboardStats(),
-
-        renderAdminContents(),
-
-        renderAdminServices(),
-
-        renderAdminFeatures(),
-
-        renderAdminMessages(),
-
-        loadHomeEditorValues(),
-
-        loadAboutEditorValues(),
-
-        loadFooterEditorValues()
-
-    ]);
-
-}
-
-
-/* =========================================================
-   13. DASHBOARD - STATS
-========================================================= */
-
-async function loadDashboardStats() {
-
-    try {
-
-        const [
-            sv,
-            ft,
-            ct,
-            pb,
-            ms
-        ] = await Promise.all([
-
-            sb
-                .from("services")
-                .select("id", {
-                    count: "exact",
-                    head: true
-                }),
-
-            sb
-                .from("features")
-                .select("id", {
-                    count: "exact",
-                    head: true
-                }),
-
-            sb
-                .from("contents")
-                .select("id", {
-                    count: "exact",
-                    head: true
-                }),
-
-            sb
-                .from("contents")
-                .select("id", {
-                    count: "exact",
-                    head: true
-                })
-                .eq(
-                    "status",
-                    "published"
-                ),
-
-            sb
-                .from("messages")
-                .select("id", {
-                    count: "exact",
-                    head: true
-                })
-
-        ]);
-
-        setText(
-            "statServices",
-            sv.count ?? 0
-        );
-
-        setText(
-            "statFeatures",
-            ft.count ?? 0
-        );
-
-        setText(
-            "statContents",
-            ct.count ?? 0
-        );
-
-        setText(
-            "statPublished",
-            pb.count ?? 0
-        );
-
-        setText(
-            "statMessages",
-            ms.count ?? 0
-        );
-
-    } catch (err) {
-
-        console.error(
-            "loadDashboardStats failed:",
-            err
-        );
-
-    }
-
-}
-
-
-/* =========================================================
-   14. DASHBOARD - NEWS / BLOG
-========================================================= */
-
-const contentTitle =
-    qs("contentTitle");
-
-const contentCategory =
-    qs("contentCategory");
-
-const contentText =
-    qs("contentText");
-
-const contentFile =
-    qs("contentFile");
-
-const contentFeatured =
-    qs("contentFeatured");
-
-const contentStatusSelect =
-    qs("contentStatusSelect");
-
-const saveContentButton =
-    qs("saveContentButton");
-
-const contentStatus =
-    qs("contentStatus");
-
-let editingContentId = null;
-
-async function uploadFile(file, folder) {
-
-    const ext =
-        file.name
-            .split(".")
-            .pop();
-
-    const fileName =
-        `${folder}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
-
-    const {
-        error
-    } = await sb
-        .storage
-        .from(STORAGE_BUCKET)
-        .upload(
-            fileName,
-            file,
-            {
-                cacheControl: "3600",
-                upsert: false
-            }
-        );
-
-    if (error) throw error;
-
-    const {
-        data
-    } = sb
-        .storage
-        .from(STORAGE_BUCKET)
-        .getPublicUrl(
-            fileName
-        );
-
-    return data.publicUrl;
-
-}
-
-if (saveContentButton) {
-
-    saveContentButton.addEventListener(
-        "click",
-        async () => {
-
-            if (!(await requireAdmin())) return;
-
-            const title =
-                contentTitle.value.trim();
-
-            const category =
-                contentCategory.value;
-
-            const text =
-                contentText.value.trim();
-
-            const status =
-                contentStatusSelect
-                    ? contentStatusSelect.value
-                    : "published";
-
-            const featured =
-                contentFeatured
-                    ? contentFeatured.checked
-                    : false;
-
-            if (!title || !text) {
-
-                alert(
-                    "Please enter title and content."
-                );
-
-                return;
-
-            }
-
-            setStatus(
-                contentStatus,
-                "Saving...",
-                false
-            );
-
-            saveContentButton.disabled =
-                true;
-
-            try {
-
-                let fileUrl = null;
-
-                const file =
-                    contentFile &&
-                    contentFile.files[0];
-
-                if (file) {
-
-                    setStatus(
-                        contentStatus,
-                        "Uploading file...",
-                        false
-                    );
-
-                    fileUrl =
-                        await uploadFile(
-                            file,
-                            "content"
-                        );
-
-                }
-
-                const payload = {
-
-                    title,
-
-                    category,
-
-                    content: text,
-
-                    description:
-                        text.slice(0, 160),
-
-                    status,
-
-                    featured,
-
-                    updated_at:
-                        new Date().toISOString()
-
-                };
-
-                if (fileUrl) {
-
-                    payload.file_url =
-                        fileUrl;
-
-                    if (
-                        category ===
-                        "video"
-                    ) {
-
-                        payload.media_url =
-                            fileUrl;
-
-                    } else {
-
-                        payload.thumbnail_url =
-                            fileUrl;
-
-                    }
-
-                }
-
-                if (
-                    status ===
-                    "published"
-                ) {
-
-                    payload.published_at =
-                        new Date().toISOString();
-
-                }
-
-                if (editingContentId) {
-
-                    const {
-                        error
-                    } = await sb
-                        .from("contents")
-                        .update(payload)
-                        .eq(
-                            "id",
-                            editingContentId
-                        );
-
-                    if (error) throw error;
-
-                } else {
-
-                    payload.slug =
-                        slugify(title);
-
-                    const {
-                        error
-                    } = await sb
-                        .from("contents")
-                        .insert([
-                            payload
-                        ]);
-
-                    if (error) throw error;
-
-                }
-
-                setStatus(
-                    contentStatus,
-                    "Content saved successfully.",
-                    false
-                );
-
-                resetContentForm();
-
-                await Promise.all([
-
-                    renderAdminContents(),
-
-                    loadPublicContents(),
-
-                    loadDashboardStats()
-
-                ]);
-
-            } catch (err) {
-
-                console.error(
-                    "save content failed:",
-                    err
-                );
-
-                setStatus(
-                    contentStatus,
-                    "Could not save content. Please try again.",
-                    true
-                );
-
-            } finally {
-
-                saveContentButton.disabled =
-                    false;
-
-            }
-
-        }
-    );
-
-}
-
-function resetContentForm() {
-
-    editingContentId = null;
-
-    if (contentTitle) {
-        contentTitle.value = "";
-    }
-
-    if (contentText) {
-        contentText.value = "";
-    }
-
-    if (contentFile) {
-        contentFile.value = "";
-    }
-
-    if (contentFeatured) {
-        contentFeatured.checked = false;
-    }
-
-    if (saveContentButton) {
-        saveContentButton.textContent =
-            "Publish Content";
-    }
-
-}
-
-[
-    "addNewsButton",
-    "addTipButton",
-    "addVideoButton",
-    "addPdfButton"
-].forEach((id) => {
-
-    const map = {
-
-        addNewsButton: "news",
-
-        addTipButton: "tip",
-
-        addVideoButton: "video",
-
-        addPdfButton: "pdf"
-
-    };
-
-    const btn = qs(id);
-
-    if (btn) {
-
-        btn.addEventListener(
-            "click",
-            () => {
-
-                resetContentForm();
-
-                if (contentCategory) {
-
-                    contentCategory.value =
-                        map[id];
-
-                }
-
-                if (contentTitle) {
-
-                    contentTitle.focus();
-
-                }
-
-            }
-        );
-
-    }
-
-});
-
-async function renderAdminContents() {
-
-    const list =
-        qs("adminContentList");
-
-    if (!list) return;
-
-    try {
-
-        const {
-            data,
-            error
-        } = await sb
-            .from("contents")
-            .select("*")
-            .order(
-                "created_at",
-                {
-                    ascending: false
-                }
-            );
-
-        if (error) throw error;
-
-        if (
-            !data ||
-            data.length === 0
-        ) {
-
-            list.innerHTML =
-                `<p class="empty-content">
-                    No content has been added yet.
-                </p>`;
-
-            return;
-
-        }
-
-        list.innerHTML =
-            data
-                .map((item) => `
-
-                    <div class="admin-content-item">
-
-                        <div>
-
-                            <h4>
-                                ${escapeHtml(item.title)}
-                            </h4>
-
-                            <p>
-                                ${escapeHtml(item.category)}
-                                —
-                                ${escapeHtml(item.status)}
-                                ${
-                                    item.featured
-                                        ? " — Featured"
-                                        : ""
-                                }
-                            </p>
-
-                        </div>
-
-                        <div>
-
-                            <button
-                                class="view-button edit-content-button"
-                                data-id="${item.id}">
-                                Edit
-                            </button>
-
-                            <button
-                                class="view-button toggle-status-button"
-                                data-id="${item.id}"
-                                data-status="${item.status}">
-                                ${
-                                    item.status ===
-                                    "published"
-                                        ? "Unpublish"
-                                        : "Publish"
-                                }
-                            </button>
-
-                            <button
-                                class="delete-content-button"
-                                data-id="${item.id}">
-                                Delete
-                            </button>
-
-                        </div>
-
-                    </div>
-
-                `)
-                .join("");
-
-        list
-            .querySelectorAll(
-                ".edit-content-button"
-            )
-            .forEach(
-                (b) =>
-                    b.addEventListener(
-                        "click",
-                        () =>
-                            editContent(
-                                Number(
-                                    b.dataset.id
-                                ),
-                                data
-                            )
-                    )
-            );
-
-        list
-            .querySelectorAll(
-                ".toggle-status-button"
-            )
-            .forEach(
-                (b) =>
-                    b.addEventListener(
-                        "click",
-                        () =>
-                            toggleContentStatus(
-                                Number(
-                                    b.dataset.id
-                                ),
-                                b.dataset.status
-                            )
-                    )
-            );
-
-        list
-            .querySelectorAll(
-                ".delete-content-button"
-            )
-            .forEach(
-                (b) =>
-                    b.addEventListener(
-                        "click",
-                        () =>
-                            deleteContent(
-                                Number(
-                                    b.dataset.id
-                                )
-                            )
-                    )
-            );
-
-    } catch (err) {
-
-        console.error(
-            "renderAdminContents failed:",
-            err
-        );
-
-        list.innerHTML =
-            `<p class="empty-content">
-                Could not load content.
-            </p>`;
-
-    }
-
-}
-
-function editContent(id, data) {
-
-    const item =
-        data.find(
-            (c) => c.id === id
-        );
-
-    if (!item) return;
-
-    editingContentId = id;
-
-    contentTitle.value =
-        item.title || "";
-
-    contentCategory.value =
-        item.category || "news";
-
-    contentText.value =
-        item.content || "";
-
-    if (contentFeatured) {
-
-        contentFeatured.checked =
-            !!item.featured;
-
-    }
-
-    if (contentStatusSelect) {
-
-        contentStatusSelect.value =
-            item.status || "published";
-
-    }
-
-    if (saveContentButton) {
-
-        saveContentButton.textContent =
-            "Update Content";
-
-    }
-
-    contentTitle.scrollIntoView({
-        behavior: "smooth",
-        block: "center"
-    });
-
-}
-
-async function toggleContentStatus(
-    id,
-    currentStatus
-) {
-
-    if (!(await requireAdmin())) return;
-
-    const newStatus =
-        currentStatus ===
-        "published"
-            ? "draft"
-            : "published";
-
-    const payload = {
-
-        status: newStatus,
-
-        updated_at:
-            new Date().toISOString()
-
-    };
-
-    if (
-        newStatus ===
-        "published"
-    ) {
-
-        payload.published_at =
-            new Date().toISOString();
-
-    }
-
-    try {
-
-        const {
-            error
-        } = await sb
-            .from("contents")
-            .update(payload)
-            .eq("id", id);
-
-        if (error) throw error;
-
-        await Promise.all([
-
-            renderAdminContents(),
-
-            loadPublicContents(),
-
-            loadDashboardStats()
-
-        ]);
-
-    } catch (err) {
-
-        console.error(
-            "toggleContentStatus failed:",
-            err
-        );
-
-        alert(
-            "Could not update the content status."
-        );
-
-    }
-
-}
-
-async function deleteContent(id) {
-
-    if (
-        !confirm(
-            "Are you sure you want to delete this item?"
-        )
-    ) return;
-
-    if (!(await requireAdmin())) return;
-
-    try {
-
-        const {
-            error
-        } = await sb
-            .from("contents")
-            .delete()
-            .eq("id", id);
-
-        if (error) throw error;
-
-        await Promise.all([
-
-            renderAdminContents(),
-
-            loadPublicContents(),
-
-            loadDashboardStats()
-
-        ]);
-
-    } catch (err) {
-
-        console.error(
-            "deleteContent failed:",
-            err
-        );
-
-        alert(
-            "Could not delete this item."
-        );
-
-    }
-
-}
-
-
-/* =========================================================
-   15-16. SERVICES + FEATURES CRUD
-========================================================= */
-
-function setupCrud(cfg) {
-
-    const f = {};
-
-    [
-        "Title",
-        "Description",
-        "FullDescription",
-        "Order",
-        "Status"
-    ].forEach(
-        (n) =>
-            (f[n] =
-                qs(
-                    cfg.prefix +
-                    "Editor" +
-                    n
-                ))
-    );
-
-    const saveBtn =
-        qs(
-            "save" +
-            cfg.name +
-            "Button"
-        );
-
-    const cancelBtn =
-        qs(
-            "cancel" +
-            cfg.name +
-            "EditButton"
-        );
-
-    const msg =
-        qs(
-            cfg.prefix +
-            "EditorStatusMsg"
-        );
-
-    let editingId = null;
-
-    function reset() {
-
-        editingId = null;
-
-        if (f.Title)
-            f.Title.value = "";
-
-        if (f.Description)
-            f.Description.value = "";
-
-        if (f.FullDescription)
-            f.FullDescription.value = "";
-
-        if (f.Order)
-            f.Order.value = "0";
-
-        if (f.Status)
-            f.Status.value = "published";
-
-        if (saveBtn)
-            saveBtn.textContent =
-                "Add " + cfg.name;
-
-    }
-
-    async function render() {
-
-        const list =
-            qs(cfg.listId);
-
-        if (!list) return;
-
-        try {
-
-            const {
-                data,
-                error
-            } = await sb
-                .from(cfg.table)
-                .select("*")
-                .order(
-                    "display_order",
-                    {
-                        ascending: true
-                    }
-                );
-
-            if (error) throw error;
-
-            if (
-                !data ||
-                data.length === 0
-            ) {
-
-                list.innerHTML =
-                    `<p class="empty-content">
-                        No ${cfg.table} in the database yet.
-                        Add one below.
-                    </p>`;
-
-                return;
-
-            }
-
-            list.innerHTML =
-                data
-                    .map((item) => `
-
-                        <div class="admin-content-item">
-
-                            <div>
-
-                                <h4>
-                                    ${escapeHtml(item.title)}
-                                </h4>
-
-                                <p>
-                                    Order
-                                    ${item.display_order}
-                                    —
-                                    ${escapeHtml(item.status)}
-                                </p>
-
-                            </div>
-
-                            <div>
-
-                                <button
-                                    class="view-button crud-edit"
-                                    data-id="${item.id}">
-                                    Edit
-                                </button>
-
-                                <button
-                                    class="delete-content-button crud-delete"
-                                    data-id="${item.id}">
-                                    Delete
-                                </button>
-
-                            </div>
-
-                        </div>
-
-                    `)
-                    .join("");
-
-            list
-                .querySelectorAll(".crud-edit")
-                .forEach(
-                    (b) =>
-                        b.addEventListener(
-                            "click",
-                            () => {
-
-                                const item =
-                                    data.find(
-                                        (s) =>
-                                            s.id ===
-                                            Number(
-                                                b.dataset.id
-                                            )
-                                    );
-
-                                if (!item) return;
-
-                                editingId =
-                                    item.id;
-
-                                f.Title.value =
-                                    item.title ||
-                                    "";
-
-                                f.Description.value =
-                                    item.description ||
-                                    "";
-
-                                f.FullDescription.value =
-                                    item.full_description ||
-                                    "";
-
-                                f.Order.value =
-                                    item.display_order ||
-                                    0;
-
-                                f.Status.value =
-                                    item.status ||
-                                    "published";
-
-                                saveBtn.textContent =
-                                    "Update " +
-                                    cfg.name;
-
-                                f.Title.scrollIntoView({
-                                    behavior:
-                                        "smooth",
-                                    block:
-                                        "center"
-                                });
-
-                            }
-                        )
-                );
-
-            list
-                .querySelectorAll(".crud-delete")
-                .forEach(
-                    (b) =>
-                        b.addEventListener(
-                            "click",
-                            async () => {
-
-                                if (
-                                    !confirm(
-                                        "Are you sure you want to delete this " +
-                                        cfg.label +
-                                        "?"
-                                    )
-                                ) return;
-
-                                if (
-                                    !(await requireAdmin())
-                                ) return;
-
-                                try {
-
-                                    const {
-                                        error
-                                    } = await sb
-                                        .from(
-                                            cfg.table
-                                        )
-                                        .delete()
-                                        .eq(
-                                            "id",
-                                            Number(
-                                                b.dataset.id
-                                            )
-                                        );
-
-                                    if (error)
-                                        throw error;
-
-                                    await Promise.all([
-
-                                        render(),
-
-                                        cfg.reloadPublic(),
-
-                                        loadDashboardStats()
-
-                                    ]);
-
-                                } catch (err) {
-
-                                    console.error(
-                                        "delete " +
-                                        cfg.label +
-                                        " failed:",
-                                        err
-                                    );
-
-                                    alert(
-                                        "Could not delete this " +
-                                        cfg.label +
-                                        "."
-                                    );
-
-                                }
-
-                            }
-                        )
-                );
-
-        } catch (err) {
-
-            console.error(
-                "render " +
-                cfg.table +
-                " failed:",
-                err
-            );
-
-            list.innerHTML =
-                `<p class="empty-content">
-                    Could not load ${cfg.table}.
-                </p>`;
-
-        }
-
-    }
-
-    if (saveBtn) {
-
-        saveBtn.addEventListener(
-            "click",
-            async () => {
-
-                if (
-                    !(await requireAdmin())
-                ) return;
-
-                const title =
-                    f.Title.value.trim();
-
-                const description =
-                    f.Description.value.trim();
-
-                if (
-                    !title ||
-                    !description
-                ) {
-
-                    alert(
-                        "Please enter a title and short description."
-                    );
-
-                    return;
-
-                }
-
-                const payload = {
-
-                    title,
-
-                    description,
-
-                    full_description:
-                        f.FullDescription.value.trim(),
-
-                    display_order:
-                        Number(
-                            f.Order.value
-                        ) || 0,
-
-                    status:
-                        f.Status.value,
-
-                    updated_at:
-                        new Date().toISOString()
-
-                };
-
-                setStatus(
-                    msg,
-                    "Saving...",
-                    false
-                );
-
-                try {
-
-                    if (editingId) {
-
-                        const {
-                            error
-                        } = await sb
-                            .from(cfg.table)
-                            .update(payload)
-                            .eq(
-                                "id",
-                                editingId
-                            );
-
-                        if (error)
-                            throw error;
-
-                    } else {
-
-                        const {
-                            error
-                        } = await sb
-                            .from(cfg.table)
-                            .insert([
-                                payload
-                            ]);
-
-                        if (error)
-                            throw error;
-
-                    }
-
-                    setStatus(
-                        msg,
-                        cfg.name +
-                        " saved.",
-                        false
-                    );
-
-                    reset();
-
-                    await Promise.all([
-
-                        render(),
-
-                        cfg.reloadPublic(),
-
-                        loadDashboardStats()
-
-                    ]);
-
-                } catch (err) {
-
-                    console.error(
-                        "save " +
-                        cfg.label +
-                        " failed:",
-                        err
-                    );
-
-                    setStatus(
-                        msg,
-                        "Could not save the " +
-                        cfg.label +
-                        ".",
-                        true
-                    );
-
-                }
-
-            }
-        );
-
-    }
-
-    if (cancelBtn) {
-
-        cancelBtn.addEventListener(
-            "click",
-            reset
-        );
-
-    }
-
-    return render;
-
-}
-
-const renderAdminServices =
-    setupCrud({
-
-        name: "Service",
-
-        label: "service",
-
-        table: "services",
-
-        prefix: "service",
-
-        listId:
-            "adminServiceList",
-
-        reloadPublic:
-            loadServices
-
-    });
-
-const renderAdminFeatures =
-    setupCrud({
-
-        name: "Feature",
-
-        label: "feature",
-
-        table: "features",
-
-        prefix: "feature",
-
-        listId:
-            "adminFeatureList",
-
-        reloadPublic:
-            loadFeatures
-
-    });
-
-
-/* =========================================================
-   17. DASHBOARD - MESSAGES
-========================================================= */
-
-async function renderAdminMessages() {
-
-    const list =
-        qs("adminMessagesList");
-
-    if (!list) return;
-
-    try {
-
-        const {
-            data,
-            error
-        } = await sb
-            .from("messages")
-            .select("*")
-            .order(
-                "created_at",
-                {
-                    ascending: false
-                }
-            );
-
-        if (error) throw error;
-
-        if (
-            !data ||
-            data.length === 0
-        ) {
-
-            list.innerHTML =
-                `<p class="empty-content">
-                    No messages yet.
-                </p>`;
-
-            return;
-
-        }
-
-        list.innerHTML =
-            data
-                .map((msg) => `
-
-                    <div class="admin-message-item">
-
-                        <h4>
-                            ${escapeHtml(
-                                msg.subject ||
-                                "No subject"
-                            )}
-                        </h4>
-
-                        <p>
-                            <strong>From:</strong>
-                            ${escapeHtml(msg.name)}
-                            (${escapeHtml(msg.email)})
-                        </p>
-
-                        <p>
-                            ${escapeHtml(msg.message)}
-                        </p>
-
-                        <small>
-                            ${formatDate(msg.created_at)}
-                            —
-                            ${escapeHtml(msg.status)}
-                        </small>
-
-                        <div>
-
-                            <button
-                                class="view-button toggle-message-status-button"
-                                data-id="${msg.id}"
-                                data-status="${msg.status}">
-
-                                Mark as
-                                ${
-                                    msg.status ===
-                                    "unread"
-                                        ? "read"
-                                        : "unread"
-                                }
-
-                            </button>
-
-                            <button
-                                class="delete-message-button"
-                                data-id="${msg.id}">
-                                Delete
-                            </button>
-
-                        </div>
-
-                    </div>
-
-                `)
-                .join("");
-
-        list
-            .querySelectorAll(
-                ".toggle-message-status-button"
-            )
-            .forEach(
-                (btn) =>
-                    btn.addEventListener(
-                        "click",
-                        async () => {
-
-                            if (
-                                !(await requireAdmin())
-                            ) return;
-
-                            const newStatus =
-                                btn.dataset.status ===
-                                "unread"
-                                    ? "read"
-                                    : "unread";
-
-                            try {
-
-                                const {
-                                    error
-                                } = await sb
-                                    .from("messages")
-                                    .update({
-                                        status:
-                                            newStatus
-                                    })
-                                    .eq(
-                                        "id",
-                                        Number(
-                                            btn.dataset.id
-                                        )
-                                    );
-
-                                if (error)
-                                    throw error;
-
-                                await renderAdminMessages();
-
-                            } catch (err) {
-
-                                console.error(
-                                    "toggle message status failed:",
-                                    err
-                                );
-
-                            }
-
-                        }
-                    )
-            );
-
-        list
-            .querySelectorAll(
-                ".delete-message-button"
-            )
-            .forEach(
-                (btn) =>
-                    btn.addEventListener(
-                        "click",
-                        async () => {
-
-                            if (
-                                !confirm(
-                                    "Are you sure you want to delete this message?"
-                                )
-                            ) return;
-
-                            if (
-                                !(await requireAdmin())
-                            ) return;
-
-                            try {
-
-                                const {
-                                    error
-                                } = await sb
-                                    .from("messages")
-                                    .delete()
-                                    .eq(
-                                        "id",
-                                        Number(
-                                            btn.dataset.id
-                                        )
-                                    );
-
-                                if (error)
-                                    throw error;
-
-                                await Promise.all([
-
-                                    renderAdminMessages(),
-
-                                    loadDashboardStats()
-
-                                ]);
-
-                            } catch (err) {
-
-                                console.error(
-                                    "delete message failed:",
-                                    err
-                                );
-
-                            }
-
-                        }
-                    )
-            );
-
-    } catch (err) {
-
-        console.error(
-            "renderAdminMessages failed:",
-            err
-        );
-
-        list.innerHTML =
-            `<p class="empty-content">
-                Could not load messages.
-            </p>`;
-
-    }
-
-}
-
-const refreshMessagesButton =
-    qs("refreshMessagesButton");
-
-if (refreshMessagesButton) {
-
-    refreshMessagesButton.addEventListener(
-        "click",
-        renderAdminMessages
-    );
-
-}
-
-
-/* =========================================================
-   18. DASHBOARD - HOME PAGE EDITOR
-========================================================= */
-
-const homeEditorFields = {
-
-    hero_title:
-        "homeHeroTitle",
-
-    hero_subtitle:
-        "homeHeroSubtitle",
-
-    hero_description:
-        "homeHeroDescription",
-
-    hero_button_text:
-        "homeHeroButtonText",
-
-    hero_button_link:
-        "homeHeroButtonLink",
-
-    welcome_title:
-        "homeWelcomeTitle",
-
-    welcome_text:
-        "homeWelcomeText",
-
-    cta_title:
-        "homeCtaTitle",
-
-    cta_text:
-        "homeCtaText"
-
-};
-
-async function loadHomeEditorValues() {
-
-    try {
-
-        const {
-            data,
-            error
-        } = await sb
-            .from("site_settings")
-            .select("*");
-
-        if (error) throw error;
-
-        (data || []).forEach(
-            (row) => {
-
-                const fieldId =
-                    homeEditorFields[
-                        row.setting_key
-                    ];
-
-                const el =
-                    fieldId &&
-                    qs(fieldId);
-
-                if (el) {
-
-                    el.value =
-                        row.setting_value ||
-                        "";
-
-                }
-
-            }
-        );
-
-    } catch (err) {
-
-        console.error(
-            "loadHomeEditorValues failed:",
-            err
-        );
-
-    }
-
-}
-
-const saveHomeButton =
-    qs("saveHomeButton");
-
-const homeEditorStatus =
-    qs("homeEditorStatus");
-
-if (saveHomeButton) {
-
-    saveHomeButton.addEventListener(
-        "click",
-        async () => {
-
-            if (
-                !(await requireAdmin())
-            ) return;
-
-            setStatus(
-                homeEditorStatus,
-                "Saving...",
-                false
-            );
-
-            try {
-
-                const rows =
-                    Object.entries(
-                        homeEditorFields
-                    )
-                    .map(
-                        ([key, fieldId]) => ({
-
-                            setting_key:
-                                key,
-
-                            setting_value:
-                                qs(fieldId)
-                                    ? qs(fieldId)
-                                        .value
-                                    : "",
-
-                            updated_at:
-                                new Date()
-                                    .toISOString()
-
-                        })
-                    );
-
-                const {
-                    error
-                } = await sb
-                    .from("site_settings")
-                    .upsert(
-                        rows,
-                        {
-                            onConflict:
-                                "setting_key"
-                        }
-                    );
-
-                if (error) throw error;
-
-                setStatus(
-                    homeEditorStatus,
-                    "Home page updated.",
-                    false
-                );
-
-                await loadSiteSettingsPublic();
-
-            } catch (err) {
-
-                console.error(
-                    "save home settings failed:",
-                    err
-                );
-
-                setStatus(
-                    homeEditorStatus,
-                    "Could not save changes.",
-                    true
-                );
-
-            }
-
-        }
-    );
-
-}
-
-
-/* =========================================================
-   19. DASHBOARD - ABOUT EDITOR
-========================================================= */
-
-async function loadAboutEditorValues() {
-
-    try {
-
-        const {
-            data,
-            error
-        } = await sb
-            .from("about_sections")
-            .select("*");
-
-        if (error) throw error;
-
-        const get = (k) =>
-            (data || []).find(
-                (s) =>
-                    s.section_key === k
-            );
-
-        const main =
-            get("main");
-
-        const mission =
-            get("mission");
-
-        const vision =
-            get("vision");
-
-        if (
-            main &&
-            qs("aboutTitle")
-        ) {
-
-            qs("aboutTitle").value =
-                main.title || "";
-
-        }
-
-        if (
-            main &&
-            qs("aboutDescription")
-        ) {
-
-            qs("aboutDescription").value =
-                main.content || "";
-
-        }
-
-        if (
-            mission &&
-            qs("aboutMission")
-        ) {
-
-            qs("aboutMission").value =
-                mission.content || "";
-
-        }
-
-        if (
-            vision &&
-            qs("aboutVision")
-        ) {
-
-            qs("aboutVision").value =
-                vision.content || "";
-
-        }
-
-    } catch (err) {
-
-        console.error(
-            "loadAboutEditorValues failed:",
-            err
-        );
-
-    }
-
-}
-
-const saveAboutButton =
-    qs("saveAboutButton");
-
-const aboutEditorStatus =
-    qs("aboutEditorStatus");
-
-if (saveAboutButton) {
-
-    saveAboutButton.addEventListener(
-        "click",
-        async () => {
-
-            if (
-                !(await requireAdmin())
-            ) return;
-
-            setStatus(
-                aboutEditorStatus,
-                "Saving...",
-                false
-            );
-
-            try {
-
-                const now =
-                    new Date().toISOString();
-
-                const rows = [
-
-                    {
-                        section_key:
-                            "main",
-
-                        title:
-                            qs(
-                                "aboutTitle"
-                            )
-                            .value
-                            .trim(),
-
-                        content:
-                            qs(
-                                "aboutDescription"
-                            )
-                            .value
-                            .trim(),
-
-                        updated_at:
-                            now
-
-                    },
-
-                    {
-                        section_key:
-                            "mission",
-
-                        title:
-                            "Mission",
-
-                        content:
-                            qs(
-                                "aboutMission"
-                            )
-                            .value
-                            .trim(),
-
-                        updated_at:
-                            now
-
-                    },
-
-                    {
-                        section_key:
-                            "vision",
-
-                        title:
-                            "Vision",
-
-                        content:
-                            qs(
-                                "aboutVision"
-                            )
-                            .value
-                            .trim(),
-
-                        updated_at:
-                            now
-
-                    }
-
-                ];
-
-                const {
-                    error
-                } = await sb
-                    .from("about_sections")
-                    .upsert(
-                        rows,
-                        {
-                            onConflict:
-                                "section_key"
-                        }
-                    );
-
-                if (error) throw error;
-
-                setStatus(
-                    aboutEditorStatus,
-                    "About section updated.",
-                    false
-                );
-
-                await loadAboutPublic();
-
-            } catch (err) {
-
-                console.error(
-                    "save about failed:",
-                    err
-                );
-
-                setStatus(
-                    aboutEditorStatus,
-                    "Could not save changes.",
-                    true
-                );
-
-            }
-
-        }
-    );
-
-}
-
-
-/* =========================================================
-   20. DASHBOARD - FOOTER EDITOR
-========================================================= */
-
-async function loadFooterEditorValues() {
-
-    try {
-
-        const {
-            data,
-            error
-        } = await sb
-            .from("site_settings")
-            .select("*");
-
-        if (error) throw error;
-
-        const s = {};
-
-        (data || []).forEach(
-            (row) =>
-                (s[row.setting_key] =
-                    row.setting_value)
-        );
-
-        if (
-            qs("footerTextInput")
-        ) {
-
-            qs(
-                "footerTextInput"
-            ).value =
-                s.footer_text || "";
-
-        }
-
-        if (
-            qs("footerEmailInput")
-        ) {
-
-            qs(
-                "footerEmailInput"
-            ).value =
-                s.footer_email || "";
-
-        }
-
-        if (
-            qs("footerPhoneInput")
-        ) {
-
-            qs(
-                "footerPhoneInput"
-            ).value =
-                s.footer_phone || "";
-
-        }
-
-        if (
-            qs("footerAddressInput")
-        ) {
-
-            qs(
-                "footerAddressInput"
-            ).value =
-                s.footer_address || "";
-
-        }
-
-    } catch (err) {
-
-        console.error(
-            "loadFooterEditorValues failed:",
-            err
-        );
-
-    }
-
-}
-
-const saveFooterButton =
-    qs("saveFooterButton");
-
-const footerEditorStatus =
-    qs("footerEditorStatus");
-
-if (saveFooterButton) {
-
-    saveFooterButton.addEventListener(
-        "click",
-        async () => {
-
-            if (
-                !(await requireAdmin())
-            ) return;
-
-            setStatus(
-                footerEditorStatus,
-                "Saving...",
-                false
-            );
-
-            try {
-
-                const rows = [
-
-                    {
-                        setting_key:
-                            "footer_text",
-
-                        setting_value:
-                            qs(
-                                "footerTextInput"
-                            )
-                            .value
-                            .trim()
-                    },
-
-                    {
-                        setting_key:
-                            "footer_email",
-
-                        setting_value:
-                            qs(
-                                "footerEmailInput"
-                            )
-                            .value
-                            .trim()
-                    },
-
-                    {
-                        setting_key:
-                            "footer_phone",
-
-                        setting_value:
-                            qs(
-                                "footerPhoneInput"
-                            )
-                            .value
-                            .trim()
-                    },
-
-                    {
-                        setting_key:
-                            "footer_address",
-
-                        setting_value:
-                            qs(
-                                "footerAddressInput"
-                            )
-                            .value
-                            .trim()
-                    }
-
-                ]
-                .map(
-                    (r) => ({
-
-                        ...r,
-
-                        updated_at:
-                            new Date()
-                                .toISOString()
-
-                    })
-                );
-
-                const {
-                    error
-                } = await sb
-                    .from("site_settings")
-                    .upsert(
-                        rows,
-                        {
-                            onConflict:
-                                "setting_key"
-                        }
-                    );
-
-                if (error) throw error;
-
-                setStatus(
-                    footerEditorStatus,
-                    "Footer updated.",
-                    false
-                );
-
-                await loadSiteSettingsPublic();
-
-            } catch (err) {
-
-                console.error(
-                    "save footer failed:",
-                    err
-                );
-
-                setStatus(
-                    footerEditorStatus,
-                    "Could not save changes.",
-                    true
-                );
-
-            }
-
-        }
-    );
-
-}
-
-
-/* =========================================================
-   21. BACK TO TOP
-========================================================= */
+   34. BACK TO TOP
+   ========================================================= */
 
 const backTop =
     qs("backTop");
 
-if (backTop) {
 
-    window.addEventListener(
-        "scroll",
-        () =>
-            backTop.classList.toggle(
-                "show",
-                window.scrollY > 400
-            )
-    );
+function updateBackTop() {
+
+    if (!backTop) {
+        return;
+    }
+
+
+    if (window.scrollY > 400) {
+
+        backTop.classList.add("show");
+
+    } else {
+
+        backTop.classList.remove("show");
+
+    }
+
+}
+
+
+window.addEventListener(
+    "scroll",
+    updateBackTop
+);
+
+
+if (backTop) {
 
     backTop.addEventListener(
         "click",
-        () =>
+        function () {
+
             window.scrollTo({
+
                 top: 0,
+
                 behavior: "smooth"
-            })
+
+            });
+
+        }
     );
 
 }
 
 
 /* =========================================================
-   22. INIT
-========================================================= */
+   35. INITIALIZATION
+   ========================================================= */
 
-document.addEventListener(
-    "DOMContentLoaded",
-    () => {
+async function initializeDanielTech() {
 
-        showPage("home");
+    console.log(
+        "Daniel Tech V2.0.0 initializing..."
+    );
 
-        loadServices();
 
-        loadFeatures();
+    await initializeAuth();
 
-        loadPublicContents();
 
-        loadSiteSettingsPublic();
+    await Promise.allSettled([
 
-        loadAboutPublic();
+        loadServices(),
 
-        loadSocialLinksPublic();
+        loadContents(),
 
-    }
-);
+        loadComments(),
+
+        loadSiteSettingsPublic(),
+
+        loadAboutPublic(),
+
+        loadSocialLinksPublic()
+
+    ]);
+
+
+    updateBackTop();
+
+
+    console.log(
+        "Daniel Tech V2.0.0 initialized."
+    );
+
+}
+
+
+initializeDanielTech();
 
 
 /* =========================================================
-   24. VERSION + SETTINGS PAGE
-========================================================= */
+   36. VERSION INFORMATION
+   ========================================================= */
 
 window.DANIEL_TECH_VERSION =
     Object.freeze({
@@ -3876,1205 +3675,11 @@ window.DANIEL_TECH_VERSION =
 
         released: "2026-10-02",
 
-        developer:
-            "Daniel Shululu"
+        developer: "Daniel Shululu"
 
     });
 
-(function () {
 
-    "use strict";
-
-    var V =
-        window.DANIEL_TECH_VERSION ||
-        {};
-
-    var version =
-        typeof V.version === "string" &&
-        /^\d+\.\d+\.\d+$/.test(
-            V.version
-        )
-            ? V.version
-            : "";
-
-    var released =
-        typeof V.released === "string"
-            ? V.released
-            : "";
-
-    var developer =
-        V.developer ||
-        "Daniel Shululu";
-
-    var T = {
-
-        en: {
-
-            title:
-                "Settings",
-
-            sub:
-                "Website preferences and information.",
-
-            general:
-                "General",
-
-            name:
-                "Website name",
-
-            ver:
-                "Website version",
-
-            dev:
-                "Developer",
-
-            type:
-                "Website type",
-
-            typeV:
-                "Technology & Digital Solutions",
-
-            status:
-                "Website status",
-
-            online:
-                "Online",
-
-            lang:
-                "Current language",
-
-            langName:
-                "English",
-
-            theme:
-                "Current theme",
-
-            light:
-                "Light Mode",
-
-            dark:
-                "Dark Mode",
-
-            updated:
-                "Last updated",
-
-            language:
-                "Language",
-
-            appearance:
-                "Appearance",
-
-            appearanceNote:
-                "The theme changes automatically using your device time: Light Mode 06:00 to 17:59, Dark Mode 18:00 to 05:59.",
-
-            info:
-                "Website Information",
-
-            infoText:
-                "Daniel Tech is a technology platform for digital solutions, computer services, programming, AI tools and technology education.",
-
-            versionCard:
-                "Version",
-
-            history:
-                "Version History",
-
-            current:
-                "Current Version",
-
-            prev:
-                "Previous Release",
-
-            h2: [
-
-                "Automatic time-based Light and Dark theme",
-
-                "Services and Features managed from the database",
-
-                "Blog and News publishing with share links",
-
-                "Private admin dashboard for content, messages and site text",
-
-                "Central version system"
-
-            ],
-
-            h1: [
-
-                "Original Daniel Tech website",
-
-                "Technology articles",
-
-                "Computer tips",
-
-                "Phone tips",
-
-                "AI tools",
-
-                "Programming",
-
-                "Gaming"
-
-            ],
-
-            about:
-                "About Daniel Tech",
-
-            devSec:
-                "Developer Information",
-
-            project:
-                "Project",
-
-            role:
-                "Role",
-
-            roleV:
-                "Developer / Creator",
-
-            legal:
-                "Privacy",
-
-            privacy:
-                "Privacy Policy",
-
-            cookies:
-                "Cookie Policy",
-
-            terms:
-                "Terms & Conditions",
-
-            termsShort:
-                "Terms",
-
-            unavailable:
-                "Not available",
-
-            footTag:
-                "Technology • AI • Gaming • Programming • Digital Solutions",
-
-            by:
-                "Developed by",
-
-            pPriv: [
-
-                "When you use the contact form, your name, email, subject and message are stored so Daniel Tech can reply to you.",
-
-                "Comments you post on the Blog page are saved only in your own browser.",
-
-                "Daniel Tech does not sell your information."
-
-            ],
-
-            pCook: [
-
-                "Daniel Tech stores your language choice in your browser (local storage) and your comments on the Blog page.",
-
-                "The theme is calculated from your device time and is not stored.",
-
-                "Administrators who sign in also use a session managed by the authentication service."
-
-            ],
-
-            pTerms: [
-
-                "Content on Daniel Tech is provided for information and education.",
-
-                "Do not misuse the website, its forms or its services.",
-
-                "Daniel Tech may update content, services and these terms at any time."
-
-            ]
-
-        },
-
-        sw: {
-
-            title:
-                "Mipangilio",
-
-            sub:
-                "Mapendeleo na taarifa za tovuti.",
-
-            general:
-                "Taarifa za Jumla",
-
-            name:
-                "Jina la tovuti",
-
-            ver:
-                "Toleo la tovuti",
-
-            dev:
-                "Msanidi",
-
-            type:
-                "Aina ya tovuti",
-
-            typeV:
-                "Teknolojia na Suluhisho za Kidijitali",
-
-            status:
-                "Hali ya tovuti",
-
-            online:
-                "Inafanya kazi",
-
-            lang:
-                "Lugha ya sasa",
-
-            langName:
-                "Kiswahili",
-
-            theme:
-                "Mwonekano wa sasa",
-
-            light:
-                "Mwonekano wa Mchana (Light Mode)",
-
-            dark:
-                "Mwonekano wa Usiku (Dark Mode)",
-
-            updated:
-                "Imesasishwa mwisho",
-
-            language:
-                "Lugha",
-
-            appearance:
-                "Mwonekano",
-
-            appearanceNote:
-                "Mwonekano hubadilika wenyewe kulingana na saa ya kifaa chako: Light Mode saa 12:00 asubuhi hadi 11:59 jioni, Dark Mode saa 12:00 jioni hadi 11:59 usiku wa manane na alfajiri.",
-
-            info:
-                "Kuhusu Tovuti",
-
-            infoText:
-                "Daniel Tech ni jukwaa la teknolojia linalotoa suluhisho za kidijitali, huduma za kompyuta, programming, zana za AI na elimu ya teknolojia.",
-
-            versionCard:
-                "Toleo",
-
-            history:
-                "Historia ya Matoleo",
-
-            current:
-                "Toleo la Sasa",
-
-            prev:
-                "Toleo la Awali",
-
-            h2: [
-
-                "Mwonekano wa Light na Dark unaobadilika wenyewe kwa muda",
-
-                "Huduma na Vipengele vinavyodhibitiwa kutoka kwenye database",
-
-                "Machapisho ya Blog na Habari yenye viungo vya kushiriki",
-
-                "Dashboard binafsi ya admin kwa maudhui, ujumbe na maandishi ya tovuti",
-
-                "Mfumo mmoja wa toleo"
-
-            ],
-
-            h1: [
-
-                "Tovuti ya awali ya Daniel Tech",
-
-                "Makala za teknolojia",
-
-                "Vidokezo vya kompyuta",
-
-                "Vidokezo vya simu",
-
-                "Zana za AI",
-
-                "Programming",
-
-                "Michezo ya video (Gaming)"
-
-            ],
-
-            about:
-                "Kuhusu Daniel Tech",
-
-            devSec:
-                "Taarifa za Msanidi",
-
-            project:
-                "Mradi",
-
-            role:
-                "Nafasi",
-
-            roleV:
-                "Msanidi / Muundaji",
-
-            legal:
-                "Faragha",
-
-            privacy:
-                "Sera ya Faragha",
-
-            cookies:
-                "Sera ya Cookies",
-
-            terms:
-                "Masharti na Vigezo",
-
-            termsShort:
-                "Masharti",
-
-            unavailable:
-                "Haipatikani",
-
-            footTag:
-                "Teknolojia • AI • Gaming • Programming • Suluhisho za Kidijitali",
-
-            by:
-                "Imetengenezwa na",
-
-            pPriv: [
-
-                "Ukitumia fomu ya mawasiliano, jina, barua pepe, mada na ujumbe wako huhifadhiwa ili Daniel Tech ikujibu.",
-
-                "Maoni unayoandika kwenye ukurasa wa Blog huhifadhiwa kwenye kivinjari chako tu.",
-
-                "Daniel Tech haiuzi taarifa zako."
-
-            ],
-
-            pCook: [
-
-                "Daniel Tech huhifadhi lugha uliyochagua kwenye kivinjari chako (local storage) pamoja na maoni yako ya Blog.",
-
-                "Mwonekano huhesabiwa kutoka saa ya kifaa chako na haihifadhiwi.",
-
-                "Wasimamizi wanaoingia hutumia pia session inayodhibitiwa na huduma ya authentication."
-
-            ],
-
-            pTerms: [
-
-                "Maudhui ya Daniel Tech yametolewa kwa ajili ya taarifa na elimu.",
-
-                "Usitumie vibaya tovuti, fomu zake wala huduma zake.",
-
-                "Daniel Tech inaweza kubadilisha maudhui, huduma na masharti haya wakati wowote."
-
-            ]
-
-        }
-
-    };
-
-    var lang = "en";
-
-    try {
-
-        lang =
-            localStorage.getItem(
-                "danielTechLang"
-            ) === "sw"
-                ? "sw"
-                : "en";
-
-    } catch (e) {}
-
-    function t() {
-        return T[lang];
-    }
-
-    function isDark() {
-
-        return document.documentElement
-            .classList
-            .contains("dark-mode");
-
-    }
-
-    function verText() {
-
-        return version ||
-            t().unavailable;
-
-    }
-
-    function dateText() {
-
-        var d =
-            new Date(released);
-
-        return isNaN(
-            d.getTime()
-        )
-            ? t().unavailable
-            : d.toLocaleDateString(
-                lang === "sw"
-                    ? "sw-TZ"
-                    : "en-GB",
-                {
-                    year:
-                        "numeric",
-                    month:
-                        "long",
-                    day:
-                        "numeric"
-                }
-            );
-
-    }
-
-    function row(l, v) {
-
-        return (
-            '<div class="st-row">' +
-            "<span>" +
-            l +
-            "</span>" +
-            "<strong>" +
-            v +
-            "</strong>" +
-            "</div>"
-        );
-
-    }
-
-    function list(a) {
-
-        return (
-            "<ul>" +
-            a
-                .map(
-                    function (x) {
-                        return (
-                            "<li>" +
-                            x +
-                            "</li>"
-                        );
-                    }
-                )
-                .join("") +
-            "</ul>"
-        );
-
-    }
-
-    function legalLink(
-        p,
-        label
-    ) {
-
-        return (
-            '<a class="st-link" href="#" data-legal="' +
-            p +
-            '">' +
-            label +
-            "</a>"
-        );
-
-    }
-
-    var main =
-        document.querySelector(
-            "main"
-        );
-
-    if (!main) return;
-
-    function mkPage(id) {
-
-        var s =
-            document.getElementById(
-                id
-            );
-
-        if (!s) {
-
-            s =
-                document.createElement(
-                    "section"
-                );
-
-            s.id = id;
-
-            s.className =
-                "page";
-
-            main.appendChild(s);
-
-        }
-
-        return s;
-
-    }
-
-    var pSettings =
-        mkPage("settings");
-
-    var pPrivacy =
-        mkPage("privacy");
-
-    var pCookies =
-        mkPage("cookies");
-
-    var pTerms =
-        mkPage("terms");
-
-    function renderSettings() {
-
-        var x = t();
-
-        pSettings.innerHTML =
-
-            '<div class="st-wrap">' +
-
-            '<div class="st-head">' +
-
-            "<h2>" +
-            x.title +
-            "</h2>" +
-
-            "<p>" +
-            x.sub +
-            "</p>" +
-
-            "</div>" +
-
-            '<div class="st-grid">' +
-
-            '<div class="st-card">' +
-
-            "<h3>" +
-            x.general +
-            "</h3>" +
-
-            row(
-                x.name,
-                "Daniel Tech"
-            ) +
-
-            row(
-                x.ver,
-                verText()
-            ) +
-
-            row(
-                x.dev,
-                developer
-            ) +
-
-            row(
-                x.type,
-                x.typeV
-            ) +
-
-            row(
-                x.status,
-                x.online
-            ) +
-
-            row(
-                x.lang,
-                x.langName
-            ) +
-
-            row(
-                x.theme,
-                isDark()
-                    ? x.dark
-                    : x.light
-            ) +
-
-            row(
-                x.updated,
-                dateText()
-            ) +
-
-            "</div>" +
-
-            '<div class="st-card">' +
-
-            "<h3>" +
-            x.versionCard +
-            "</h3>" +
-
-            "<p>Daniel Tech</p>" +
-
-            '<div class="st-version">' +
-
-            (
-                version
-                    ? "Version " +
-                      version
-                    : x.unavailable
-            ) +
-
-            "</div>" +
-
-            "<p>" +
-            x.typeV +
-            "</p>" +
-
-            "<p>" +
-            x.by +
-            " " +
-            developer +
-            "</p>" +
-
-            "</div>" +
-
-            '<div class="st-card">' +
-
-            "<h3>" +
-            x.language +
-            "</h3>" +
-
-            '<div class="st-langs">' +
-
-            '<button type="button" class="st-btn" data-lang="sw" aria-pressed="' +
-            (lang === "sw") +
-            '">' +
-            "Kiswahili" +
-            "</button>" +
-
-            '<button type="button" class="st-btn" data-lang="en" aria-pressed="' +
-            (lang === "en") +
-            '">' +
-            "English" +
-            "</button>" +
-
-            "</div>" +
-
-            "</div>" +
-
-            '<div class="st-card">' +
-
-            "<h3>" +
-            x.appearance +
-            "</h3>" +
-
-            row(
-                x.theme,
-                isDark()
-                    ? x.dark
-                    : x.light
-            ) +
-
-            "<p>" +
-            x.appearanceNote +
-            "</p>" +
-
-            "</div>" +
-
-            '<div class="st-card wide">' +
-
-            "<h3>" +
-            x.info +
-            "</h3>" +
-
-            "<p>" +
-            x.infoText +
-            "</p>" +
-
-            "</div>" +
-
-            '<div class="st-card wide st-history">' +
-
-            "<h3>" +
-            x.history +
-            "</h3>" +
-
-            "<h4>Version 2.x" +
-
-            '<span class="st-tag">' +
-            x.current +
-            "</span>" +
-
-            "</h4>" +
-
-            list(x.h2) +
-
-            "<h4>Version 1.x" +
-
-            '<span class="st-tag">' +
-            x.prev +
-            "</span>" +
-
-            "</h4>" +
-
-            list(x.h1) +
-
-            "</div>" +
-
-            '<div class="st-card">' +
-
-            "<h3>" +
-            x.devSec +
-            "</h3>" +
-
-            row(
-                x.dev,
-                developer
-            ) +
-
-            row(
-                x.project,
-                "Daniel Tech"
-            ) +
-
-            row(
-                x.role,
-                x.roleV
-            ) +
-
-            "</div>" +
-
-            '<div class="st-card">' +
-
-            "<h3>" +
-            x.legal +
-            "</h3>" +
-
-            '<div class="st-links">' +
-
-            legalLink(
-                "privacy",
-                x.privacy
-            ) +
-
-            legalLink(
-                "cookies",
-                x.cookies
-            ) +
-
-            legalLink(
-                "terms",
-                x.terms
-            ) +
-
-            "</div>" +
-
-            "</div>" +
-
-            "</div>" +
-
-            "</div>";
-
-    }
-
-    function renderLegal(
-        el,
-        title,
-        paras
-    ) {
-
-        el.innerHTML =
-            '<div class="st-legal">' +
-            "<h2>" +
-            title +
-            "</h2>" +
-
-            paras
-                .map(
-                    function (p) {
-                        return (
-                            "<p>" +
-                            p +
-                            "</p>"
-                        );
-                    }
-                )
-                .join("") +
-
-            "</div>";
-
-    }
-
-    function renderFooter() {
-
-        var fb =
-            document.querySelector(
-                ".footer-bottom"
-            );
-
-        if (!fb) return;
-
-        var x = t();
-
-        var box =
-            document.getElementById(
-                "footerExtra"
-            );
-
-        if (!box) {
-
-            box =
-                document.createElement(
-                    "div"
-                );
-
-            box.id =
-                "footerExtra";
-
-            fb.appendChild(box);
-
-        }
-
-        box.innerHTML =
-
-            '<div class="footer-meta">' +
-            x.footTag +
-            "</div>" +
-
-            '<div class="footer-meta">' +
-
-            (
-                version
-                    ? "Daniel Tech v" +
-                      version +
-                      " • "
-                    : ""
-            ) +
-
-            x.by +
-            " " +
-            developer +
-
-            "</div>" +
-
-            '<div class="footer-legal">' +
-
-            '<a href="#" data-legal="privacy">' +
-            x.privacy +
-            "</a>" +
-
-            '<a href="#" data-legal="cookies">' +
-            x.cookies +
-            "</a>" +
-
-            '<a href="#" data-legal="terms">' +
-            x.termsShort +
-            "</a>" +
-
-            "</div>";
-
-    }
-
-    function renderAll() {
-
-        var x = t();
-
-        document.documentElement.lang =
-            lang;
-
-        renderSettings();
-
-        renderLegal(
-            pPrivacy,
-            x.privacy,
-            x.pPriv
-        );
-
-        renderLegal(
-            pCookies,
-            x.cookies,
-            x.pCook
-        );
-
-        renderLegal(
-            pTerms,
-            x.terms,
-            x.pTerms
-        );
-
-        renderFooter();
-
-    }
-
-    document.addEventListener(
-        "click",
-        function (e) {
-
-            var l =
-                e.target.closest(
-                    "[data-legal]"
-                );
-
-            if (l) {
-
-                e.preventDefault();
-
-                showPage(
-                    l.dataset.legal
-                );
-
-                return;
-
-            }
-
-            var a =
-                e.target.closest(
-                    "[data-about]"
-                );
-
-            if (a) {
-
-                openModal(
-                    "aboutModal"
-                );
-
-                return;
-
-            }
-
-            var b =
-                e.target.closest(
-                    "[data-lang]"
-                );
-
-            if (b) {
-
-                lang =
-                    b.dataset.lang ===
-                    "sw"
-                        ? "sw"
-                        : "en";
-
-                try {
-
-                    localStorage.setItem(
-                        "danielTechLang",
-                        lang
-                    );
-
-                } catch (err) {}
-
-                renderAll();
-
-            }
-
-        }
-    );
-
-    /*
-       Settings button opens Settings page.
-    */
-
-    var sbButton =
-        document.getElementById(
-            "settingsButton"
-        );
-
-    if (sbButton) {
-
-        sbButton.addEventListener(
-            "click",
-            function (e) {
-
-                e.stopImmediatePropagation();
-
-                showPage(
-                    "settings"
-                );
-
-            },
-            true
-        );
-
-    }
-
-    /*
-       Keep theme information correct.
-    */
-
-    new MutationObserver(
-        function () {
-
-            renderSettings();
-
-        }
-    ).observe(
-        document.documentElement,
-        {
-            attributes: true,
-            attributeFilter: [
-                "class"
-            ]
-        }
-    );
-
-
-    /* =====================================================
-       ADMIN SYSTEM INFORMATION
-    ===================================================== */
-
-    function addAdminPanel() {
-
-        var tabs =
-            document.querySelector(
-                ".dashboard-tabs"
-            );
-
-        var anyPanel =
-            document.querySelector(
-                ".admin-panel"
-            );
-
-        if (
-            !tabs ||
-            !anyPanel ||
-            document.querySelector(
-                '.admin-panel[data-panel="system"]'
-            )
-        ) return;
-
-        var tab =
-            document.createElement(
-                "button"
-            );
-
-        tab.type =
-            "button";
-
-        tab.className =
-            "dashboard-button dashboard-tab";
-
-        tab.dataset.panel =
-            "system";
-
-        tab.textContent =
-            "System Information";
-
-        tabs.appendChild(tab);
-
-        var host =
-            location.hostname;
-
-        var env =
-            (
-                host ===
-                "localhost" ||
-                host ===
-                "127.0.0.1"
-            )
-                ? "Development"
-                : "Production";
-
-        var p =
-            document.createElement(
-                "div"
-            );
-
-        p.className =
-            "admin-panel";
-
-        p.dataset.panel =
-            "system";
-
-        p.innerHTML =
-
-            '<div class="admin-editor">' +
-
-            "<h3>" +
-            "System Information" +
-            "</h3>" +
-
-            "<p>" +
-            "Current Version: " +
-            "<strong>" +
-            verText() +
-            "</strong>" +
-            "</p>" +
-
-            "<p>" +
-            "Environment: " +
-            "<strong>" +
-            env +
-            "</strong>" +
-            "</p>" +
-
-            "<p>" +
-            "Website Status: " +
-            "<strong>" +
-            "Online" +
-            "</strong>" +
-            "</p>" +
-
-            "<p>" +
-            "Release date (last deployment): " +
-            "<strong>" +
-            dateText() +
-            "</strong>" +
-            "</p>" +
-
-            "<p>" +
-            "Last Updated: " +
-            "<strong>" +
-            dateText() +
-            "</strong>" +
-            "</p>" +
-
-            "<p>" +
-            "The version is set in version.js and changes only with a new deployment." +
-            "</p>" +
-
-            "</div>";
-
-        anyPanel.parentNode.appendChild(
-            p
-        );
-
-        tab.addEventListener(
-            "click",
-            function () {
-
-                document
-                    .querySelectorAll(
-                        ".admin-panel"
-                    )
-                    .forEach(
-                        function (a) {
-
-                            a.classList.remove(
-                                "active-panel"
-                            );
-
-                        }
-                    );
-
-                document
-                    .querySelectorAll(
-                        ".dashboard-tab"
-                    )
-                    .forEach(
-                        function (a) {
-
-                            a.classList.remove(
-                                "active"
-                            );
-
-                        }
-                    );
-
-                p.classList.add(
-                    "active-panel"
-                );
-
-                tab.classList.add(
-                    "active"
-                );
-
-            }
-        );
-
-    }
-
-    renderAll();
-
-    addAdminPanel();
-
-})();
-```
+console.log(
+    "Daniel Tech V2.0.0"
+);
