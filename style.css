@@ -1356,9 +1356,13 @@ body.menu-open, body.modal-open {
    RESPONSIVE DESIGN (TABLET & MOBILE)
    ========================================================= */
 
+/* =========================================================
+   TABLET (max-width: 950px)
+   ========================================================= */
 @media (max-width: 950px) {
   .header-top-row {
     min-height: 56px;
+    gap: 10px;
   }
 
   .main-nav {
@@ -1367,8 +1371,17 @@ body.menu-open, body.modal-open {
 
   .hero {
     grid-template-columns: 1fr;
-    gap: 36px;
-    padding: 50px 0;
+    gap: 30px;
+    padding: 44px 0;
+    min-height: unset;
+  }
+
+  .hero-card {
+    padding: 20px;
+  }
+
+  .hero-card-content {
+    grid-template-columns: repeat(2, 1fr);
   }
 
   .service-grid, .blog-grid, .content-grid {
@@ -1381,6 +1394,7 @@ body.menu-open, body.modal-open {
 
   .footer-container {
     grid-template-columns: 1fr;
+    gap: 32px;
   }
 
   .dashboard-container {
@@ -1409,40 +1423,275 @@ body.menu-open, body.modal-open {
   .dashboard-grid {
     grid-template-columns: 1fr;
   }
-}
 
-@media (max-width: 600px) {
-  .logo {
-    font-size: 20px;
+  .section-container {
+    padding: 52px 0;
   }
 
+  .modal-box {
+    width: 95%;
+    max-height: 90vh;
+    padding: 24px 20px;
+  }
+}
+
+/* =========================================================
+   MOBILE (max-width: 600px)
+   ========================================================= */
+@media (max-width: 600px) {
+
+  /* --- HEADER --- */
+  :root {
+    --header-h: auto;
+  }
+
+  .header-top-row {
+    width: 100%;
+    padding: 0 14px;
+    min-height: 52px;
+    grid-template-columns: 1fr auto;
+    gap: 8px;
+  }
+
+  /* Hide the left spacer so logo goes left */
+  .header-spacer {
+    display: none;
+  }
+
+  /* Logo goes to column 1, left-aligned */
+  .header-top-row .logo {
+    grid-column: 1;
+    text-align: left;
+    font-size: 18px;
+  }
+
+  /* Actions (language + sign in/up + hamburger) go to column 2 */
+  .header-actions {
+    grid-column: 2;
+    gap: 5px;
+  }
+
+  /* Hide language switcher on very small screens to save space */
+  .language-switch {
+    display: none;
+  }
+
+  /* Smaller auth buttons */
   .header-button {
-    padding: 7px 10px;
+    padding: 6px 9px;
+    font-size: 10px;
+    border-radius: 6px;
+  }
+
+  .auth-buttons {
+    gap: 5px;
+  }
+
+  /* Hamburger stays visible */
+  .menu-button {
+    padding: 8px 10px;
+  }
+
+  /* --- NEWS TICKER --- */
+  .news-container {
+    font-size: 11px;
+    gap: 8px;
+  }
+
+  #newsContent {
     font-size: 11px;
   }
 
+  /* --- HERO --- */
+  .hero {
+    grid-template-columns: 1fr;
+    gap: 24px;
+    padding: 32px 0;
+    min-height: unset;
+  }
+
+  .hero h1 {
+    font-size: clamp(26px, 8vw, 38px);
+    margin-bottom: 14px;
+  }
+
+  .hero-description {
+    font-size: 14px;
+    line-height: 1.7;
+    margin-bottom: 20px;
+  }
+
+  .hero-buttons {
+    gap: 10px;
+  }
+
+  .hero-buttons .primary-button,
+  .hero-buttons .secondary-button {
+    width: 100%;
+    justify-content: center;
+    padding: 13px 16px;
+  }
+
+  .hero-card {
+    padding: 16px;
+  }
+
+  .hero-card-top {
+    font-size: 16px;
+    margin-bottom: 14px;
+  }
+
+  .hero-card-content {
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  .hero-stat {
+    padding: 12px;
+  }
+
+  .hero-stat strong {
+    font-size: 16px;
+  }
+
+  .hero-stat span {
+    font-size: 10px;
+  }
+
+  /* --- SECTION CONTAINERS --- */
+  .section-container {
+    padding: 36px 0;
+    width: 94%;
+  }
+
+  .section-heading {
+    margin-bottom: 24px;
+  }
+
+  .section-heading h2 {
+    font-size: clamp(20px, 7vw, 28px);
+  }
+
+  .section-heading span {
+    font-size: 13px;
+  }
+
+  /* --- GRIDS --- */
   .service-grid, .blog-grid, .content-grid {
     grid-template-columns: 1fr;
+    gap: 16px;
   }
 
+  /* --- SERVICE FILTER BAR --- */
+  .services-filter-bar {
+    gap: 6px;
+    margin-bottom: 20px;
+  }
+
+  .filter-btn {
+    padding: 7px 14px;
+    font-size: 11px;
+  }
+
+  /* --- CARDS --- */
+  .service-card, .blog-card, .content-card {
+    border-radius: 8px;
+  }
+
+  /* --- FORMS --- */
   .form-row {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .contact-layout {
+    gap: 24px;
+  }
+
+  /* --- SETTINGS --- */
+  .settings-page-content {
     grid-template-columns: 1fr;
   }
 
-  .settings-page-content {
+  /* --- DASHBOARD --- */
+  .dashboard-stats {
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  .dashboard-main {
+    padding: 14px;
+  }
+
+  .dashboard-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .dashboard-header h2 {
+    font-size: 18px;
+  }
+
+  /* --- MODALS --- */
+  .modal-box {
+    width: 96%;
+    max-height: 92vh;
+    padding: 20px 16px;
+    border-radius: 12px;
+  }
+
+  .modal-title {
+    font-size: 18px;
+  }
+
+  /* --- FOOTER --- */
+  .footer-container {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+
+  .site-footer {
+    padding: 36px 0 20px;
+  }
+
+  /* --- DRAWER --- */
+  .menu-drawer {
+    width: 100%;
+    max-width: 100%;
+    right: -100%;
+  }
+
+  /* --- BUTTONS GENERAL --- */
+  .primary-button, .secondary-button {
+    padding: 11px 16px;
+    font-size: 12px;
+  }
+}
+
+/* =========================================================
+   VERY SMALL SCREENS (max-width: 380px)
+   ========================================================= */
+@media (max-width: 380px) {
+  .header-top-row .logo {
+    font-size: 16px;
+  }
+
+  /* On very tiny screens, hide Sign Up, keep only Sign In */
+  #signUpButton {
+    display: none;
+  }
+
+  .hero h1 {
+    font-size: 24px;
+  }
+
+  .hero-card-content {
     grid-template-columns: 1fr;
   }
 
   .dashboard-stats {
     grid-template-columns: 1fr;
   }
-
-  .dashboard-main {
-    padding: 16px;
-  }
-
-  .dashboard-header {
-    flex-direction: column;
-    align-items: flex-start;
-  }
 }
+
