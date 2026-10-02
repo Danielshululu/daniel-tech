@@ -224,20 +224,164 @@ document.addEventListener("keydown", function (event) {
 });
 
 /* =========================================================
-   7. LANGUAGE SWITCHER (ENG / KISW)
+   7. LANGUAGE SWITCHER (ENG / KISW) — FULL TRANSLATION SYSTEM
    ========================================================= */
+
+const TRANSLATIONS = {
+  en: {
+    // Navigation
+    "nav-home": "Home",
+    "nav-services": "Services",
+    "nav-tech": "Tech",
+    "nav-ai-tools": "AI Tools",
+    "nav-programming": "Programming",
+    "nav-blog": "Blog / News",
+    "nav-contact": "Contact",
+    // Header Buttons
+    "btn-signin": "Sign In",
+    "btn-signup": "Sign Up",
+    // Hero
+    "hero-label": "DANIEL TECH V2.0.0",
+    "hero-h1-line1": "Your Idea,",
+    "hero-h1-line2": "Brought to Life",
+    "hero-h1-line3": "Through Technology.",
+    "hero-description": "We engineer cutting-edge web platforms, mobile solutions, AI integrations, cloud infrastructure, and immersive gaming experiences — built for the future, optimized for today.",
+    "hero-btn-primary": "Get Started",
+    "hero-btn-secondary": "View Services",
+    "hero-card-title": "Our Capabilities",
+    "hero-stat-web": "Web & Mobile",
+    "hero-stat-ai": "AI & Cloud",
+    "hero-stat-gaming": "Gaming",
+    "hero-stat-support": "24/7 Support",
+    // Services Section
+    "services-label": "WHAT WE OFFER",
+    "services-h2": "Our Technology Services",
+    "services-desc": "From web development to AI solutions — we build everything your business needs to grow.",
+    "filter-all": "All",
+    "filter-web": "Web",
+    "filter-phone": "Phone",
+    "filter-gaming": "Gaming",
+    "filter-ai": "AI",
+    // Contact Section
+    "contact-label": "GET IN TOUCH",
+    "contact-h2": "Contact Us",
+    "contact-desc": "Have a project in mind? We would love to hear from you.",
+    "contact-name": "Full Name",
+    "contact-email": "Email Address",
+    "contact-phone": "Phone Number",
+    "contact-subject": "Subject",
+    "contact-message": "Your Message",
+    "contact-send": "Send Message",
+    // Footer
+    "footer-tagline": "Engineering tomorrow's solutions, today.",
+    "footer-services": "Services",
+    "footer-company": "Company",
+    "footer-legal": "Legal",
+    "footer-rights": "All rights reserved.",
+    // Misc
+    "read-more": "Read More",
+    "view-details": "View Details",
+    "learn-more": "Learn More",
+    "back": "Back",
+    "close": "Close",
+    "loading": "Loading...",
+    "news-label": "Latest News",
+  },
+  sw: {
+    // Navigation
+    "nav-home": "Nyumbani",
+    "nav-services": "Huduma",
+    "nav-tech": "Teknolojia",
+    "nav-ai-tools": "Zana za AI",
+    "nav-programming": "Programu",
+    "nav-blog": "Blogu / Habari",
+    "nav-contact": "Wasiliana",
+    // Header Buttons
+    "btn-signin": "Ingia",
+    "btn-signup": "Jisajili",
+    // Hero
+    "hero-label": "DANIEL TECH V2.0.0",
+    "hero-h1-line1": "Wazo Lako,",
+    "hero-h1-line2": "Linafanywa Ukweli",
+    "hero-h1-line3": "Kupitia Teknolojia.",
+    "hero-description": "Tunaunda mifumo ya kisasa ya wavuti, suluhisho za simu, ujumuishaji wa AI, miundombinu ya wingu, na uzoefu wa burudani wa michezo — iliyoundwa kwa mustakabali, iliyoboreshwa kwa leo.",
+    "hero-btn-primary": "Anza Sasa",
+    "hero-btn-secondary": "Ona Huduma",
+    "hero-card-title": "Uwezo Wetu",
+    "hero-stat-web": "Wavuti & Simu",
+    "hero-stat-ai": "AI & Wingu",
+    "hero-stat-gaming": "Michezo",
+    "hero-stat-support": "Msaada 24/7",
+    // Services Section
+    "services-label": "TUNACHOTOA",
+    "services-h2": "Huduma Zetu za Teknolojia",
+    "services-desc": "Kuanzia utengenezaji wavuti hadi suluhisho za AI — tunajenga kila kitu biashara yako inahitaji kukua.",
+    "filter-all": "Zote",
+    "filter-web": "Wavuti",
+    "filter-phone": "Simu",
+    "filter-gaming": "Michezo",
+    "filter-ai": "AI",
+    // Contact Section
+    "contact-label": "WASILIANA NASI",
+    "contact-h2": "Wasiliana Nasi",
+    "contact-desc": "Una mradi akilini? Tungependa kukusikia.",
+    "contact-name": "Jina Kamili",
+    "contact-email": "Barua Pepe",
+    "contact-phone": "Nambari ya Simu",
+    "contact-subject": "Mada",
+    "contact-message": "Ujumbe Wako",
+    "contact-send": "Tuma Ujumbe",
+    // Footer
+    "footer-tagline": "Tunaunda suluhisho za kesho, leo.",
+    "footer-services": "Huduma",
+    "footer-company": "Kampuni",
+    "footer-legal": "Kisheria",
+    "footer-rights": "Haki zote zimehifadhiwa.",
+    // Misc
+    "read-more": "Soma Zaidi",
+    "view-details": "Ona Maelezo",
+    "learn-more": "Jifunze Zaidi",
+    "back": "Rudi",
+    "close": "Funga",
+    "loading": "Inapakia...",
+    "news-label": "Habari za Hivi Karibuni",
+  }
+};
+
+function applyTranslations(language) {
+  const t = TRANSLATIONS[language] || TRANSLATIONS["en"];
+  // Apply all data-i18n attributes
+  qsa("[data-i18n]").forEach(el => {
+    const key = el.getAttribute("data-i18n");
+    if (t[key] !== undefined) {
+      if (el.tagName === "INPUT" || el.tagName === "TEXTAREA") {
+        el.placeholder = t[key];
+      } else {
+        el.textContent = t[key];
+      }
+    }
+  });
+  // Apply placeholder-specific translations
+  qsa("[data-i18n-placeholder]").forEach(el => {
+    const key = el.getAttribute("data-i18n-placeholder");
+    if (t[key] !== undefined) el.placeholder = t[key];
+  });
+}
+
 function setLanguage(language) {
   currentLanguage = language;
   localStorage.setItem("danielTechLanguage", language);
-  qsa(".language-button").forEach(button => button.classList.remove("active"));
-  
+
+  // Update active button state — all language buttons across the page
+  qsa(".language-button").forEach(btn => btn.classList.remove("active"));
   if (language === "sw") {
-    const sw = qs("languageSW");
-    if (sw) sw.classList.add("active");
+    qsa("#languageSW, #settingsSW").forEach(el => el?.classList.add("active"));
   } else {
-    const en = qs("languageEN");
-    if (en) en.classList.add("active");
+    qsa("#languageEN, #settingsEN").forEach(el => el?.classList.add("active"));
   }
+
+  // Apply translations
+  applyTranslations(language);
 }
 
 const languageEN = qs("languageEN");
