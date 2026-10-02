@@ -1,1020 +1,227 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta name="google-site-verification" content="YT29c5mfboXHqdivqlpQ9F-KVEr8fo8bwh9Q--r5Vl8" />
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <meta name="description"
-          content="Daniel Tech - Technology, computer services, web development, AI tools, programming, gaming and software solutions.">
-
-    <meta name="author" content="Daniel Tech">
-
-    <title>Daniel Tech</title>
-
-    <link rel="icon" href="data:,">
-
-    <link rel="stylesheet" href="style.css?v=20261002-1">
-
-    <!-- DANIEL TECH V2.0 - AUTOMATIC TIME-BASED THEME SCRIPT -->
-    <script>
-        (function() {
-            function updateTheme() {
-                const now = new Date();
-                const hours = now.getHours(); 
-                
-                // 06:00 AM (6) hadi 05:59 PM (17) -> Light Mode (Ondoa darasa la 'dark-mode')
-                // 06:00 PM (18) hadi 05:59 AM (5) -> Dark Mode (Weka darasa la 'dark-mode')
-                const isDarkMode = hours >= 18 || hours < 6;
-                
-                if (isDarkMode) {
-                    document.documentElement.classList.add('dark-mode');
-                    document.body.classList.add('dark-mode');
-                } else {
-                    document.documentElement.classList.remove('dark-mode');
-                    document.body.classList.remove('dark-mode');
-                }
-            }
-
-            // Set the theme immediately before the DOM loads
-            updateTheme();
-
-            // Mfumo utajikagua kila dakika (kama mtu ameacha ukurasa wazi)
-            setInterval(updateTheme, 60000);
-            
-            // Subiri mpaka DOM iwe tayari (kwa fallback)
-            document.addEventListener('DOMContentLoaded', updateTheme);
-        })();
-    </script>
+<meta name="google-site-verification" content="YT29c5mfboXHqdivqlpQ9F-KVEr8fo8bwh9Q--r5Vl8" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Daniel Tech - Technology, computer services, web development, AI tools, programming, gaming and software solutions.">
+<meta name="author" content="Daniel Tech">
+<title>Daniel Tech</title>
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="style.css?v=20261002-2">
+<!-- Automatic time-based theme: Light 06:00-17:59, Dark 18:00-05:59 (visitor's device time) -->
+<script>
+(function () {
+  function updateTheme() {
+    var h = new Date().getHours();
+    document.documentElement.classList.toggle('dark-mode', h >= 18 || h < 6);
+  }
+  updateTheme();
+  setInterval(updateTheme, 30000);
+})();
+</script>
 </head>
-
 <body>
 
-<!-- ================= HEADER ================= -->
-
 <header class="site-header">
-
-    <div class="header-container">
-
-        <a href="#" class="logo" data-page="home">
-            <span>Daniel</span> Tech
-        </a>
-
-        <nav class="main-nav" id="mainNav">
-
-            <a href="#" data-page="home">Home</a>
-
-            <a href="#" data-page="services">Services</a>
-
-            <a href="#" data-page="features">Features</a>
-
-            <a href="#" data-page="blog">Blog / News</a>
-
-            <a href="#" data-page="contact">Contact</a>
-
-        </nav>
-
-        <div class="header-actions">
-
-            <button
-                type="button"
-                id="settingsButton"
-                class="header-button">
-                Settings
-            </button>
-
-            <button
-                type="button"
-                id="menuButton"
-                class="menu-button">
-                Menu
-            </button>
-
-        </div>
-
-    </div>
-
+<div class="header-container">
+<a href="#" class="logo" data-page="home"><span>Daniel</span> Tech</a>
+<nav class="main-nav" id="mainNav">
+<a href="#" data-page="home">Home</a>
+<a href="#" data-page="services">Services</a>
+<a href="#" data-page="features">Features</a>
+<a href="#" data-page="blog">Blog / News</a>
+<a href="#" data-page="contact">Contact</a>
+</nav>
+<div class="header-actions">
+<button type="button" id="settingsButton" class="header-button">Settings</button>
+<button type="button" id="menuButton" class="menu-button">Menu</button>
+</div>
+</div>
 </header>
 
-
-<!-- ================= NEWS BAR ================= -->
-
 <div class="news-bar">
-
-    <div class="news-container">
-
-        <strong>Latest News</strong>
-
-        <div class="news-ticker">
-            <div id="newsContent">
-                Welcome to Daniel Tech.
-            </div>
-        </div>
-
-    </div>
-
+<div class="news-container">
+<strong>Latest News</strong>
+<div class="news-ticker"><div id="newsContent">Welcome to Daniel Tech.</div></div>
 </div>
-
-
-<!-- ================= MAIN ================= -->
+</div>
 
 <main>
 
-
-<!-- ================= HOME ================= -->
-
 <section id="home" class="page active-page">
-
-    <div class="hero">
-
-        <div class="hero-content">
-
-            <p class="hero-label">
-                TECHNOLOGY • DIGITAL SOLUTIONS • INNOVATION
-            </p>
-
-            <h1>
-                Welcome to
-                <span>Daniel Tech</span>
-            </h1>
-
-            <p class="hero-description">
-                Your technology platform for computer services,
-                web development, programming, AI tools, software
-                solutions, gaming and useful technology tips.
-            </p>
-
-            <div class="hero-buttons">
-
-                <button
-                    type="button"
-                    class="primary-button"
-                    data-page="services">
-                    Explore Services
-                </button>
-
-                <button
-                    type="button"
-                    class="secondary-button"
-                    data-page="contact">
-                    Contact Daniel Tech
-                </button>
-
-            </div>
-
-        </div>
-
-
-        <div class="hero-card">
-
-            <div class="hero-card-top">
-                Daniel Tech
-            </div>
-
-            <div class="hero-card-content">
-
-                <div class="hero-stat">
-                    <strong>Web</strong>
-                    <span>Development</span>
-                </div>
-
-                <div class="hero-stat">
-                    <strong>AI</strong>
-                    <span>Solutions</span>
-                </div>
-
-                <div class="hero-stat">
-                    <strong>ICT</strong>
-                    <span>Services</span>
-                </div>
-
-                <div class="hero-stat">
-                    <strong>Tech</strong>
-                    <span>Tips</span>
-                </div>
-
-            </div>
-
-        </div>
-
-    </div>
-
-
-    <!-- Latest Content -->
-
-    <div class="section-container">
-
-        <div class="section-heading">
-
-            <p>WHAT'S NEW</p>
-
-            <h2>Latest Content</h2>
-
-            <span>
-                Discover the latest technology content published
-                on Daniel Tech.
-            </span>
-
-        </div>
-
-        <div id="latestContent" class="content-grid">
-
-            <div class="empty-content">
-                No content has been published yet.
-            </div>
-
-        </div>
-
-    </div>
-
+<div class="hero">
+<div class="hero-content">
+<p class="hero-label">TECHNOLOGY • DIGITAL SOLUTIONS • INNOVATION</p>
+<h1>Welcome to <span>Daniel Tech</span></h1>
+<p class="hero-description">Your technology platform for computer services, web development, programming, AI tools, software solutions, gaming and useful technology tips.</p>
+<div class="hero-buttons">
+<button type="button" class="primary-button" data-page="services">Explore Services</button>
+<button type="button" class="secondary-button" data-page="contact">Contact Daniel Tech</button>
+</div>
+</div>
+<div class="hero-card">
+<div class="hero-card-top">Daniel Tech</div>
+<div class="hero-card-content">
+<div class="hero-stat"><strong>Web</strong><span>Development</span></div>
+<div class="hero-stat"><strong>AI</strong><span>Solutions</span></div>
+<div class="hero-stat"><strong>ICT</strong><span>Services</span></div>
+<div class="hero-stat"><strong>Tech</strong><span>Tips</span></div>
+</div>
+</div>
+</div>
+<div class="section-container">
+<div class="section-heading">
+<p>WHAT'S NEW</p>
+<h2>Latest Content</h2>
+<span>Discover the latest technology content published on Daniel Tech.</span>
+</div>
+<div id="latestContent" class="content-grid"><div class="empty-content">No content has been published yet.</div></div>
+</div>
 </section>
-
-
-<!-- ================= SERVICES ================= -->
 
 <section id="services" class="page">
-
-    <div class="section-container">
-
-        <div class="section-heading">
-
-            <p>DANIEL TECH SERVICES</p>
-
-            <h2>Our Services</h2>
-
-            <span>
-                Professional technology services and digital solutions.
-            </span>
-
-        </div>
-
-
-        <div class="service-grid">
-
-
-            <article class="service-card">
-
-                <div class="card-number">01</div>
-
-                <h3>Web Development</h3>
-
-                <p>
-                    Modern, responsive and professional websites
-                    for businesses, organizations and personal projects.
-                </p>
-
-                <button
-                    type="button"
-                    class="view-button service-view-button"
-                    data-service="web">
-                    View Service
-                </button>
-
-            </article>
-
-
-            <article class="service-card">
-
-                <div class="card-number">02</div>
-
-                <h3>Graphics Design</h3>
-
-                <p>
-                    Professional digital designs for logos,
-                    posters, social media and other creative projects.
-                </p>
-
-                <button
-                    type="button"
-                    class="view-button service-view-button"
-                    data-service="graphics">
-                    View Service
-                </button>
-
-            </article>
-
-
-            <article class="service-card">
-
-                <div class="card-number">03</div>
-
-                <h3>Cyber Security</h3>
-
-                <p>
-                    Technology security guidance, digital safety
-                    awareness and basic cybersecurity solutions.
-                </p>
-
-                <button
-                    type="button"
-                    class="view-button service-view-button"
-                    data-service="security">
-                    View Service
-                </button>
-
-            </article>
-
-
-            <article class="service-card">
-
-                <div class="card-number">04</div>
-
-                <h3>Computer Services</h3>
-
-                <p>
-                    Computer setup, software installation,
-                    troubleshooting and general ICT support.
-                </p>
-
-                <button
-                    type="button"
-                    class="view-button service-view-button"
-                    data-service="computer">
-                    View Service
-                </button>
-
-            </article>
-
-
-            <article class="service-card">
-
-                <div class="card-number">05</div>
-
-                <h3>Software Solutions</h3>
-
-                <p>
-                    Software solutions and digital tools designed
-                    to make everyday work easier.
-                </p>
-
-                <button
-                    type="button"
-                    class="view-button service-view-button"
-                    data-service="software">
-                    View Service
-                </button>
-
-            </article>
-
-
-            <article class="service-card">
-
-                <div class="card-number">06</div>
-
-                <h3>AI Solutions</h3>
-
-                <p>
-                    Practical use of artificial intelligence tools
-                    for learning, productivity and digital projects.
-                </p>
-
-                <button
-                    type="button"
-                    class="view-button service-view-button"
-                    data-service="ai">
-                    View Service
-                </button>
-
-            </article>
-
-        </div>
-
-    </div>
-
+<div class="section-container">
+<div class="section-heading">
+<p>DANIEL TECH SERVICES</p>
+<h2>Our Services</h2>
+<span>Professional technology services and digital solutions.</span>
+</div>
+<div class="service-grid">
+<article class="service-card"><div class="card-number">01</div><h3>Web Development</h3><p>Modern, responsive and professional websites for businesses, organizations and personal projects.</p><button type="button" class="view-button service-view-button" data-service="web">View Service</button></article>
+<article class="service-card"><div class="card-number">02</div><h3>Graphics Design</h3><p>Professional digital designs for logos, posters, social media and other creative projects.</p><button type="button" class="view-button service-view-button" data-service="graphics">View Service</button></article>
+<article class="service-card"><div class="card-number">03</div><h3>Cyber Security</h3><p>Technology security guidance, digital safety awareness and basic cybersecurity solutions.</p><button type="button" class="view-button service-view-button" data-service="security">View Service</button></article>
+<article class="service-card"><div class="card-number">04</div><h3>Computer Services</h3><p>Computer setup, software installation, troubleshooting and general ICT support.</p><button type="button" class="view-button service-view-button" data-service="computer">View Service</button></article>
+<article class="service-card"><div class="card-number">05</div><h3>Software Solutions</h3><p>Software solutions and digital tools designed to make everyday work easier.</p><button type="button" class="view-button service-view-button" data-service="software">View Service</button></article>
+<article class="service-card"><div class="card-number">06</div><h3>AI Solutions</h3><p>Practical use of artificial intelligence tools for learning, productivity and digital projects.</p><button type="button" class="view-button service-view-button" data-service="ai">View Service</button></article>
+</div>
+</div>
 </section>
-
-
-<!-- ================= FEATURES ================= -->
 
 <section id="features" class="page">
-
-    <div class="section-container">
-
-        <div class="section-heading">
-
-            <p>TECHNOLOGY KNOWLEDGE</p>
-
-            <h2>Features</h2>
-
-            <span>
-                Useful technology information and practical guides.
-            </span>
-
-        </div>
-
-
-        <div class="feature-grid">
-
-
-            <article class="feature-card">
-
-                <div class="feature-number">01</div>
-
-                <h3>Computer Tips</h3>
-
-                <p>
-                    Learn useful computer tricks, maintenance tips
-                    and productivity techniques.
-                </p>
-
-                <button
-                    type="button"
-                    class="view-button feature-view-button"
-                    data-feature="computer-tips">
-                    Explore
-                </button>
-
-            </article>
-
-
-            <article class="feature-card">
-
-                <div class="feature-number">02</div>
-
-                <h3>Phone Tips</h3>
-
-                <p>
-                    Discover useful smartphone settings,
-                    troubleshooting methods and practical tips.
-                </p>
-
-                <button
-                    type="button"
-                    class="view-button feature-view-button"
-                    data-feature="phone-tips">
-                    Explore
-                </button>
-
-            </article>
-
-
-            <article class="feature-card">
-
-                <div class="feature-number">03</div>
-
-                <h3>AI Tools</h3>
-
-                <p>
-                    Learn about useful artificial intelligence
-                    tools and how they can improve productivity.
-                </p>
-
-                <button
-                    type="button"
-                    class="view-button feature-view-button"
-                    data-feature="ai-tools">
-                    Explore
-                </button>
-
-            </article>
-
-
-            <article class="feature-card">
-
-                <div class="feature-number">04</div>
-
-                <h3>Gaming</h3>
-
-                <p>
-                    Gaming tips, software information,
-                    performance improvements and guides.
-                </p>
-
-                <button
-                    type="button"
-                    class="view-button feature-view-button"
-                    data-feature="gaming">
-                    Explore
-                </button>
-
-            </article>
-
-
-            <article class="feature-card">
-
-                <div class="feature-number">05</div>
-
-                <h3>Programming</h3>
-
-                <p>
-                    Programming concepts, coding tutorials
-                    and useful development resources.
-                </p>
-
-                <button
-                    type="button"
-                    class="view-button feature-view-button"
-                    data-feature="programming">
-                    Explore
-                </button>
-
-            </article>
-
-
-            <article class="feature-card">
-
-                <div class="feature-number">06</div>
-
-                <h3>Software Tips</h3>
-
-                <p>
-                    Guides for installing, configuring and
-                    using useful computer software.
-                </p>
-
-                <button
-                    type="button"
-                    class="view-button feature-view-button"
-                    data-feature="software-tips">
-                    Explore
-                </button>
-
-            </article>
-
-        </div>
-
-    </div>
-
+<div class="section-container">
+<div class="section-heading">
+<p>TECHNOLOGY KNOWLEDGE</p>
+<h2>Features</h2>
+<span>Useful technology information and practical guides.</span>
+</div>
+<div class="feature-grid">
+<article class="feature-card"><div class="feature-number">01</div><h3>Computer Tips</h3><p>Learn useful computer tricks, maintenance tips and productivity techniques.</p><button type="button" class="view-button feature-view-button" data-feature="computer-tips">Explore</button></article>
+<article class="feature-card"><div class="feature-number">02</div><h3>Phone Tips</h3><p>Discover useful smartphone settings, troubleshooting methods and practical tips.</p><button type="button" class="view-button feature-view-button" data-feature="phone-tips">Explore</button></article>
+<article class="feature-card"><div class="feature-number">03</div><h3>AI Tools</h3><p>Learn about useful artificial intelligence tools and how they can improve productivity.</p><button type="button" class="view-button feature-view-button" data-feature="ai-tools">Explore</button></article>
+<article class="feature-card"><div class="feature-number">04</div><h3>Gaming</h3><p>Gaming tips, software information, performance improvements and guides.</p><button type="button" class="view-button feature-view-button" data-feature="gaming">Explore</button></article>
+<article class="feature-card"><div class="feature-number">05</div><h3>Programming</h3><p>Programming concepts, coding tutorials and useful development resources.</p><button type="button" class="view-button feature-view-button" data-feature="programming">Explore</button></article>
+<article class="feature-card"><div class="feature-number">06</div><h3>Software Tips</h3><p>Guides for installing, configuring and using useful computer software.</p><button type="button" class="view-button feature-view-button" data-feature="software-tips">Explore</button></article>
+</div>
+</div>
 </section>
-
-
-<!-- ================= BLOG ================= -->
 
 <section id="blog" class="page">
-
-    <div class="section-container">
-
-        <div class="section-heading">
-
-            <p>DANIEL TECH BLOG</p>
-
-            <h2>Blog / News</h2>
-
-            <span>
-                Technology news, tutorials, tips and published content.
-            </span>
-
-        </div>
-
-
-        <div id="blogGrid" class="blog-grid">
-
-            <div class="empty-content">
-                No blog content has been published yet.
-            </div>
-
-        </div>
-
-
-        <!-- Local Comments -->
-
-        <div class="comments-section">
-
-            <div class="section-heading small-heading">
-
-                <p>COMMUNITY</p>
-
-                <h2>Comments</h2>
-
-                <span>
-                    Leave a comment about Daniel Tech.
-                </span>
-
-            </div>
-
-
-            <form id="commentForm" class="comment-form">
-
-                <div class="form-group">
-
-                    <label for="commentName">
-                        Your Name
-                    </label>
-
-                    <input
-                        type="text"
-                        id="commentName"
-                        placeholder="Enter your name"
-                        required>
-
-                </div>
-
-
-                <div class="form-group">
-
-                    <label for="commentText">
-                        Your Comment
-                    </label>
-
-                    <textarea
-                        id="commentText"
-                        placeholder="Write your comment"
-                        required></textarea>
-
-                </div>
-
-
-                <button
-                    type="submit"
-                    class="primary-button">
-                    Post Comment
-                </button>
-
-            </form>
-
-
-            <div id="commentsList" class="comments-list">
-
-                <p class="empty-content">
-                    No comments yet.
-                </p>
-
-            </div>
-
-        </div>
-
-    </div>
-
+<div class="section-container">
+<div class="section-heading">
+<p>DANIEL TECH BLOG</p>
+<h2>Blog / News</h2>
+<span>Technology news, tutorials, tips and published content.</span>
+</div>
+<div id="blogGrid" class="blog-grid"><div class="empty-content">No blog content has been published yet.</div></div>
+<div class="comments-section">
+<div class="section-heading small-heading">
+<p>COMMUNITY</p>
+<h2>Comments</h2>
+<span>Leave a comment about Daniel Tech.</span>
+</div>
+<form id="commentForm" class="comment-form">
+<div class="form-group"><label for="commentName">Your Name</label><input type="text" id="commentName" placeholder="Enter your name" required></div>
+<div class="form-group"><label for="commentText">Your Comment</label><textarea id="commentText" placeholder="Write your comment" required></textarea></div>
+<button type="submit" class="primary-button">Post Comment</button>
+</form>
+<div id="commentsList" class="comments-list"><p class="empty-content">No comments yet.</p></div>
+</div>
+</div>
 </section>
 
-
-<!-- ================= CONTACT ================= -->
-
 <section id="contact" class="page">
-
-    <div class="section-container">
-
-        <div class="section-heading">
-
-            <p>GET IN TOUCH</p>
-
-            <h2>Contact Daniel Tech</h2>
-
-            <span>
-                Send us a message and we will get back to you.
-            </span>
-
-        </div>
-
-
-        <div class="contact-layout">
-
-
-            <div class="contact-information">
-
-                <div class="contact-card">
-
-                    <span>Phone</span>
-
-                    <strong>
-                        0742287977
-                    </strong>
-
-                </div>
-
-
-                <div class="contact-card">
-
-                    <span>WhatsApp</span>
-
-                    <strong>
-                        0742287977
-                    </strong>
-
-                </div>
-
-
-                <div class="contact-card">
-
-                    <span>Email</span>
-
-                    <strong>
-                        danielshululu770@gmail.com
-                    </strong>
-
-                </div>
-
-
-                <div class="contact-card">
-
-                    <span>Response</span>
-
-                    <strong>
-                        We will respond as soon as possible.
-                    </strong>
-
-                </div>
-
-            </div>
-
-
-            <div class="contact-form-container">
-
-                <form id="contactForm">
-
-                    <div class="form-row">
-
-                        <div class="form-group">
-
-                            <label for="contactName">
-                                Name
-                            </label>
-
-                            <input
-                                type="text"
-                                id="contactName"
-                                placeholder="Your name"
-                                required>
-
-                        </div>
-
-
-                        <div class="form-group">
-
-                            <label for="contactEmail">
-                                Email
-                            </label>
-
-                            <input
-                                type="email"
-                                id="contactEmail"
-                                placeholder="Your email"
-                                required>
-
-                        </div>
-
-                    </div>
-
-
-                    <div class="form-group">
-
-                        <label for="contactSubject">
-                            Subject
-                        </label>
-
-                        <input
-                            type="text"
-                            id="contactSubject"
-                            placeholder="Message subject"
-                            required>
-
-                    </div>
-
-
-                    <div class="form-group">
-
-                        <label for="contactMessage">
-                            Message
-                        </label>
-
-                        <textarea
-                            id="contactMessage"
-                            placeholder="Write your message"
-                            required></textarea>
-
-                    </div>
-
-
-                    <button
-                        type="submit"
-                        class="primary-button">
-                        Send Message
-                    </button>
-
-
-                    <p id="contactStatus" class="form-status"></p>
-
-                </form>
-
-            </div>
-
-        </div>
-
-    </div>
-
+<div class="section-container">
+<div class="section-heading">
+<p>GET IN TOUCH</p>
+<h2>Contact Daniel Tech</h2>
+<span>Send us a message and we will get back to you.</span>
+</div>
+<div class="contact-layout">
+<div class="contact-information">
+<div class="contact-card"><span>Phone</span><strong>0742287977</strong></div>
+<div class="contact-card"><span>WhatsApp</span><strong>0742287977</strong></div>
+<div class="contact-card"><span>Email</span><strong>danielshululu770@gmail.com</strong></div>
+<div class="contact-card"><span>Response</span><strong>We will respond as soon as possible.</strong></div>
+</div>
+<div class="contact-form-container">
+<form id="contactForm">
+<div class="form-row">
+<div class="form-group"><label for="contactName">Name</label><input type="text" id="contactName" placeholder="Your name" required></div>
+<div class="form-group"><label for="contactEmail">Email</label><input type="email" id="contactEmail" placeholder="Your email" required></div>
+</div>
+<div class="form-group"><label for="contactSubject">Subject</label><input type="text" id="contactSubject" placeholder="Message subject" required></div>
+<div class="form-group"><label for="contactMessage">Message</label><textarea id="contactMessage" placeholder="Write your message" required></textarea></div>
+<button type="submit" class="primary-button">Send Message</button>
+<p id="contactStatus" class="form-status"></p>
+</form>
+</div>
+</div>
+</div>
 </section>
 
 </main>
 
-
-<!-- ================= FOOTER ================= -->
-
 <footer class="site-footer">
-
-    <div class="section-container footer-container">
-
-        <div class="footer-about">
-
-            <div class="logo">
-                <span>Daniel</span> Tech
-            </div>
-
-            <p id="footerText">
-                Daniel Tech is a technology platform focused on
-                digital solutions, computer services and technology
-                education.
-            </p>
-
-        </div>
-
-
-        <div class="footer-contact">
-
-            <span>Email: <strong id="footerEmail">danielshululu770@gmail.com</strong></span>
-            <span>Phone: <strong id="footerPhone">0742287977</strong></span>
-            <span id="footerAddress"></span>
-
-        </div>
-
-
-        <div id="footerSocialLinks" class="footer-social">
-        </div>
-
-    </div>
-
-
-    <div class="footer-bottom">
-        <span>&copy; <span id="footerYear"></span> Daniel Tech. All rights reserved.</span>
-    </div>
-
+<div class="section-container footer-container">
+<div class="footer-about">
+<div class="logo"><span>Daniel</span> Tech</div>
+<p id="footerText">Daniel Tech is a technology platform focused on digital solutions, computer services and technology education.</p>
+</div>
+<div class="footer-contact">
+<span>Email: <strong id="footerEmail">danielshululu770@gmail.com</strong></span>
+<span>Phone: <strong id="footerPhone">0742287977</strong></span>
+<span id="footerAddress"></span>
+</div>
+<div id="footerSocialLinks" class="footer-social"></div>
+</div>
+<div class="footer-bottom"><span>&copy; <span id="footerYear"></span> Daniel Tech. All rights reserved.</span></div>
 </footer>
 
-
-<!-- ================= SETTINGS ================= -->
-
 <aside id="settingsPanel" class="settings-panel">
-
-    <div class="settings-header">
-
-        <h3>Settings</h3>
-
-        <button
-            type="button"
-            id="closeSettings"
-            class="close-button">
-            Close
-        </button>
-
-    </div>
-
-
-    <div class="settings-content">
-
-        <!-- Kitufe cha Dark Mode kimeondolewa hapa kwa sababu Theme inabadilika automatically -->
-
-        <button
-            type="button"
-            id="aboutButton"
-            class="settings-action">
-            About Daniel Tech
-        </button>
-
-    </div>
-
+<div class="settings-header"><h3>Settings</h3><button type="button" id="closeSettings" class="close-button">Close</button></div>
+<div class="settings-content"><button type="button" id="aboutButton" class="settings-action">About Daniel Tech</button></div>
 </aside>
-
-
-<!-- ================= OVERLAY ================= -->
-
 <div id="overlay" class="overlay"></div>
 
-
-<!-- ================= ABOUT MODAL ================= -->
-
-<div id="aboutModal" class="modal">
-
-    <div class="modal-box">
-
-        <button
-            type="button"
-            class="modal-close"
-            data-close-modal="aboutModal">
-            Close
-        </button>
-
-        <div class="modal-content">
-
-            <p class="modal-label">
-                ABOUT
-            </p>
-
-            <h2>Daniel Tech</h2>
-
-            <p>
-                Daniel Tech is a technology platform focused on
-                digital solutions, computer services, programming,
-                AI tools, software and technology education.
-            </p>
-
-            <p>
-                Our goal is to make technology easier to understand
-                and more useful for everyday users.
-            </p>
-
-        </div>
-
-    </div>
-
+<div id="aboutModal" class="modal"><div class="modal-box">
+<button type="button" class="modal-close" data-close-modal="aboutModal">Close</button>
+<div class="modal-content">
+<p class="modal-label">ABOUT</p>
+<h2>Daniel Tech</h2>
+<p>Daniel Tech is a technology platform focused on digital solutions, computer services, programming, AI tools, software and technology education.</p>
+<p>Our goal is to make technology easier to understand and more useful for everyday users.</p>
 </div>
+</div></div>
 
+<div id="serviceModal" class="modal"><div class="modal-box">
+<button type="button" class="modal-close" data-close-modal="serviceModal">Close</button>
+<div class="modal-content"><p class="modal-label">SERVICE</p><h2 id="serviceModalTitle">Service</h2><p id="serviceModalText">Service information.</p></div>
+</div></div>
 
-<!-- ================= SERVICE MODAL ================= -->
+<div id="featureModal" class="modal"><div class="modal-box">
+<button type="button" class="modal-close" data-close-modal="featureModal">Close</button>
+<div class="modal-content"><p class="modal-label">FEATURE</p><h2 id="featureModalTitle">Feature</h2><p id="featureModalText">Feature information.</p></div>
+</div></div>
 
-<div id="serviceModal" class="modal">
-
-    <div class="modal-box">
-
-        <button
-            type="button"
-            class="modal-close"
-            data-close-modal="serviceModal">
-            Close
-        </button>
-
-        <div class="modal-content">
-
-            <p class="modal-label">
-                SERVICE
-            </p>
-
-            <h2 id="serviceModalTitle">
-                Service
-            </h2>
-
-            <p id="serviceModalText">
-                Service information.
-            </p>
-
-        </div>
-
-    </div>
-
-</div>
-
-
-<!-- ================= FEATURE MODAL ================= -->
-
-<div id="featureModal" class="modal">
-
-    <div class="modal-box">
-
-        <button
-            type="button"
-            class="modal-close"
-            data-close-modal="featureModal">
-            Close
-        </button>
-
-        <div class="modal-content">
-
-            <p class="modal-label">
-                FEATURE
-            </p>
-
-            <h2 id="featureModalTitle">
-                Feature
-            </h2>
-
-            <p id="featureModalText">
-                Feature information.
-            </p>
-
-        </div>
-
-    </div>
-
-</div>
-
-
-<!-- ================= BACK TO TOP ================= -->
-
-<button
-    type="button"
-    id="backTop"
-    class="back-top">
-    Top
-</button>
-
-
-<!-- ================= WHATSAPP ================= -->
-
-<a
-    href="https://wa.me/255742287977"
-    target="_blank"
-    rel="noopener noreferrer"
-    class="whatsapp-button">
-    WhatsApp
-</a>
-
-
-<!-- ================= JAVASCRIPT ================= -->
+<button type="button" id="backTop" class="back-top">Top</button>
+<a href="https://wa.me/255742287977" target="_blank" rel="noopener noreferrer" class="whatsapp-button">WhatsApp</a>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
-<script src="script.js?v=20261002-1"></script>
+<script src="script.js?v=20261002-2"></script>
 <script>
-    var yearEl = document.getElementById("footerYear");
-    if (yearEl) { yearEl.textContent = new Date().getFullYear(); }
+var yearEl = document.getElementById("footerYear");
+if (yearEl) { yearEl.textContent = new Date().getFullYear(); }
 </script>
-
 </body>
 </html>
