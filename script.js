@@ -1909,3 +1909,249 @@ document.addEventListener("DOMContentLoaded", async () => {
   await loadContents();
   await loadComments();
 });
+
+/* =========================================================
+   OTP / 6-DIGIT EMAIL VERIFICATION SYSTEM
+   ========================================================= */
+
+function initOtpInputs() {
+  const inputs = document.querySelectorAll('.otp-input');
+  inputs.forEach((input, idx) => {
+    input.addEventListener('input', function () {
+      this.value = this.value.replace(/[^0-9]/g, '');
+      if (this.value && idx < inputs.length - 1) inputs[idx + 1].focus();
+      this.classList.toggle('otp-filled', this.value.length === 1);
+    });
+    input.addEventListener('keydown', function (e) {
+      if (e.key === 'Backspace' && !this.value && idx > 0) inputs[idx - 1].focus();
+    });
+    input.addEventListener('paste', function (e) {
+      e.preventDefault();
+      const pasted = (e.clipboardData || window.clipboardData).getData('text').replace(/\D/g,'').slice(0,6);
+      pasted.split('').forEach((char, i) => {
+        if (inputs[i]) { inputs[i].value = char; inputs[i].classList.add('otp-filled'); }
+      });
+      if (inputs[pasted.length - 1]) inputs[pasted.length - 1].focus();
+    });
+  });
+}
+
+function getOtpValue() {
+  return Array.from(document.querySelectorAll('.otp-input')).map(i => i.value).join('');
+}
+
+function clearOtpInputs() {
+  document.querySelectorAll('.otp-input').forEach(i => { i.value = ''; i.classList.remove('otp-filled'); });
+  const first = document.querySelector('.otp-input');
+  if (first) first.focus();
+}
+
+function showVerifyModal(email) {
+  const target = document.getElementById('verifyEmailTarget');
+  if (target) target.textContent = email || '';
+  clearOtpInputs();
+  setStatus(document.getElementById('verifyOtpStatus'), '');
+  const modal = document.getElementById('verifyEmailModal');
+  if (modal) { modal.hidden = false; modal.classList.add('active'); }
+  initOtpInputs();
+}
+
+function closeVerifyModal() {
+  const modal = document.getElementById('verifyEmailModal');
+  if (modal) { modal.hidden = true; modal.classList.remove('active'); }
+}
+
+// Verify OTP button
+document.getElementById('verifyOtpBtn')?.addEventListener('click', async function () {
+  const code = getOtpValue();
+  const status = document.getElementById('verifyOtpStatus');
+  if (code.length < 6) { setStatus(status, 'Enter all 6 digits.', true); return; }
+  setStatus(status, 'Verifying...');
+  try {
+    if (!sb) throw new Error('Not connected.');
+    const { data, error } = await sb.auth.verifyOtp({
+      type: 'signup',
+      token: code,
+      email: document.getElementById('verifyEmailTarget')?.textContent?.trim()
+    });
+    if (error) throw error;
+    setStatus(status, 'Email verified! Welcome to Daniel Tech.');
+    setTimeout(() => {
+      closeVerifyModal();
+      closeAllModals();
+      if (data.session) { currentSession = data.session; currentUser = data.user; handleAuthenticatedUser(); }
+    }, 1200);
+  } catch (err) {
+    setStatus(status, err.message || 'Invalid or expired code.', true);
+  }
+});
+
+// Resend OTP
+document.getElementById('resendOtpBtn')?.addEventListener('click', async function () {
+  const email = document.getElementById('verifyEmailTarget')?.textContent?.trim();
+  const status = document.getElementById('verifyOtpStatus');
+  if (!email || !sb) return;
+  setStatus(status, 'Resending code...');
+  const { error } = await sb.auth.resend({ type: 'signup', email });
+  if (error) setStatus(status, error.message, true);
+  else setStatus(status, 'Code resent! Check your email.');
+});
+
+// Change email — go back to signup form
+document.getElementById('changeEmailBtn')?.addEventListener('click', function () {
+  closeVerifyModal();
+  openSignUp();
+});
+
+// Hook into signUp to show verify modal instead of auto-redirect
+const _origSignUpForm = document.getElementById('signUpForm');
+if (_origSignUpForm) {
+  _origSignUpForm.addEventListener('submit-otp-hook', function(e) {
+    showVerifyModal(e.detail?.email);
+  });
+}
+
+/* =========================================================
+   PROFILE — AVATAR UPLOAD + EDIT NAME/PHONE
+   ========================================================= */
+
+async function loadCustomerProfile() {
+  if (!currentUser || !sb) return;
+  const { data: profile } = await sb.from('profiles').select('full_name,phone,avatar_url').eq('id', currentUser.id).single();
+  if (!profile) return;
+
+  const nameEl = document.getElementById('profileName');
+  const phoneEl = document.getElementById('profilePhone');
+  const avatarImg = document.getElementById('profileAvatarImg');
+  const avatarIcon = document.getElementById('profileAvatarIcon');
+
+  if (nameEl) nameEl.value = profile.full_name || '';
+  if (phoneEl) phoneEl.value = profile.phone || '';
+  if (profile.avatar_url) {
+    const { data: urlData } = sb.storage.from('avatars').getPublicUrl(profile.avatar_url);
+    if (urlData?.publicUrl) {
+      if (avatarImg) { avatarImg.src = urlData.publicUrl; avatarImg.hidden = false; }
+      if (avatarIcon) avatarIcon.hidden = true;
+    }
+  }
+}
+
+async function saveCustomerProfile() {
+  if (!currentUser || !sb) return;
+  const name = document.getElementById('profileName')?.value.trim();
+  const phone = document.getElementById('profilePhone')?.value.trim();
+  const status = document.getElementById('profileSaveStatus');
+  if (!name) { setStatus(status, 'Full name is required.', true); return; }
+  setStatus(status, 'Saving...');
+  const { error } = await sb.from('profiles').upsert({ id: currentUser.id, full_name: name, phone, updated_at: new Date().toISOString() });
+  if (error) { setStatus(status, error.message, true); return; }
+  setStatus(status, 'Profile updated successfully.');
+  if (currentUser.user_metadata) currentUser.user_metadata.full_name = name;
+  updateAuthUI();
+}
+
+async function uploadAvatar(file) {
+  if (!currentUser || !sb) return;
+  if (!file || !file.type.startsWith('image/')) { alert('Please select an image file.'); return; }
+  if (file.size > 2 * 1024 * 1024) { alert('Image must be under 2MB.'); return; }
+  const ext = file.name.split('.').pop();
+  const path = `${currentUser.id}/avatar.${ext}`;
+  const { error } = await sb.storage.from('avatars').upload(path, file, { upsert: true });
+  if (error) { alert('Upload failed: ' + error.message); return; }
+  await sb.from('profiles').upsert({ id: currentUser.id, avatar_url: path, updated_at: new Date().toISOString() });
+  const { data: urlData } = sb.storage.from('avatars').getPublicUrl(path);
+  const avatarImg = document.getElementById('profileAvatarImg');
+  const avatarIcon = document.getElementById('profileAvatarIcon');
+  if (avatarImg && urlData?.publicUrl) { avatarImg.src = urlData.publicUrl; avatarImg.hidden = false; }
+  if (avatarIcon) avatarIcon.hidden = true;
+}
+
+document.getElementById('avatarFileInput')?.addEventListener('change', function () {
+  if (this.files[0]) uploadAvatar(this.files[0]);
+});
+
+document.getElementById('profileSaveBtn')?.addEventListener('click', saveCustomerProfile);
+
+/* =========================================================
+   RECEIPT SYSTEM
+   ========================================================= */
+
+function buildReceiptHTML(receipt, is80mm = false) {
+  const wrapClass = is80mm ? 'receipt-wrap receipt-80mm' : 'receipt-wrap';
+  const date = receipt.created_at ? new Date(receipt.created_at) : new Date();
+  const dateStr = date.toLocaleDateString('en-TZ', { year:'numeric', month:'long', day:'numeric' });
+  const timeStr = date.toLocaleTimeString('en-TZ', { hour:'2-digit', minute:'2-digit' });
+  const status = (receipt.status || 'paid').toLowerCase();
+  const statusClass = status === 'paid' || status === 'completed' ? '' : status;
+
+  return `
+  <div class="${wrapClass}" id="receiptPrintContent">
+    <div class="receipt-header">
+      <div class="receipt-brand"><span>Daniel</span> Tech</div>
+      <div class="receipt-tagline">Professional Technology Solutions &bull; Dar es Salaam, Tanzania</div>
+      <div class="receipt-num">RECEIPT #${escapeHtml(receipt.receipt_number || receipt.id?.slice(0,8).toUpperCase() || 'N/A')}</div>
+      <div class="receipt-datetime">${dateStr} &bull; ${timeStr}</div>
+    </div>
+
+    <hr class="receipt-divider">
+
+    <div class="receipt-rows">
+      <div class="receipt-row"><span class="r-label">Customer</span><span class="r-value">${escapeHtml(receipt.customer_name || '—')}</span></div>
+      <div class="receipt-row"><span class="r-label">Email</span><span class="r-value">${escapeHtml(receipt.customer_email || '—')}</span></div>
+      ${receipt.customer_phone ? `<div class="receipt-row"><span class="r-label">Phone</span><span class="r-value">${escapeHtml(receipt.customer_phone)}</span></div>` : ''}
+    </div>
+
+    <hr class="receipt-divider">
+
+    <div class="receipt-rows">
+      <div class="receipt-row"><span class="r-label">Service</span><span class="r-value">${escapeHtml(receipt.service_name || '—')}</span></div>
+      ${receipt.order_number ? `<div class="receipt-row"><span class="r-label">Order #</span><span class="r-value">${escapeHtml(receipt.order_number)}</span></div>` : ''}
+      <div class="receipt-row"><span class="r-label">Payment Method</span><span class="r-value">${escapeHtml(receipt.payment_method || '—')}</span></div>
+      <div class="receipt-row"><span class="r-label">Reference</span><span class="r-value">${escapeHtml(receipt.transaction_ref || receipt.id || '—')}</span></div>
+      <div class="receipt-row"><span class="r-label">Status</span><span class="r-value"><span class="receipt-status ${statusClass}">${escapeHtml(status)}</span></span></div>
+    </div>
+
+    <div class="receipt-total">
+      <span>Total Amount</span>
+      <span>${formatPrice(receipt.amount_tzs || 0, receipt.amount_usd)}</span>
+    </div>
+
+    <div class="receipt-footer-note">
+      Thank you for choosing Daniel Tech.<br>
+      For support: danielshululu770@gmail.com &bull; +255 742 287 977
+      <div class="receipt-verify">Verification: ${escapeHtml(receipt.id || '—')}</div>
+    </div>
+  </div>`;
+}
+
+function openReceipt(receiptData) {
+  const content = document.getElementById('receiptContent');
+  if (content) content.innerHTML = buildReceiptHTML(receiptData);
+  const modal = document.getElementById('receiptModal');
+  if (modal) { modal.hidden = false; modal.classList.add('active'); }
+}
+
+document.getElementById('printReceiptBtn')?.addEventListener('click', function () {
+  const content = document.getElementById('receiptPrintContent');
+  if (!content) return;
+  const printWin = window.open('', '_blank', 'width=600,height=800');
+  printWin.document.write(`<!DOCTYPE html><html><head><title>Receipt — Daniel Tech</title>
+    <style>
+      body { font-family: Inter, Arial, sans-serif; margin: 20px; background: #fff; color: #111; }
+      .receipt-brand { font-size: 20px; font-weight: 900; } .receipt-brand span { color: #00BFFF; }
+      .receipt-divider { border: none; border-top: 1px dashed #ccc; margin: 12px 0; }
+      .receipt-rows { display: flex; flex-direction: column; gap: 8px; }
+      .receipt-row { display: flex; justify-content: space-between; font-size: 12px; gap: 8px; }
+      .r-label { color: #777; min-width: 110px; }
+      .r-value { font-weight: 700; text-align: right; }
+      .receipt-total { display: flex; justify-content: space-between; font-size: 15px; font-weight: 900; border-top: 2px solid #111; padding-top: 12px; margin-top: 10px; }
+      .receipt-footer-note { text-align: center; margin-top: 16px; font-size: 10px; color: #aaa; border-top: 1px dashed #ccc; padding-top: 12px; }
+      .receipt-verify { font-family: monospace; font-size: 9px; color: #bbb; margin-top: 4px; }
+      .receipt-status { background: #e6f9ee; color: #1a7c3e; padding: 2px 8px; border-radius: 8px; font-size: 10px; font-weight: 800; }
+      .receipt-tagline { font-size: 10px; color: #888; } .receipt-num { font-weight: 700; margin-top: 6px; font-size: 12px; }
+      .receipt-datetime { font-size: 11px; color: #888; } .receipt-header { text-align: center; border-bottom: 2px solid #111; padding-bottom: 12px; margin-bottom: 16px; }
+    </style></head><body>${content.outerHTML}</body></html>`);
+  printWin.document.close();
+  printWin.print();
+});
+
