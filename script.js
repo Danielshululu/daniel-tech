@@ -88,6 +88,34 @@ function formatPrice(amountTZS, amountUSD) {
   return `TZS ${Number(amountTZS).toLocaleString()}`;
 }
 
+// Supabase query with timeout — prevents "Loading..." forever
+async function sbQuery(queryFn, timeoutMs = 8000) {
+  if (!sb) return { data: null, error: { message: "Database not connected" } };
+  return Promise.race([
+    queryFn(),
+    new Promise((_, reject) =>
+      setTimeout(() => reject(new Error("Request timed out. Check your connection.")), timeoutMs)
+    )
+  ]).catch(err => ({ data: null, error: { message: err.message } }));
+}
+
+// Show error state inside a grid/list container
+function showLoadError(containerId, message = "Failed to load. Please refresh the page.") {
+  const el = document.getElementById(containerId);
+  if (!el) return;
+  el.innerHTML = `<div class="empty-content error-state">
+    <i class="fa-solid fa-triangle-exclamation"></i>
+    ${escapeHtml(message)}
+  </div>`;
+}
+
+// Show empty state inside a grid/list container
+function showEmpty(containerId, message = "Nothing to show yet.") {
+  const el = document.getElementById(containerId);
+  if (!el) return;
+  el.innerHTML = `<div class="empty-content">${escapeHtml(message)}</div>`;
+}
+
 /* =========================================================
    3. AUTOMATIC TIME-BASED THEME & MANUAL OVERRIDE
    ========================================================= */
