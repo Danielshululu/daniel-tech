@@ -1,8 +1,7 @@
 /* =========================================================
-   DANIEL TECH V2.0.0
-   COLOR SYSTEM: #000000, #0B192C, #00BFFF, #D9534F, #FFFDF5
-   Functional Error: #B42318 (Light), #FF8A80 (Dark)
-   Strictly NO Gold. NO Emojis in UI.
+   DANIEL TECH — Design System
+   Colors: #000000, #0B192C, #00BFFF, #D9534F, #FF4D8D, #FFFDF5
+   Pink accent: #FF4D8D (supporting, not dominant)
    ========================================================= */
 
 :root {
@@ -11,6 +10,9 @@
   --color-blue: #00BFFF;
   --color-orange: #D9534F;
   --color-white: #FFFDF5;
+  --color-pink: #FF4D8D;
+  --color-pink-soft: rgba(255, 77, 141, 0.12);
+  --color-pink-line: rgba(255, 77, 141, 0.35);
 
   --surface: var(--color-white);
   --on-surface: var(--color-black);
@@ -1778,3 +1780,233 @@ body.menu-open, body.modal-open {
   }
 }
 
+
+/* =========================================================
+   PINK ACCENT — Subtle supporting uses only
+   ========================================================= */
+
+.badge-pink {
+  background: var(--color-pink);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 800;
+  padding: 2px 6px;
+  border-radius: 10px;
+  vertical-align: middle;
+}
+
+.hero-label { color: var(--color-pink) !important; }
+
+.section-heading::after {
+  content: "";
+  display: block;
+  width: 36px;
+  height: 3px;
+  background: var(--color-pink);
+  border-radius: 2px;
+  margin: 10px auto 0;
+}
+
+/* =========================================================
+   DECORATIVE DOT-GRID
+   ========================================================= */
+
+.dot-grid {
+  position: absolute;
+  width: 160px;
+  height: 160px;
+  background-image: radial-gradient(circle, var(--color-blue) 1.5px, transparent 1.5px);
+  background-size: 16px 16px;
+  opacity: 0.15;
+  pointer-events: none;
+  z-index: 0;
+  border-radius: 4px;
+}
+
+.dot-grid--pink {
+  background-image: radial-gradient(circle, var(--color-pink) 1.5px, transparent 1.5px);
+  opacity: 0.10;
+}
+
+.hero { position: relative; overflow: hidden; }
+
+/* =========================================================
+   SIDEBAR NAV SECTION GROUPS
+   ========================================================= */
+
+.sidebar-section-label {
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 1.8px;
+  text-transform: uppercase;
+  color: rgba(255, 253, 245, 0.35);
+  padding: 16px 14px 4px;
+  margin: 0;
+  user-select: none;
+  display: block;
+}
+
+.dashboard-nav.active {
+  background: rgba(255, 77, 141, 0.14) !important;
+  color: var(--color-pink) !important;
+  border-left: 3px solid var(--color-pink) !important;
+  padding-left: 11px;
+}
+
+.dashboard-nav {
+  border-left: 3px solid transparent;
+  padding-left: 14px;
+}
+
+/* =========================================================
+   AVATAR / PROFILE PICTURE
+   ========================================================= */
+
+.avatar-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.avatar-circle {
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  border: 3px solid var(--color-blue);
+  background: var(--tint);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 34px;
+  color: var(--color-blue);
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.avatar-circle img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+  display: block;
+}
+
+.avatar-actions { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
+
+/* =========================================================
+   OTP / 6-DIGIT VERIFICATION
+   ========================================================= */
+
+.otp-container {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  margin: 20px 0;
+}
+
+.otp-input {
+  width: 44px;
+  height: 54px;
+  text-align: center;
+  font-size: 22px;
+  font-weight: 800;
+  border: 2px solid var(--line);
+  border-radius: 8px;
+  background: var(--tint);
+  color: var(--on-surface);
+  transition: border-color 0.2s, box-shadow 0.2s;
+  outline: none;
+}
+
+.otp-input:focus {
+  border-color: var(--color-pink) !important;
+  box-shadow: 0 0 0 3px var(--color-pink-line);
+}
+
+.verify-intro {
+  font-size: 13px;
+  color: var(--muted);
+  text-align: center;
+  line-height: 1.6;
+  margin-bottom: 4px;
+}
+
+.verify-intro strong {
+  color: var(--color-blue);
+  display: block;
+  margin-top: 4px;
+}
+
+/* =========================================================
+   RECEIPT
+   ========================================================= */
+
+.receipt-wrap {
+  background: #fff;
+  color: #111;
+  border-radius: 10px;
+  max-width: 480px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 28px 24px 20px;
+  font-family: 'Inter', Arial, sans-serif;
+}
+
+.receipt-header {
+  text-align: center;
+  border-bottom: 2px solid #111;
+  padding-bottom: 14px;
+  margin-bottom: 18px;
+}
+
+.receipt-brand { font-size: 20px; font-weight: 900; letter-spacing: -0.5px; color: #111; }
+.receipt-brand span { color: #00BFFF; }
+.receipt-tagline { font-size: 10px; color: #888; margin-top: 2px; text-transform: uppercase; letter-spacing: 1px; }
+.receipt-num { font-size: 12px; font-weight: 700; color: #444; margin-top: 8px; font-family: monospace; }
+.receipt-datetime { font-size: 11px; color: #888; margin-top: 2px; }
+.receipt-divider { border: none; border-top: 1px dashed #ccc; margin: 14px 0; }
+
+.receipt-rows { display: flex; flex-direction: column; gap: 9px; }
+
+.receipt-row { display: flex; justify-content: space-between; align-items: baseline; font-size: 12px; gap: 8px; }
+.receipt-row .r-label { color: #777; flex-shrink: 0; min-width: 120px; }
+.receipt-row .r-value { font-weight: 700; text-align: right; word-break: break-all; }
+
+.receipt-total { display: flex; justify-content: space-between; font-size: 15px; font-weight: 900; border-top: 2px solid #111; padding-top: 12px; margin-top: 10px; }
+
+.receipt-status { display: inline-block; padding: 2px 10px; border-radius: 10px; font-size: 10px; font-weight: 800; background: #e6f9ee; color: #1a7c3e; text-transform: uppercase; }
+.receipt-status.pending { background: #fff8e1; color: #b45309; }
+.receipt-status.failed  { background: #fee2e2; color: #b42318; }
+
+.receipt-footer-note { text-align: center; margin-top: 18px; padding-top: 14px; border-top: 1px dashed #ccc; font-size: 10px; color: #aaa; line-height: 1.6; }
+.receipt-verify { font-family: monospace; font-size: 10px; color: #bbb; letter-spacing: 1px; margin-top: 4px; }
+
+@media print {
+  body > *:not(.receipt-print-area) { display: none !important; }
+  .receipt-print-area { display: block !important; position: fixed; inset: 0; background: #fff; z-index: 99999; padding: 20px; }
+}
+
+.receipt-80mm { max-width: 80mm; font-size: 11px; }
+.receipt-80mm .receipt-brand { font-size: 15px; }
+.receipt-80mm .receipt-total { font-size: 13px; }
+
+/* =========================================================
+   VERSION TAG (only in system info)
+   ========================================================= */
+
+.version-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--tint);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 3px 9px;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--muted);
+  font-family: monospace;
+  letter-spacing: 0.5px;
+}
