@@ -3,25 +3,48 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Daniel Tech V2.0.0 - Leading Technology, Web Development, AI Tools, Programming, Gaming, and Phone Solutions.">
+
+  <!-- ===== PRIMARY SEO META TAGS ===== -->
+  <title>Daniel Tech V2.0 | Technology Solutions — Dar es Salaam, Tanzania</title>
+  <meta name="description" content="Daniel Tech offers professional web development, AI tools, phone diagnostics, gaming systems, cloud solutions and programming services in Tanzania. Led by Daniel Shululu.">
+  <meta name="keywords" content="Daniel Tech, web development Tanzania, AI tools, phone repair Dar es Salaam, gaming PC, programming, technology solutions">
   <meta name="author" content="Daniel Shululu">
-  <title>Daniel Tech V2.0.0 - Technology Solutions</title>
-  <link rel="icon" href="data:,">
-  
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://danielshululu.github.io/daniel-tech/">
+
+  <!-- ===== OPEN GRAPH (Facebook, WhatsApp, LinkedIn) ===== -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://danielshululu.github.io/daniel-tech/">
+  <meta property="og:title" content="Daniel Tech | Technology Solutions — Tanzania">
+  <meta property="og:description" content="Professional web development, AI tools, phone diagnostics, gaming systems and cloud solutions. Based in Dar es Salaam, Tanzania.">
+  <meta property="og:image" content="https://danielshululu.github.io/daniel-tech/og-image.png">
+  <meta property="og:locale" content="en_TZ">
+  <meta property="og:site_name" content="Daniel Tech">
+
+  <!-- ===== TWITTER / X CARD ===== -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Daniel Tech | Technology Solutions — Tanzania">
+  <meta name="twitter:description" content="Professional web development, AI tools, phone diagnostics, gaming systems and cloud solutions in Tanzania.">
+  <meta name="twitter:image" content="https://danielshululu.github.io/daniel-tech/og-image.png">
+
+  <!-- ===== FAVICON (Inline SVG — no external file needed) ===== -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%230B192C'/%3E%3Ctext x='50%25' y='54%25' dominant-baseline='middle' text-anchor='middle' font-family='Arial,sans-serif' font-weight='900' font-size='14' fill='%2300BFFF'%3EDT%3C/text%3E%3C/svg%3E">
+  <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%230B192C'/%3E%3Ctext x='50%25' y='54%25' dominant-baseline='middle' text-anchor='middle' font-family='Arial,sans-serif' font-weight='900' font-size='14' fill='%2300BFFF'%3EDT%3C/text%3E%3C/svg%3E">
+
   <!-- Font Awesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-  
+
   <!-- Google Fonts: Inter -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-  
+
   <!-- Supabase JS Client Library -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-  <!-- Asset Links (Relative for GitHub Pages and Vite) -->
-  <link rel="stylesheet" crossorigin href="./style.css">
-  <script type="module" crossorigin src="./script.js"></script>
+  <!-- Asset Links (Relative for GitHub Pages) -->
+  <link rel="stylesheet" href="./style.css">
+  <script type="module" src="./script.js"></script>
 </head>
 <body>
   <!-- =========================================================
@@ -104,7 +127,7 @@
       <!-- Quick user portal link if logged in -->
       <div id="drawerUserStatus" class="drawer-user-box hidden">
         <strong id="drawerUserName">Welcome</strong>
-        <p id="drawerUserEmail" class="drawer-subtext">user@example.com</p>
+        <p id="drawerUserEmail" class="drawer-subtext"></p>
         <button type="button" id="drawerMyPortalBtn" class="primary-button" style="margin-top: 8px; width: 100%;">
           <i class="fa-solid fa-gauge-high"></i> Go to Dashboard
         </button>
@@ -548,7 +571,7 @@
             <h2 id="customerWelcome">Welcome</h2>
           </div>
           <div class="dashboard-user">
-            <span id="customerEmail">customer@example.com</span>
+            <span id="customerEmail"></span>
             <button type="button" class="secondary-button" id="btnCustomerExitToSite" style="padding: 6px 12px; margin-left: 12px; font-size: 12px;">
               <i class="fa-solid fa-arrow-left"></i> Exit to Website
             </button>
@@ -1067,7 +1090,17 @@
         <span id="footerPhoneRow">Phone: <strong id="footerPhone">+255 742 287 977</strong></span>
         <span id="footerAddress">Dar es Salaam, Tanzania</span>
       </div>
-      <div id="footerSocialLinks" class="footer-social"></div>
+      <div id="footerSocialLinks" class="footer-social">
+        <a href="https://wa.me/255742287977" target="_blank" rel="noopener" aria-label="WhatsApp" class="social-link">
+          <i class="fa-brands fa-whatsapp"></i>
+        </a>
+        <a href="https://github.com/Danielshululu" target="_blank" rel="noopener" aria-label="GitHub" class="social-link">
+          <i class="fa-brands fa-github"></i>
+        </a>
+        <a href="mailto:danielshululu770@gmail.com" aria-label="Email" class="social-link">
+          <i class="fa-solid fa-envelope"></i>
+        </a>
+      </div>
     </div>
     <div class="footer-bottom">
       <span>&copy; <span id="footerYear">2026</span> Daniel Tech V2.0.0. All rights reserved.</span>
